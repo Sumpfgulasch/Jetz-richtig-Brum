@@ -852,7 +852,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSteerAngle: 30
-  motorForce: 50
+  motorForce: 1000
   frontWheelColliderL: {fileID: 1831576854}
   frontWheelColliderR: {fileID: 1197219700}
   backWheelColliderL: {fileID: 749561764}
@@ -1288,8 +1288,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1.5082648, z: 4.039776}
-  m_Center: {x: 0, y: 0.79104936, z: -0.03918606}
+  m_Size: {x: 1, y: 1.1945634, z: 3.3900862}
+  m_Center: {x: 0, y: 0.94790006, z: -0.116569996}
 --- !u!54 &919132148347960409
 Rigidbody:
   m_ObjectHideFlags: 0
