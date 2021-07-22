@@ -5,31 +5,104 @@ using UnityEngine.InputSystem;
 
 public class CarController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [Header("Settings")]
+    public float maxSteerAngle = 30f;
+    public float motorForce = 50;
+
+    [Header("References")]
+    public WheelCollider frontWheelColliderL;
+    public WheelCollider frontWheelColliderR, backWheelColliderL, backWheelColliderR;
+    public Transform frontWheelTransformL, frontWheelTransformR;
+    public Transform backWheelTransformL, backWheelTransformR;
+
+    private float thrustValue;
+    private float steerValue;
+
+
     void Start()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    
+    void FixedUpdate()
     {
-        
+        Steer(steerValue);
+        Thrust(thrustValue);
+        UpdateWheelPoses();
     }
 
-    public void OnThrust(InputValue value)
-    {
 
-        print("onThrust: " + value.Get<float>());
+
+    // ----------------------------------------- Methods -----------------------------------------
+
+    private void Steer(float steeringAngle)
+    {
+        float targetAngle = steeringAngle * maxSteerAngle;
+
+        frontWheelColliderL.steerAngle = targetAngle;
+        frontWheelColliderR.steerAngle = targetAngle;
     }
 
-    public void OnSteer(InputValue value)
+    private void Thrust(float strength)
     {
-        print("onSteer: " + value.Get<float>());
+        frontWheelColliderL.motorTorque = strength * motorForce;
+        frontWheelColliderR.motorTorque = strength * motorForce;
+    }
+
+    private void UpdateWheelPoses()
+    {
+        UpdateWheelPose(frontWheelColliderL, frontWheelTransformL);
+        UpdateWheelPose(frontWheelColliderR, frontWheelTransformR);
+        UpdateWheelPose(backWheelColliderL, backWheelTransformL);
+        UpdateWheelPose(backWheelColliderR, backWheelTransformR);
+    }
+
+    private void UpdateWheelPose(WheelCollider wheelCollider, Transform wheelTransform)
+    {
+        Vector3 pos = transform.position;
+        Quaternion quat = transform.rotation;
+
+        wheelCollider.GetWorldPose(out pos, out quat);
+
+        wheelTransform.position = pos;
+        wheelTransform.rotation = quat;
+    }
+
+    private void LowRide()
+    {
+
+    }
+
+
+
+    // ----------------------------------------- Input -----------------------------------------
+
+
+
+    public void OnThrust(InputValue inputValue)
+    {
+        float value = inputValue.Get<float>();
+        thrustValue = value;
+
+        //Thrust(value);
+        //UpdateWheelPoses();
+    }
+
+    public void OnSteer(InputValue inputValue)
+    {
+        float value = inputValue.Get<float>();
+        steerValue = value;
+
+        //Steer(value);
+        //UpdateWheelPoses();
     }
 
     public void OnLowRide(InputValue value)
     {
-        print("onLowRide: " + value.Get<Vector2>());
+        // TO DO
+
+        LowRide();
+        UpdateWheelPoses();
     }
 }
