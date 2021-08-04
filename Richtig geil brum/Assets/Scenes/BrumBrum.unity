@@ -659,7 +659,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1197219698}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.7856635, y: -0.27132332, z: -1.2635508}
+  m_LocalPosition: {x: 0.7856635, y: -0.271323, z: -1.2635508}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 170101282}
@@ -851,6 +851,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37c1019ae85ee984688cc7c4e90f2add, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   maxSteerAngle: 30
   motorForce: 1000
   frontWheelColliderL: {fileID: 1831576854}
@@ -861,6 +870,8 @@ MonoBehaviour:
   frontWheelTransformR: {fileID: 7155883020045172237}
   backWheelTransformL: {fileID: 6926820944721866070}
   backWheelTransformR: {fileID: 8903108962197718673}
+  maximumLowRideDistance: 2
+  showDebugHandles: 1
 --- !u!114 &1474740489
 MonoBehaviour:
   m_ObjectHideFlags: 0

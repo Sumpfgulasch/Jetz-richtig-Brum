@@ -23,9 +23,9 @@
                 },
                 {
                     "name": "LowRide",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "955466bf-83e1-4c49-9ea0-e6f793edea17",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
                 }
