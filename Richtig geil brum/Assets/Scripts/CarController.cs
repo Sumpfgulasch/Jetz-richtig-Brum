@@ -14,6 +14,7 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(S)]
     public float maxSteerAngle = 30f;
     public float motorForce = 50;
+    public float maximumLowRideDistance = 2f; // The maximum length that the wheels can extend
 
 
     [TitleGroup(R)]
@@ -23,8 +24,9 @@ public class CarController : SerializedMonoBehaviour
 
     private float thrustValue;
     private float steerValue;
+    private Vector2 lowRideValue;
 
-    public float maximumLowRideDistance = 2f;
+
     private Vector3 startingPosFrontWheelL,startingPosFrontWheelR,startingPosBackWheelL,startingPosBackWheelR;
     public Vector3 StartingPosFrontWheelL{get{return  this.transform.rotation * startingPosFrontWheelL  + this.transform.position;} set{startingPosFrontWheelL = value;}}
     public Vector3 StartingPosFrontWheelR{get{return this.transform.rotation * startingPosFrontWheelR + this.transform.position;} set{startingPosFrontWheelR = value;}}
@@ -34,11 +36,12 @@ public class CarController : SerializedMonoBehaviour
 
 
     [TitleGroup(H)]
-    public bool showDebugHandles = true; 
+    public bool showDebugHandles = true;
 
 
     void Start()
     {
+
         SetStartingWheelPositions();
     }
 
@@ -47,6 +50,7 @@ public class CarController : SerializedMonoBehaviour
     {
         Steer(steerValue);
         Thrust(thrustValue);
+        LowRide(lowRideValue);
         UpdateWheelPoses();
     }
 
@@ -68,6 +72,19 @@ public class CarController : SerializedMonoBehaviour
         frontWheelColliderR.motorTorque = strength * motorForce;
     }
 
+    private void LowRide(Vector2 strength)
+    {
+        float strengthWheelFL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f,1f).normalized, strength.normalized)) * strength.magnitude;
+        float strengthWheelFR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f,1f).normalized, strength.normalized)) * strength.magnitude;
+        float strengthWheelBL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f,-1f).normalized, strength.normalized)) * strength.magnitude;
+        float strengthWheelBR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f,-1f).normalized, strength.normalized)) * strength.magnitude;
+
+        frontWheelColliderL.transform.position = StartingPosFrontWheelL + (-this.transform.up * maximumLowRideDistance * strengthWheelFL);
+        frontWheelColliderR.transform.position = StartingPosFrontWheelR + (-this.transform.up * maximumLowRideDistance * strengthWheelFR);
+        backWheelColliderL.transform.position = StartingPosBackWheelL + (-this.transform.up * maximumLowRideDistance * strengthWheelBL);
+        backWheelColliderR.transform.position = StartingPosBackWheelR + (-this.transform.up * maximumLowRideDistance * strengthWheelBR);
+    }
+
     private void UpdateWheelPoses()
     {
         UpdateWheelPose(frontWheelColliderL, frontWheelTransformL);
@@ -83,13 +100,8 @@ public class CarController : SerializedMonoBehaviour
 
         wheelCollider.GetWorldPose(out Vector3 pos, out Quaternion quat);
 
-        //wheelTransform.position = pos; //Frage: Musst du hier die Position Setzen ?, dat scheint auch ohne zu gehen
+        wheelTransform.position = pos;
         wheelTransform.rotation = quat;
-    }
-
-    private void LowRide()
-    {
-        frontWheelColliderL.transform.position = StartingPosFrontWheelL + (-this.transform.up * maximumLowRideDistance);
     }
 
 
@@ -97,11 +109,9 @@ public class CarController : SerializedMonoBehaviour
     // ----------------------------------------- Input -----------------------------------------
 
 
-
     public void OnThrust(InputValue inputValue)
     {
-        float value = inputValue.Get<float>();
-        thrustValue = value;
+        thrustValue = inputValue.Get<float>();
 
         //Thrust(value);
         //UpdateWheelPoses();
@@ -109,19 +119,16 @@ public class CarController : SerializedMonoBehaviour
 
     public void OnSteer(InputValue inputValue)
     {
-        float value = inputValue.Get<float>();
-        steerValue = value;
+        steerValue = inputValue.Get<float>();
 
         //Steer(value);
         //UpdateWheelPoses();
     }
 
-    public void OnLowRide(InputValue inputValue) // ich glaube dafuer brauchen wir keinen "inputValue" , sondern einen zustand der einem sagt : wurde gedrueckt, wird gehalten, wurde gecancelt
+    public void OnLowRide(InputValue inputValue)
     {
-        // TO DO
-
-        LowRide();
-        UpdateWheelPoses();
+        lowRideValue = inputValue.Get<Vector2>();
+        //UpdateWheelPoses();
     }
 
 
