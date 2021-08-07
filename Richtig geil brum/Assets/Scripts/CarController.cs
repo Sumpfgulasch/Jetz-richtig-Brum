@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Sirenix.OdinInspector;
+using Sirenix.Serialization;
 
 public class CarController : SerializedMonoBehaviour
 {
@@ -12,97 +13,136 @@ public class CarController : SerializedMonoBehaviour
 
 
     [TitleGroup(S)]
+    public Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
+    public PropulsionMethod propulsionMethod = PropulsionMethod.FrontDrive;
+    public SteeringMethod steeringMethod = SteeringMethod.FrontSteer;
     public float maxSteerAngle = 30f;
     public float motorForce = 50;
     public float maximumLowRideDistance = 2f; // The maximum length that the wheels can extend
+    [Range(0f,1f)] public float lowRideStepSize = 0.1f; // the maximum percentage which the wheels move(lowRide) each frame. (based on the maximumLowRideDistance)
+    public AnimationCurve powerCurve = AnimationCurve.Linear(0f,1f,1f,1f); // The maximum length that the wheels can extend
 
 
     [TitleGroup(R)]
-    public WheelCollider frontWheelColliderL, frontWheelColliderR, backWheelColliderL, backWheelColliderR;
-    public Transform frontWheelTransformL, frontWheelTransformR;
-    public Transform backWheelTransformL, backWheelTransformR;
+    public Wheel frontWheelR, frontWheelL, backWheelR, backWheelL;
+    public Wheel[] Wheels {get{return new Wheel[4]{frontWheelR,frontWheelL,backWheelR,backWheelL};}}
 
     private float thrustValue;
     private float steerValue;
     private Vector2 lowRideValue;
 
-
-    private Vector3 startingPosFrontWheelL,startingPosFrontWheelR,startingPosBackWheelL,startingPosBackWheelR;
-    public Vector3 StartingPosFrontWheelL{get{return  this.transform.rotation * startingPosFrontWheelL  + this.transform.position;} set{startingPosFrontWheelL = value;}}
-    public Vector3 StartingPosFrontWheelR{get{return this.transform.rotation * startingPosFrontWheelR + this.transform.position;} set{startingPosFrontWheelR = value;}}
-    public Vector3 StartingPosBackWheelL{get{return this.transform.rotation * startingPosBackWheelL + this.transform.position;} set{startingPosBackWheelL = value;}}
-    public Vector3 StartingPosBackWheelR{get{return this.transform.rotation * startingPosBackWheelR + this.transform.position;} set{startingPosBackWheelR = value;}}
-    private bool startingPosWheelIsSet = false;
+    private Rigidbody rB;
 
 
     [TitleGroup(H)]
     public bool showDebugHandles = true;
 
-
-    void Start()
-    {
-
-        SetStartingWheelPositions();
+    void Start() {
+        rB = this.GetComponent<Rigidbody>();
     }
-
-    
     void FixedUpdate()
     {
-        Steer(steerValue);
-        Thrust(thrustValue);
-        LowRide(lowRideValue);
-        UpdateWheelPoses();
+        Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
+        Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
+        LowRide(lowRideValue,maximumLowRideDistance, powerCurve, lowRideStepSize,frontWheelR, frontWheelL, backWheelR, backWheelL);
+        SetCenterOfMass(rB);
     }
 
+    // ----------------------------------------- Setup -----------------------------------------
 
+    private void SetCenterOfMass(Rigidbody _rb)
+    {
+        if(_rb == null)
+        {
+            Debug.LogWarning("Rigidbody ist null - es gibt keinen auf diesem Auto");
+            return;
+        }
+        _rb.centerOfMass =  centerOfMassOffset;
+    }
 
     // ----------------------------------------- Methods -----------------------------------------
 
-    private void Steer(float steeringAngle)
+    private void Steer(float _steeringAngle, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL )
     {
-        float targetAngle = steeringAngle * maxSteerAngle;
+        // brauchen wir hier evtl. deltatime? 
+        float targetAngle = _steeringAngle * maxSteerAngle;
 
-        frontWheelColliderL.steerAngle = targetAngle;
-        frontWheelColliderR.steerAngle = targetAngle;
+        switch(propulsionMethod)
+        {
+            case PropulsionMethod.FrontDrive:
+            {
+                _frontWheelL.wheelCollider.steerAngle = targetAngle;
+                _frontWheelR.wheelCollider.steerAngle = targetAngle;
+                break;
+            }
+            case PropulsionMethod.BackDrive:
+            {
+                _backWheelL.wheelCollider.steerAngle = targetAngle;
+                _backWheelR.wheelCollider.steerAngle = targetAngle;
+                break;
+            }
+            case PropulsionMethod.FourWheelDrive:
+            {
+                _frontWheelL.wheelCollider.steerAngle = targetAngle;
+                _frontWheelR.wheelCollider.steerAngle = targetAngle;
+                _backWheelL.wheelCollider.steerAngle = targetAngle;
+                _backWheelR.wheelCollider.steerAngle = targetAngle;
+                break;
+            }
+        }
+
     }
 
-    private void Thrust(float strength)
+    private void Thrust(float _strength, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL )
     {
-        frontWheelColliderL.motorTorque = strength * motorForce;
-        frontWheelColliderR.motorTorque = strength * motorForce;
+        // brauchen wir hier evtl. deltatime?
+
+        switch(steeringMethod)
+        {
+            case SteeringMethod.FrontSteer:
+            {
+                _frontWheelL.wheelCollider.motorTorque = _strength * motorForce;
+                _frontWheelR.wheelCollider.motorTorque = _strength * motorForce;
+                break;
+            }
+            case SteeringMethod.BackSteer:
+            {
+                _backWheelL.wheelCollider.motorTorque = _strength * motorForce;
+                _backWheelR.wheelCollider.motorTorque = _strength * motorForce;
+                break;
+            }
+            case SteeringMethod.FourWheelSteer:
+            {
+                _frontWheelL.wheelCollider.motorTorque = _strength * motorForce;
+                _frontWheelR.wheelCollider.motorTorque = _strength * motorForce;
+                _backWheelL.wheelCollider.motorTorque = _strength * motorForce;
+                _backWheelR.wheelCollider.motorTorque = _strength * motorForce;
+                break;
+            }
+        } 
     }
 
-    private void LowRide(Vector2 strength)
+    private void LowRide(Vector2 _strength, float _maximumLowRideDistance, AnimationCurve _powerCurve, float _lowRideStepSize, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL)
     {
-        float strengthWheelFL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f,1f).normalized, strength.normalized)) * strength.magnitude;
-        float strengthWheelFR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f,1f).normalized, strength.normalized)) * strength.magnitude;
-        float strengthWheelBL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f,-1f).normalized, strength.normalized)) * strength.magnitude;
-        float strengthWheelBR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f,-1f).normalized, strength.normalized)) * strength.magnitude;
+        // nimmt das dot product (Skalarprodukt) vom InputVektor und  dem "Radpositions-Vektor" und clampt es auf eine range von 0 bis 1 (voher wars -1 bis 1), 
+        // danach wird es mit der intensität des verschubs des sticks multipliziert um die staerke zu bestimmen
+        float strengthWheelFR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f,1f).normalized, _strength.normalized)) * _strength.magnitude;
+        float strengthWheelFL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f,1f).normalized, _strength.normalized)) * _strength.magnitude;
+        float strengthWheelBR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f,-1f).normalized, _strength.normalized)) * _strength.magnitude;
+        float strengthWheelBL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f,-1f).normalized, _strength.normalized)) * _strength.magnitude;
 
-        frontWheelColliderL.transform.position = StartingPosFrontWheelL + (-this.transform.up * maximumLowRideDistance * strengthWheelFL);
-        frontWheelColliderR.transform.position = StartingPosFrontWheelR + (-this.transform.up * maximumLowRideDistance * strengthWheelFR);
-        backWheelColliderL.transform.position = StartingPosBackWheelL + (-this.transform.up * maximumLowRideDistance * strengthWheelBL);
-        backWheelColliderR.transform.position = StartingPosBackWheelR + (-this.transform.up * maximumLowRideDistance * strengthWheelBR);
+        _frontWheelR.OffsetWheelGradually(_maximumLowRideDistance,_lowRideStepSize,strengthWheelFR,_powerCurve);
+        _frontWheelL.OffsetWheelGradually(_maximumLowRideDistance,_lowRideStepSize,strengthWheelFL,_powerCurve);
+        _backWheelR.OffsetWheelGradually(_maximumLowRideDistance,_lowRideStepSize,strengthWheelBR,_powerCurve);
+        _backWheelL.OffsetWheelGradually(_maximumLowRideDistance,_lowRideStepSize,strengthWheelBL,_powerCurve);
+
+        // _frontWheelR.OffsetWheel(_maximumLowRideDistance,strengthWheelFR);
+        // _frontWheelL.OffsetWheel(_maximumLowRideDistance,strengthWheelFR);
+        // _backWheelR.OffsetWheel(_maximumLowRideDistance,strengthWheelBR);
+        // _backWheelL.OffsetWheel(_maximumLowRideDistance,strengthWheelBL);
     }
 
-    private void UpdateWheelPoses()
-    {
-        UpdateWheelPose(frontWheelColliderL, frontWheelTransformL);
-        UpdateWheelPose(frontWheelColliderR, frontWheelTransformR);
-        UpdateWheelPose(backWheelColliderL, backWheelTransformL);
-        UpdateWheelPose(backWheelColliderR, backWheelTransformR);
-    }
 
-    private void UpdateWheelPose(WheelCollider wheelCollider, Transform wheelTransform)
-    {
-        //Vector3 pos = transform.position; // indem du in Zeile 68 ein "out" benutzt erstellst du in dem moment die Variable
-        //Quaternion quat = transform.rotation;
-
-        wheelCollider.GetWorldPose(out Vector3 pos, out Quaternion quat);
-
-        wheelTransform.position = pos;
-        wheelTransform.rotation = quat;
-    }
 
 
 
@@ -112,45 +152,37 @@ public class CarController : SerializedMonoBehaviour
     public void OnThrust(InputValue inputValue)
     {
         thrustValue = inputValue.Get<float>();
-
-        //Thrust(value);
-        //UpdateWheelPoses();
     }
 
     public void OnSteer(InputValue inputValue)
     {
         steerValue = inputValue.Get<float>();
-
-        //Steer(value);
-        //UpdateWheelPoses();
     }
 
     public void OnLowRide(InputValue inputValue)
     {
         lowRideValue = inputValue.Get<Vector2>();
-        //UpdateWheelPoses();
     }
 
-
-
-    // ----------------------------------------- Helper -----------------------------------------
-
-
-
-    private void SetStartingWheelPositions()
+    public void OnJump(InputValue inputValue)
     {
-        StartingPosFrontWheelL = frontWheelColliderL.transform.position - this.transform.position;
-        StartingPosFrontWheelR = frontWheelColliderR.transform.position - this.transform.position;
-        StartingPosBackWheelL = backWheelColliderL.transform.position - this.transform.position;
-        StartingPosBackWheelR = backWheelColliderR.transform.position - this.transform.position;
-
-        if(!startingPosWheelIsSet)
-        {
-            startingPosWheelIsSet = true;
-        }
-        else
-        {
-            Debug.LogWarning("startingPosWheelIsSet is already set to true");
-        }
+        Debug.Log("Jump");
     }
+
+    public void OnReset(InputValue inputValue)
+    {
+        Debug.Log("Reset");
+    }
+}
+
+public enum PropulsionMethod{
+    FrontDrive,
+    BackDrive,
+    FourWheelDrive
+}
+
+public enum SteeringMethod{
+    FrontSteer,
+    BackSteer,
+    FourWheelSteer
 }
