@@ -191,7 +191,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1997966424}
-  m_Father: {fileID: 1493520233}
+  m_Father: {fileID: 472861107}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 12.303, y: 0, z: 0}
 --- !u!114 &54303025
@@ -335,7 +335,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1493520233}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &271817094
 GameObject:
@@ -492,7 +492,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1493520233}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &318336033
 MonoBehaviour:
@@ -789,6 +789,39 @@ Transform:
   m_Father: {fileID: 1114307849}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &472861106
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 472861107}
+  m_Layer: 0
+  m_Name: CinemachineCameras
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &472861107
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472861106}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 54303024}
+  - {fileID: 1114307849}
+  - {fileID: 521277442}
+  m_Father: {fileID: 1493520233}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &508513242
 GameObject:
   m_ObjectHideFlags: 0
@@ -877,7 +910,7 @@ GameObject:
   - component: {fileID: 521277442}
   - component: {fileID: 521277443}
   m_Layer: 0
-  m_Name: CM vcam1
+  m_Name: TopDownCam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -895,8 +928,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 571555596}
-  m_Father: {fileID: 1493520233}
-  m_RootOrder: 6
+  m_Father: {fileID: 472861107}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &521277443
 MonoBehaviour:
@@ -1477,7 +1510,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1493520233}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1052069583
 MonoBehaviour:
@@ -1640,7 +1673,7 @@ Transform:
   - {fileID: 1890083709}
   - {fileID: 391781416}
   - {fileID: 813547253}
-  m_Father: {fileID: 1493520233}
+  m_Father: {fileID: 472861107}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1114307850
@@ -1911,7 +1944,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1493520233}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 28.651, y: 0, z: 0}
 --- !u!114 &1325487850
 MonoBehaviour:
@@ -2102,13 +2135,11 @@ Transform:
   m_LocalPosition: {x: -9.879002, y: -7.827872, z: -10.668911}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 54303024}
-  - {fileID: 1114307849}
+  - {fileID: 472861107}
   - {fileID: 1052069582}
   - {fileID: 318336032}
   - {fileID: 1325487849}
   - {fileID: 186378652}
-  - {fileID: 521277442}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2732,7 +2763,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6747697756912961394}
   m_Layer: 0
-  m_Name: StossdaempferBack
+  m_Name: StossdaempferBackBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3168,7 +3199,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2038904287234721589}
   m_Layer: 0
-  m_Name: StossdaempferFront
+  m_Name: StossdaempferFrontBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3385,7 +3416,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7914078221680170320}
   m_Layer: 0
-  m_Name: AutoMesh 1
+  m_Name: AutoBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
