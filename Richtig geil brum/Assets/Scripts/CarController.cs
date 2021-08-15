@@ -67,21 +67,21 @@ public class CarController : SerializedMonoBehaviour
         // brauchen wir hier evtl. deltatime? 
         float targetAngle = _steeringAngle * maxSteerAngle;
 
-        switch(propulsionMethod)
+        switch(steeringMethod)
         {
-            case PropulsionMethod.FrontDrive:
+            case SteeringMethod.FrontSteer:
             {
                 _frontWheelL.wheelCollider.steerAngle = targetAngle;
                 _frontWheelR.wheelCollider.steerAngle = targetAngle;
                 break;
             }
-            case PropulsionMethod.BackDrive:
+            case SteeringMethod.BackSteer:
             {
                 _backWheelL.wheelCollider.steerAngle = targetAngle;
                 _backWheelR.wheelCollider.steerAngle = targetAngle;
                 break;
             }
-            case PropulsionMethod.FourWheelDrive:
+            case SteeringMethod.FourWheelSteer:
             {
                 _frontWheelL.wheelCollider.steerAngle = targetAngle;
                 _frontWheelR.wheelCollider.steerAngle = targetAngle;
@@ -97,21 +97,21 @@ public class CarController : SerializedMonoBehaviour
     {
         // brauchen wir hier evtl. deltatime?
 
-        switch(steeringMethod)
+        switch(propulsionMethod)
         {
-            case SteeringMethod.FrontSteer:
+            case PropulsionMethod.FrontDrive:
             {
                 _frontWheelL.wheelCollider.motorTorque = _strength * motorForce;
                 _frontWheelR.wheelCollider.motorTorque = _strength * motorForce;
                 break;
             }
-            case SteeringMethod.BackSteer:
+            case PropulsionMethod.BackDrive:
             {
                 _backWheelL.wheelCollider.motorTorque = _strength * motorForce;
                 _backWheelR.wheelCollider.motorTorque = _strength * motorForce;
                 break;
             }
-            case SteeringMethod.FourWheelSteer:
+            case PropulsionMethod.FourWheelDrive:
             {
                 _frontWheelL.wheelCollider.motorTorque = _strength * motorForce;
                 _frontWheelR.wheelCollider.motorTorque = _strength * motorForce;
