@@ -18,9 +18,13 @@ public class CarController : SerializedMonoBehaviour
     public SteeringMethod steeringMethod = SteeringMethod.FrontSteer;
     public float maxSteerAngle = 30f;
     public float motorForce = 50;
+    [Tooltip("NOT USED ANYMORE")]
     public float maximumLowRideDistance = 2f; // The maximum length that the wheels can extend
     [Range(0f,1f)] public float lowRideStepSize = 0.1f; // the maximum percentage which the wheels move(lowRide) each frame. (based on the maximumLowRideDistance)
     public AnimationCurve powerCurve = AnimationCurve.Linear(0f,1f,1f,1f); // The maximum length that the wheels can extend
+    [Range(0, 0.3f)] public float minGroundDistance = 0.1f;
+    public bool allignStickToView = false;
+    [Range(0,1f)] public float lowRideSideScale = 0f;
 
 
     [TitleGroup(R)]
@@ -37,15 +41,27 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(H)]
     public bool showDebugHandles = true;
 
+
+
     void Start() {
         rB = this.GetComponent<Rigidbody>();
+
+        // Init low ride distance; kp ob sinnvoll
+        //foreach(Wheel wheel in Wheels)
+        //{
+        //    wheel.wheelCollider.suspensionDistance = maximumLowRideDistance;
+        //}
     }
+
+
     void FixedUpdate()
     {
         Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
         Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
-        LowRide(lowRideValue,maximumLowRideDistance, powerCurve, lowRideStepSize,frontWheelR, frontWheelL, backWheelR, backWheelL);
+        LowRide(lowRideValue, minGroundDistance, powerCurve, lowRideStepSize,frontWheelR, frontWheelL, backWheelR, backWheelL);
         SetCenterOfMass(rB);
+
+        //Debug.DrawLine(transform.position, transform.position + transform.forward * 5f, Color.black, 0.5f);
     }
 
     // ----------------------------------------- Setup -----------------------------------------
@@ -122,31 +138,59 @@ public class CarController : SerializedMonoBehaviour
         } 
     }
 
-    private void LowRide(Vector2 _strength, float _maximumLowRideDistance, AnimationCurve _powerCurve, float _lowRideStepSize, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL)
+    private void LowRide(Vector2 _strength, float _minGroundDistance, AnimationCurve _powerCurve, float _lowRideStepSize, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL)
     {
-        // nimmt das dot product (Skalarprodukt) vom InputVektor und  dem "Radpositions-Vektor" und clampt es auf eine range von 0 bis 1 (voher wars -1 bis 1), 
-        // danach wird es mit der intensität des verschubs des sticks multipliziert um die staerke zu bestimmen
-        float strengthWheelFR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f,1f).normalized, _strength.normalized)) * _strength.magnitude;
-        float strengthWheelFL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f,1f).normalized, _strength.normalized)) * _strength.magnitude;
-        float strengthWheelBR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f,-1f).normalized, _strength.normalized)) * _strength.magnitude;
-        float strengthWheelBL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f,-1f).normalized, _strength.normalized)) * _strength.magnitude;
+        float strengthWheelFR, strengthWheelFL, strengthWheelBR, strengthWheelBL;
 
-        _frontWheelR.OffsetWheelGradually(_maximumLowRideDistance,_lowRideStepSize,strengthWheelFR,_powerCurve);
-        _frontWheelL.OffsetWheelGradually(_maximumLowRideDistance,_lowRideStepSize,strengthWheelFL,_powerCurve);
-        _backWheelR.OffsetWheelGradually(_maximumLowRideDistance,_lowRideStepSize,strengthWheelBR,_powerCurve);
-        _backWheelL.OffsetWheelGradually(_maximumLowRideDistance,_lowRideStepSize,strengthWheelBL,_powerCurve);
+        if (allignStickToView)
+        {
+            // Forward-Vektor des Autos im Screen-Space
+            Vector2 forwardScreenVector = (Camera.main.WorldToScreenPoint(transform.position + transform.forward) - Camera.main.WorldToScreenPoint(transform.position)).normalized;
 
-        // _frontWheelR.OffsetWheel(_maximumLowRideDistance,strengthWheelFR);
-        // _frontWheelL.OffsetWheel(_maximumLowRideDistance,strengthWheelFR);
-        // _backWheelR.OffsetWheel(_maximumLowRideDistance,strengthWheelBR);
-        // _backWheelL.OffsetWheel(_maximumLowRideDistance,strengthWheelBL);
+            // x-input rausrechnen
+            float forwardAngle = Vector2.Angle(Vector2.up, forwardScreenVector);
+            _strength = Quaternion.Euler(0, 0, -forwardAngle) * _strength;
+            _strength *= new Vector2(lowRideSideScale, 1f);
+            _strength = Quaternion.Euler(0, 0, forwardAngle) * _strength;
+
+            // Stick-Richtungsvektoren für Dot-Produkt berechnen (sind abhängig von Richtung des Autos)
+            Vector2 vecFR = Quaternion.Euler(0, 0, -45f) * forwardScreenVector;
+            Vector2 vecFL = Quaternion.Euler(0, 0, 45f) * forwardScreenVector;
+            Vector2 vecBR = Quaternion.Euler(0, 0, -135f) * forwardScreenVector;
+            Vector2 vecBL = Quaternion.Euler(0, 0, 135) * forwardScreenVector;
+
+            // Dot-Produkt [0,1]
+            strengthWheelFR = Mathf.Clamp01(Vector2.Dot(vecFR.normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelFL = Mathf.Clamp01(Vector2.Dot(vecFL.normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelBR = Mathf.Clamp01(Vector2.Dot(vecBR.normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelBL = Mathf.Clamp01(Vector2.Dot(vecBL.normalized, _strength.normalized)) * _strength.magnitude;
+        }
+        else
+        {
+            // Rechne x-input raus
+            _strength *= new Vector2(lowRideSideScale, 1f);
+
+            // nimmt das dot product (Skalarprodukt) vom InputVektor und  dem "Radpositions-Vektor" und clampt es auf eine range von 0 bis 1 (voher wars -1 bis 1), 
+            // danach wird es mit der intensität des verschubs des sticks multipliziert um die staerke zu bestimmen
+            strengthWheelFR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f, 1f).normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelFL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f, 1f).normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelBR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f, -1f).normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelBL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f, -1f).normalized, _strength.normalized)) * _strength.magnitude;
+
+            
+        }
+        _frontWheelR.OffsetWheelGradually(_lowRideStepSize, strengthWheelFR, _minGroundDistance, _powerCurve);
+        _frontWheelL.OffsetWheelGradually(_lowRideStepSize, strengthWheelFL, _minGroundDistance, _powerCurve);
+        _backWheelR.OffsetWheelGradually(_lowRideStepSize, strengthWheelBR, _minGroundDistance, _powerCurve);
+        _backWheelL.OffsetWheelGradually(_lowRideStepSize, strengthWheelBL, _minGroundDistance, _powerCurve);
+
     }
 
 
 
 
 
-    // ----------------------------------------- Input -----------------------------------------
+    // ----------------------------------------- Input Events -----------------------------------------
 
 
     public void OnThrust(InputValue inputValue)
@@ -171,7 +215,10 @@ public class CarController : SerializedMonoBehaviour
 
     public void OnReset(InputValue inputValue)
     {
-        Debug.Log("Reset");
+        // 1. Put up
+        transform.position += new Vector3(0, 5, 0);
+        // 2. rotate up
+        transform.rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
     }
 }
 

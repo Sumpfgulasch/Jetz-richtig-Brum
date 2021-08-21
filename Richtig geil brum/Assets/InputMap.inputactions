@@ -217,7 +217,7 @@
                     "id": "e5e326fd-4224-4347-b3a2-d607f69c918e",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
-                    "processors": "ScaleVector2(x=0)",
+                    "processors": "",
                     "groups": "",
                     "action": "LowRide",
                     "isComposite": false,
@@ -248,7 +248,7 @@
                 {
                     "name": "",
                     "id": "42c28f5e-c279-440f-ad1f-72da769b25ed",
-                    "path": "<Gamepad>/leftStickPress",
+                    "path": "<Gamepad>/select",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -259,7 +259,7 @@
                 {
                     "name": "",
                     "id": "427b84ca-d1b7-405e-8892-ca82485fd68b",
-                    "path": "<Keyboard>/ctrl",
+                    "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

@@ -1236,12 +1236,12 @@ WheelCollider:
   m_Radius: 0.32
   m_SuspensionSpring:
     spring: 90000
-    damper: 9000
+    damper: 500
     targetPosition: 1
-  m_SuspensionDistance: 0.08
+  m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
   m_Mass: 800
-  m_WheelDampingRate: 1
+  m_WheelDampingRate: 50
   m_ForwardFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
@@ -1347,7 +1347,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 813547251}
-  m_LocalRotation: {x: 0.18663867, y: -0.000000016904043, z: 0.000000003211376, w: 0.98242867}
+  m_LocalRotation: {x: 0.18663867, y: 0.000000016904039, z: -0.0000000032113754, w: 0.98242867}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1734,12 +1734,12 @@ WheelCollider:
   m_Radius: 0.32
   m_SuspensionSpring:
     spring: 90000
-    damper: 9000
+    damper: 500
     targetPosition: 1
-  m_SuspensionDistance: 0.08
+  m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
   m_Mass: 800
-  m_WheelDampingRate: 1
+  m_WheelDampingRate: 50
   m_ForwardFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
@@ -1819,12 +1819,12 @@ WheelCollider:
   m_Radius: 0.32
   m_SuspensionSpring:
     spring: 90000
-    damper: 9000
+    damper: 500
     targetPosition: 1
-  m_SuspensionDistance: 0.08
+  m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
   m_Mass: 800
-  m_WheelDampingRate: 1
+  m_WheelDampingRate: 50
   m_ForwardFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
@@ -2033,11 +2033,11 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  centerOfMassOffset: {x: 0, y: 0.18, z: 0.94}
-  propulsionMethod: 0
+  centerOfMassOffset: {x: 0, y: 0.07, z: 0}
+  propulsionMethod: 1
   steeringMethod: 0
   maxSteerAngle: 30
-  motorForce: 1000
+  motorForce: 5000
   maximumLowRideDistance: 1.5
   lowRideStepSize: 0.02
   powerCurve:
@@ -2073,6 +2073,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  minGroundDistance: 0.15
+  allignStickToView: 1
+  lowRideSideScale: 0.3
   frontWheelR: {fileID: 1197219701}
   frontWheelL: {fileID: 1831576855}
   backWheelR: {fileID: 1209376499}
@@ -2318,12 +2321,12 @@ WheelCollider:
   m_Radius: 0.32
   m_SuspensionSpring:
     spring: 90000
-    damper: 9000
+    damper: 500
     targetPosition: 1
-  m_SuspensionDistance: 0.08
+  m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
   m_Mass: 800
-  m_WheelDampingRate: 1
+  m_WheelDampingRate: 50
   m_ForwardFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
