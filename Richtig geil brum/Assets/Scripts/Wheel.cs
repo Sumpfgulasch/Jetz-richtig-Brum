@@ -12,10 +12,6 @@ public class Wheel : SerializedMonoBehaviour
     CarController carController;
     public WheelCollider wheelCollider;
     public Transform wheelModelTransform; // visual wheel model
-    private Vector3 startingPos;
-    public Vector3 StartingPos{
-        get{ if(carController != null){return carController.transform.rotation * startingPos  + carController.transform.position;} else {return Vector3.zero;}} set{startingPos = value;}}
-    private bool startingPosWheelIsSet = false;
 
 
     void Awake()
@@ -44,8 +40,6 @@ public class Wheel : SerializedMonoBehaviour
             Debug.LogWarning("CarController Reference is not set");
         }
 
-        //SET Starting pos
-        SetStartingWheelPositions();
     }
 
     void Update() 
@@ -57,68 +51,61 @@ public class Wheel : SerializedMonoBehaviour
         }
     }
 
-    private void SetStartingWheelPositions()
-    {
-        startingPos = this.transform.position - carController.transform.position;
-
-        if(!startingPosWheelIsSet)
-        {
-            startingPosWheelIsSet = true;
-        }
-        else
-        {
-            Debug.LogWarning("startingPosWheelIsSet is already set to true");
-        }
-    }
 
     private void UpdateWheelPose()
     {
-        //Vector3 pos = transform.position; // indem du in Zeile 68 ein "out" benutzt erstellst du in dem moment die Variable
-        //Quaternion quat = transform.rotation;
-
         this.wheelCollider.GetWorldPose(out Vector3 pos, out Quaternion quat);
 
         this.wheelModelTransform.position = pos;
         this.wheelModelTransform.rotation = quat;
     }
 
-    public void OffsetWheelGradually(float _stepSize, float _strength, float minGroundDistance, AnimationCurve _powerCurve) //Pushes the Wheel towards a goal, by an step amount(so it has to be called multiple times to reach its goal)
+    public void OffsetWheelGradually(Vector2 _stepSizePlusMinus, float _strength, Vector2 _minMaxGroundDistance, AnimationCurve _powerCurve, WheelOffsetModes _wheelOffsetMode) //Pushes the Wheel towards a goal, by an step amount(so it has to be called multiple times to reach its goal)
     {
-        #region OLD: offset wheel transform
-        //// prozent der aktuellen position von startposition bis maximalposition
-        //float currentPercentLowRideDistance = (StartingPos - this.transform.position).magnitude / _maxDistance; 
-        //// prozent der goalposition
-        //float goalPercentLowRideDistance  = _maxDistance * _strength; 
-        //// geclampter schritt * _powerCurve multiplicator(based on currentPercent)
-        //float stepPercentLowRideDistance = Mathf.Clamp(goalPercentLowRideDistance - currentPercentLowRideDistance, -_stepSize, _stepSize) * _powerCurve.Evaluate(currentPercentLowRideDistance);
-        //// geclampte schrittweite + aktuelle prozentuale position = next percent offset
-        //float newPercentLowRideDistance = stepPercentLowRideDistance + currentPercentLowRideDistance;
+        switch (_wheelOffsetMode)
+        {
+            case WheelOffsetModes.SuspensionDistance:
+            {
+                // prozent der aktuellen position von startposition bis maximalposition
+                float currentPercentLowRideDistance = wheelCollider.suspensionDistance / _minMaxGroundDistance.y; // (StartingPos - ).magnitude / _maxDistance; 
+                // geclampter schritt * _powerCurve multiplicator(based on currentPercent)
+                float stepPercentLowRideDistance = Mathf.Clamp(_strength - currentPercentLowRideDistance, _stepSizePlusMinus.y, _stepSizePlusMinus.x)* _powerCurve.Evaluate(currentPercentLowRideDistance);
+                // geclampte schrittweite + aktuelle prozentuale position = next percent offset
+                float newPercentLowRideDistance = stepPercentLowRideDistance + wheelCollider.suspensionDistance;
+                wheelCollider.suspensionDistance = Mathf.Clamp(newPercentLowRideDistance, _minMaxGroundDistance.x, _minMaxGroundDistance.y);
 
-        
-        //this.transform.position = StartingPos + (this.transform.up * _maxDistance * newPercentLowRideDistance);
-        #endregion
+                //shitty shit, used that the target position is reseted to 0.5f (muss leider, sonst kann man nicht gut wechseln zwischen den modis)
+                JointSpring newSpring = wheelCollider.suspensionSpring;
+                newSpring.targetPosition = 0.5f;
+                wheelCollider.suspensionSpring = newSpring;
 
-        // NEW: offset wheel collider spring target position
+                break;
+            }
 
-        // 1. Prozent der aktuellen Suspension spring target position [0,1]
-        float curSpringPos = wheelCollider.suspensionSpring.targetPosition;
-        // 2. Prozent der gewünschten Suspension spring target position [0 = komplett ausgefahren, 1 = eingefahren]
-        float goalSpringPos = (1f - minGroundDistance)  - _strength.Remap(0, 1f, 0, 1f-minGroundDistance);
-        // 3. geclampter schritt * _powerCurve multiplicator(based on currentPercent)
-        float springStep = Mathf.Clamp(goalSpringPos - curSpringPos, -_stepSize, _stepSize) * _powerCurve.Evaluate(curSpringPos);
-        // 4. new Spring position
-        float newSpringPos = curSpringPos + springStep;
-        // Setze wheelCollider spring target pos (unnötiger kack aber das ist einfach programmierung)
-        JointSpring newSpring = wheelCollider.suspensionSpring;
-        newSpring.targetPosition = newSpringPos;
+            case WheelOffsetModes.TargetPosition:
+            {
+                //NEW: offset wheel collider spring target position
 
-        wheelCollider.suspensionSpring = newSpring;
-    }
+                // 1. Prozent der aktuellen Suspension spring target position [0,1]
+                float curSpringPos = wheelCollider.suspensionSpring.targetPosition;
+                // 2. Prozent der gewünschten Suspension spring target position [0 = komplett ausgefahren, 1 = eingefahren]
+                float goalSpringPos = _strength.Remap(1f, 0f, 0, 1f-_minMaxGroundDistance.x);//(1f - _minGroundDistance)  - _strength.Remap(0, 1f, 0, 1f-_minGroundDistance); 
+                // 3. geclampter schritt * _powerCurve multiplicator(based on currentPercent)
+                float springStep = Mathf.Clamp(goalSpringPos - curSpringPos, _stepSizePlusMinus.y, _stepSizePlusMinus.x) * _powerCurve.Evaluate(curSpringPos);
+                // 4. new Spring position
+                float newSpringPos = curSpringPos + springStep;
+                // Setze wheelCollider spring target pos (unnötiger kack aber das ist einfach programmierung)
+                JointSpring newSpring = wheelCollider.suspensionSpring;
+                newSpring.targetPosition = newSpringPos;
 
-    public void OffsetWheel(float _maxDistance , float _strength) //immediately Sets the wheel position downwards by a percentage
-    {
-        // rad wird um seine startsposition +  eine maximaltiefe nach unten mit einer stärke verschoben.
-        this.wheelCollider.transform.position = StartingPos + (this.transform.up * _maxDistance * _strength);
+                wheelCollider.suspensionSpring = newSpring;
+
+                //shitty shit, used that the suspensionDistance is reseted to maxVal (muss leider, sonst kann man nicht gut wechseln zwischen den modis)
+                wheelCollider.suspensionDistance = _minMaxGroundDistance.y;
+
+                break;
+            }
+        }
     }
 
 }

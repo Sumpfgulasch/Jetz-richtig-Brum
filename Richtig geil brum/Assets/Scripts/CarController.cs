@@ -4,64 +4,81 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
+using UnityEditor;
+using System.Linq;
 
 public class CarController : SerializedMonoBehaviour
 {
-    const string S = "Settings";
+    const string G = "General";
+    const string M = "Modes";
+    const string LR = "LowRide";
     const string R = "References";
     const string H = "Helper";
 
 
-    [TitleGroup(S)]
-    public Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
-    public PropulsionMethod propulsionMethod = PropulsionMethod.FrontDrive;
-    public SteeringMethod steeringMethod = SteeringMethod.FrontSteer;
-    public float maxSteerAngle = 30f;
-    public float motorForce = 50;
-    [Tooltip("NOT USED ANYMORE")]
-    public float maximumLowRideDistance = 2f; // The maximum length that the wheels can extend
-    [Range(0f,1f)] public float lowRideStepSize = 0.1f; // the maximum percentage which the wheels move(lowRide) each frame. (based on the maximumLowRideDistance)
-    public AnimationCurve powerCurve = AnimationCurve.Linear(0f,1f,1f,1f); // The maximum length that the wheels can extend
-    [Range(0, 0.3f)] public float minGroundDistance = 0.1f;
-    public bool allignStickToView = false;
-    [Range(0,1f)] public float lowRideSideScale = 0f;
+    [TitleGroup(G)] public float maxSteerAngle = 30f;
+    [TitleGroup(G)] public float motorForce = 50;
+    [TitleGroup(G)] public float airRollSpeed = 1f;
+    [TitleGroup(G)] public Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
 
 
-    [TitleGroup(R)]
-    public Wheel frontWheelR, frontWheelL, backWheelR, backWheelL;
-    public Wheel[] Wheels {get{return new Wheel[4]{frontWheelR,frontWheelL,backWheelR,backWheelL};}}
-
-    private float thrustValue;
-    private float steerValue;
-    private Vector2 lowRideValue;
-
-    private Rigidbody rB;
+    [TitleGroup(M)] public PropulsionMethods propulsionMethod = PropulsionMethods.FrontDrive;
+    [TitleGroup(M)] public SteeringMethods steeringMethod = SteeringMethods.FrontSteer;
+    [TitleGroup(M)] public WheelOffsetModes wheelOffsetMode = WheelOffsetModes.SuspensionDistance;
 
 
-    [TitleGroup(H)]
-    public bool showDebugHandles = true;
+    [TitleGroup(M)] public bool allignStickToView = false;
+    [TitleGroup(M)] public bool invertRollControls = true;
 
+
+    [TitleGroup(LR)] [MinMaxSlider(0f, 2.5f, true)]public Vector2 minMaxGroundDistance = new Vector2(0.1f, 1f);// The minimum/maximum length that the wheels can extend - minimum = x component || maximum = y component
+    [TitleGroup(LR)] [VectorRange(0f,0.5f,-0.5f,0f,true)] public Vector2 lowRideStepSizePlusMinus = new Vector2(0.1f, -0.1f); // the maximum percentage which the wheels move(lowRide) each frame. (based on the maximumGroundDistance) - change when going positive = x component || change  when going negative = y component
+    [TitleGroup(LR)] public AnimationCurve powerCurve = AnimationCurve.Linear(0f,1f,1f,1f); // The maximum length that the wheels can extend
+    [TitleGroup(LR)] [Range(0,1f)] public float lowRideSideScale = 0f;
+
+
+    [TitleGroup(R)] public Wheel frontWheelR, frontWheelL, backWheelR, backWheelL;
+    [TitleGroup(R)] public Wheel[] Wheels {get{return new Wheel[4]{frontWheelR,frontWheelL,backWheelR,backWheelL};}}
+    [TitleGroup(R)] private float thrustValue;
+    [TitleGroup(R)] private Vector2 steerValue;
+    [TitleGroup(R)] private Vector2 lowRideValue;
+    [TitleGroup(R)] private Rigidbody rB;
+    [TitleGroup(R)] [ShowInInspector] DrivingState drivingStateInfo {
+            get
+            {
+                if(Wheels != null)
+                {
+                    if(!Wheels.Contains(null))
+                    {
+                        foreach (Wheel wheel in Wheels)
+                        {
+                            WheelHit hit;
+                            if(wheel.wheelCollider.GetGroundHit(out hit))
+                            {
+                                return DrivingState.Grounded;
+                            }
+                        }
+                        return DrivingState.InAir;
+                    }
+                }
+                return DrivingState.Grounded;
+            }
+        }
+
+    [TitleGroup(H)] public bool showDebugHandles = true;
 
 
     void Start() {
         rB = this.GetComponent<Rigidbody>();
-
-        // Init low ride distance; kp ob sinnvoll
-        //foreach(Wheel wheel in Wheels)
-        //{
-        //    wheel.wheelCollider.suspensionDistance = maximumLowRideDistance;
-        //}
+        InitSuspensionDistance();   
     }
-
 
     void FixedUpdate()
     {
         Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
         Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
-        LowRide(lowRideValue, minGroundDistance, powerCurve, lowRideStepSize,frontWheelR, frontWheelL, backWheelR, backWheelL);
+        LowRide(lowRideValue, minMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus,frontWheelR, frontWheelL, backWheelR, backWheelL);
         SetCenterOfMass(rB);
-
-        //Debug.DrawLine(transform.position, transform.position + transform.forward * 5f, Color.black, 0.5f);
     }
 
     // ----------------------------------------- Setup -----------------------------------------
@@ -76,28 +93,57 @@ public class CarController : SerializedMonoBehaviour
         _rb.centerOfMass =  centerOfMassOffset;
     }
 
+    public void InitSuspensionDistance()
+    {
+        if(Wheels != null)
+        {
+            foreach(Wheel wheel in Wheels)
+            {
+                if(wheel != null)
+                {
+                    wheel.wheelCollider.suspensionDistance = minMaxGroundDistance.y;
+                }
+            }
+        }
+    }
+    private bool wheelsAreSet{get{if(Wheels.Contains(null)){return false;}else{return true;}}}
+    [HideIf("wheelsAreSet")][Button("Find Wheels"), GUIColor(0f, 1f, 0f)] public void FindWheels()
+    {
+        GameObject wheelFR = GameObject.FindGameObjectWithTag("WheelFR");
+        GameObject wheelFL = GameObject.FindGameObjectWithTag("WheelFL");
+        GameObject wheelBR = GameObject.FindGameObjectWithTag("WheelBR");
+        GameObject wheelBL = GameObject.FindGameObjectWithTag("WheelBL");
+
+
+        if(wheelFR != null){Wheel w = wheelFR.GetComponent<Wheel>(); if(w != null){frontWheelR = w;}}
+        if(wheelFL != null){Wheel w = wheelFL.GetComponent<Wheel>(); if(w != null){frontWheelL = w;}}
+        if(wheelBR != null){Wheel w = wheelBR.GetComponent<Wheel>(); if(w != null){backWheelR = w;}}
+        if(wheelBL != null){Wheel w = wheelBL.GetComponent<Wheel>(); if(w != null){backWheelL = w;}}
+    } 
+
     // ----------------------------------------- Methods -----------------------------------------
 
-    private void Steer(float _steeringAngle, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL )
+    private void Steer(Vector2 _steeringAngle, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL )
     {
+
         // brauchen wir hier evtl. deltatime? 
-        float targetAngle = _steeringAngle * maxSteerAngle;
+        float targetAngle = _steeringAngle.x * maxSteerAngle;
 
         switch(steeringMethod)
         {
-            case SteeringMethod.FrontSteer:
+            case SteeringMethods.FrontSteer:
             {
                 _frontWheelL.wheelCollider.steerAngle = targetAngle;
                 _frontWheelR.wheelCollider.steerAngle = targetAngle;
                 break;
             }
-            case SteeringMethod.BackSteer:
+            case SteeringMethods.BackSteer:
             {
                 _backWheelL.wheelCollider.steerAngle = targetAngle;
                 _backWheelR.wheelCollider.steerAngle = targetAngle;
                 break;
             }
-            case SteeringMethod.FourWheelSteer:
+            case SteeringMethods.FourWheelSteer:
             {
                 _frontWheelL.wheelCollider.steerAngle = targetAngle;
                 _frontWheelR.wheelCollider.steerAngle = targetAngle;
@@ -106,6 +152,24 @@ public class CarController : SerializedMonoBehaviour
                 break;
             }
         }
+        
+        if(drivingStateInfo == DrivingState.InAir) 
+        {
+            // complex rotation of the 2 Dimensional inputVector - used as rotationAxis
+            Vector3 inputNormal = new Vector3(-_steeringAngle.y, 0f,_steeringAngle.x);
+            //flip the rotation Axis 180 deg so that the rotationangle will be opposite
+            if(invertRollControls)
+            {
+                inputNormal *= -1f;
+            }
+
+            //rotate around the cars position --- around the inputAxis(which is rotated by the cars rotation) (meaning its now in local space) ---  with the inputspeed * a fixed multiplier
+            this.transform.RotateAround(this.transform.position,this.transform.rotation * inputNormal, airRollSpeed * _steeringAngle.magnitude); // direct control
+
+            // Physics versuch scheint noch nicht zu funktionieren, vlt. ist Add Torque auch nicht das richtige dafuer
+            //rB.AddTorque((Vector3)_steeringAngle * airRollSpeed, ForceMode.Force); // Physics Approach
+        }
+        
 
     }
 
@@ -115,19 +179,19 @@ public class CarController : SerializedMonoBehaviour
 
         switch(propulsionMethod)
         {
-            case PropulsionMethod.FrontDrive:
+            case PropulsionMethods.FrontDrive:
             {
                 _frontWheelL.wheelCollider.motorTorque = _strength * motorForce;
                 _frontWheelR.wheelCollider.motorTorque = _strength * motorForce;
                 break;
             }
-            case PropulsionMethod.BackDrive:
+            case PropulsionMethods.BackDrive:
             {
                 _backWheelL.wheelCollider.motorTorque = _strength * motorForce;
                 _backWheelR.wheelCollider.motorTorque = _strength * motorForce;
                 break;
             }
-            case PropulsionMethod.FourWheelDrive:
+            case PropulsionMethods.FourWheelDrive:
             {
                 _frontWheelL.wheelCollider.motorTorque = _strength * motorForce;
                 _frontWheelR.wheelCollider.motorTorque = _strength * motorForce;
@@ -138,7 +202,7 @@ public class CarController : SerializedMonoBehaviour
         } 
     }
 
-    private void LowRide(Vector2 _strength, float _minGroundDistance, AnimationCurve _powerCurve, float _lowRideStepSize, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL)
+    private void LowRide(Vector2 _strength, Vector2 _minMaxGroundDistance, AnimationCurve _powerCurve, Vector2 _lowRideStepSizePlusMinus, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL)
     {
         float strengthWheelFR, strengthWheelFL, strengthWheelBR, strengthWheelBL;
 
@@ -179,10 +243,10 @@ public class CarController : SerializedMonoBehaviour
 
             
         }
-        _frontWheelR.OffsetWheelGradually(_lowRideStepSize, strengthWheelFR, _minGroundDistance, _powerCurve);
-        _frontWheelL.OffsetWheelGradually(_lowRideStepSize, strengthWheelFL, _minGroundDistance, _powerCurve);
-        _backWheelR.OffsetWheelGradually(_lowRideStepSize, strengthWheelBR, _minGroundDistance, _powerCurve);
-        _backWheelL.OffsetWheelGradually(_lowRideStepSize, strengthWheelBL, _minGroundDistance, _powerCurve);
+        _frontWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFR, minMaxGroundDistance, _powerCurve, wheelOffsetMode);
+        _frontWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFL, minMaxGroundDistance, _powerCurve, wheelOffsetMode);
+        _backWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBR, minMaxGroundDistance, _powerCurve, wheelOffsetMode);
+        _backWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBL, minMaxGroundDistance, _powerCurve, wheelOffsetMode);
 
     }
 
@@ -200,7 +264,7 @@ public class CarController : SerializedMonoBehaviour
 
     public void OnSteer(InputValue inputValue)
     {
-        steerValue = inputValue.Get<float>();
+        steerValue = inputValue.Get<Vector2>();
     }
 
     public void OnLowRide(InputValue inputValue)
@@ -222,14 +286,22 @@ public class CarController : SerializedMonoBehaviour
     }
 }
 
-public enum PropulsionMethod{
+public enum PropulsionMethods{
     FrontDrive,
     BackDrive,
     FourWheelDrive
 }
 
-public enum SteeringMethod{
+public enum SteeringMethods{
     FrontSteer,
     BackSteer,
     FourWheelSteer
+}
+public enum DrivingState{
+    Grounded,
+    InAir
+}
+public enum WheelOffsetModes{
+    TargetPosition,
+    SuspensionDistance
 }

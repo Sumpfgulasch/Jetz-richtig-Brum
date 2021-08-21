@@ -116,7 +116,7 @@
                 {
                     "name": "",
                     "id": "20f2f4a2-8bb7-4f56-aef8-635ea48c4bc2",
-                    "path": "<Gamepad>/leftStick/x",
+                    "path": "<Gamepad>/leftStick",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -127,7 +127,7 @@
                 {
                     "name": "Keyboard",
                     "id": "2658afb2-857d-4f1a-bd69-c967791ded22",
-                    "path": "1DAxis",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -136,8 +136,30 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "negative",
+                    "name": "Up",
                     "id": "3e13bfb5-7cbc-4f09-b01a-f60e6da49454",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Steer",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Down",
+                    "id": "f8884fcb-5390-45f4-8de4-4a8b5cc0f938",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Steer",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Left",
+                    "id": "4c85b880-d266-4642-bee5-067755e6376d",
                     "path": "<Keyboard>/leftArrow",
                     "interactions": "",
                     "processors": "",
@@ -147,8 +169,8 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "positive",
-                    "id": "f8884fcb-5390-45f4-8de4-4a8b5cc0f938",
+                    "name": "Right",
+                    "id": "930525cb-98bd-4448-a57f-562b02dbc8cd",
                     "path": "<Keyboard>/rightArrow",
                     "interactions": "",
                     "processors": "",
@@ -248,7 +270,7 @@
                 {
                     "name": "",
                     "id": "42c28f5e-c279-440f-ad1f-72da769b25ed",
-                    "path": "<Gamepad>/select",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

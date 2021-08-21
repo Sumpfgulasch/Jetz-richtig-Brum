@@ -1206,7 +1206,7 @@ GameObject:
   - component: {fileID: 749561765}
   m_Layer: 0
   m_Name: Wheel_BL
-  m_TagString: Untagged
+  m_TagString: WheelBL
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1237,7 +1237,7 @@ WheelCollider:
   m_SuspensionSpring:
     spring: 90000
     damper: 500
-    targetPosition: 1
+    targetPosition: 0.5
   m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
   m_Mass: 800
@@ -1276,7 +1276,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  wheelCollider: {fileID: 0}
+  wheelCollider: {fileID: 749561764}
   wheelModelTransform: {fileID: 6926820944721866070}
 --- !u!1 &813547251
 GameObject:
@@ -1704,7 +1704,7 @@ GameObject:
   - component: {fileID: 1197219701}
   m_Layer: 0
   m_Name: Wheel_FR
-  m_TagString: Untagged
+  m_TagString: WheelFR
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1735,8 +1735,8 @@ WheelCollider:
   m_SuspensionSpring:
     spring: 90000
     damper: 500
-    targetPosition: 1
-  m_SuspensionDistance: 0.7
+    targetPosition: 0.5
+  m_SuspensionDistance: 2.36
   m_ForceAppPointDistance: 0
   m_Mass: 800
   m_WheelDampingRate: 50
@@ -1774,7 +1774,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  wheelCollider: {fileID: 0}
+  wheelCollider: {fileID: 1197219700}
   wheelModelTransform: {fileID: 7155883020045172237}
 --- !u!1 &1209376496
 GameObject:
@@ -1789,7 +1789,7 @@ GameObject:
   - component: {fileID: 1209376499}
   m_Layer: 0
   m_Name: Wheel_BR
-  m_TagString: Untagged
+  m_TagString: WheelBR
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1820,7 +1820,7 @@ WheelCollider:
   m_SuspensionSpring:
     spring: 90000
     damper: 500
-    targetPosition: 1
+    targetPosition: 0.5
   m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
   m_Mass: 800
@@ -1859,7 +1859,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  wheelCollider: {fileID: 0}
+  wheelCollider: {fileID: 1209376498}
   wheelModelTransform: {fileID: 8903108962197718673}
 --- !u!1 &1325487846
 GameObject:
@@ -2033,13 +2033,17 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  centerOfMassOffset: {x: 0, y: 0.07, z: 0}
-  propulsionMethod: 1
-  steeringMethod: 0
   maxSteerAngle: 30
   motorForce: 5000
-  maximumLowRideDistance: 1.5
-  lowRideStepSize: 0.02
+  airRollSpeed: 1
+  centerOfMassOffset: {x: 0, y: 0.07, z: 0}
+  propulsionMethod: 0
+  steeringMethod: 0
+  wheelOffsetMode: 1
+  allignStickToView: 0
+  invertRollControls: 1
+  minMaxGroundDistance: {x: 0.15, y: 1.35}
+  lowRideStepSizePlusMinus: {x: 0.5, y: -0.02}
   powerCurve:
     serializedVersion: 2
     m_Curve:
@@ -2073,8 +2077,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  minGroundDistance: 0.15
-  allignStickToView: 1
   lowRideSideScale: 0.3
   frontWheelR: {fileID: 1197219701}
   frontWheelL: {fileID: 1831576855}
@@ -2291,7 +2293,7 @@ GameObject:
   - component: {fileID: 1831576855}
   m_Layer: 0
   m_Name: Wheel_FL
-  m_TagString: Untagged
+  m_TagString: WheelFL
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2322,7 +2324,7 @@ WheelCollider:
   m_SuspensionSpring:
     spring: 90000
     damper: 500
-    targetPosition: 1
+    targetPosition: 0.5
   m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
   m_Mass: 800
@@ -2361,7 +2363,7 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  wheelCollider: {fileID: 0}
+  wheelCollider: {fileID: 1831576854}
   wheelModelTransform: {fileID: 6544276161636027100}
 --- !u!1 &1890083707
 GameObject:
@@ -2815,6 +2817,7 @@ GameObject:
   - component: {fileID: 1474740488}
   - component: {fileID: 919132148347960409}
   - component: {fileID: 919132148347960408}
+  - component: {fileID: 919132148347960410}
   m_Layer: 0
   m_Name: Auto
   m_TagString: Untagged
@@ -2833,8 +2836,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1.1945634, z: 3.3900862}
-  m_Center: {x: 0, y: 0.94790006, z: -0.116569996}
+  m_Size: {x: 1, y: 1.1945634, z: 3.12}
+  m_Center: {x: 0, y: 0.94790006, z: 0.01}
 --- !u!54 &919132148347960409
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2851,6 +2854,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!65 &919132148347960410
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148347960407}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.66, z: 1}
+  m_Center: {x: 0, y: 0.8, z: -1.46}
 --- !u!23 &1062266050902803381
 MeshRenderer:
   m_ObjectHideFlags: 0
