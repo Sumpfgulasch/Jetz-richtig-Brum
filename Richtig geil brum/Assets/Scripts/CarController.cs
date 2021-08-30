@@ -21,6 +21,7 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(G)] public float airRollSpeed = 1f;
     [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)][OdinSerialize] public Vector3 CenterOfMassOffset{get{return centerOfMassOffset;} set{centerOfMassOffset = value; SetCenterOfMass(rB);}}
+    [TitleGroup(G)] public bool inAirCarControl = false;
 
 
     [TitleGroup(M)] public PropulsionMethods propulsionMethod = PropulsionMethods.FrontDrive;
@@ -155,7 +156,7 @@ public class CarController : SerializedMonoBehaviour
             }
         }
         
-        if(drivingStateInfo == DrivingState.InAir) 
+        if(inAirCarControl && drivingStateInfo == DrivingState.InAir) 
         {
             // complex rotation of the 2 Dimensional inputVector - used as rotationAxis
             Vector3 inputNormal = new Vector3(-_steeringAngle.y, 0f,_steeringAngle.x);
@@ -208,6 +209,7 @@ public class CarController : SerializedMonoBehaviour
     {
         float strengthWheelFR, strengthWheelFL, strengthWheelBR, strengthWheelBL;
 
+        #region allign stick to view
         if (allignStickToView)
         {
             // Forward-Vektor des Autos im Screen-Space
@@ -231,14 +233,21 @@ public class CarController : SerializedMonoBehaviour
             strengthWheelBR = Mathf.Clamp01(Vector2.Dot(vecBR.normalized, _strength.normalized)) * _strength.magnitude;
             strengthWheelBL = Mathf.Clamp01(Vector2.Dot(vecBL.normalized, _strength.normalized)) * _strength.magnitude;
         }
+        #endregion
         else
         {
             // Rechne x-input raus
             _strength *= new Vector2(lowRideSideScale, 1f);
 
+            // Invert controls
+            if (invertRollControls)
+            {
+                _strength *= new Vector2(1f, -1f);
+            }
+
             // nimmt das dot product (Skalarprodukt) vom InputVektor und  dem "Radpositions-Vektor" und clampt es auf eine range von 0 bis 1 (voher wars -1 bis 1), 
             // danach wird es mit der intensität des verschubs des sticks multipliziert um die staerke zu bestimmen
-            strengthWheelFR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f, 1f).normalized, _strength.normalized)) * _strength.magnitude;
+                strengthWheelFR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f, 1f).normalized, _strength.normalized)) * _strength.magnitude;
             strengthWheelFL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f, 1f).normalized, _strength.normalized)) * _strength.magnitude;
             strengthWheelBR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f, -1f).normalized, _strength.normalized)) * _strength.magnitude;
             strengthWheelBL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f, -1f).normalized, _strength.normalized)) * _strength.magnitude;
@@ -277,6 +286,7 @@ public class CarController : SerializedMonoBehaviour
     public void OnJump(InputValue inputValue)
     {
         Debug.Log("Jump");
+        
     }
 
     public void OnReset(InputValue inputValue)
