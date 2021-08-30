@@ -37,10 +37,11 @@ public class CarControllerEditor : OdinEditor
                 Rigidbody rB = cC.GetComponent<Rigidbody>();
                 if(rB != null)
                 {
+                    Vector3 com = cC.transform.rotation * rB.centerOfMass;
                     Handles.color = Color.red;
-                    Handles.DrawWireCube(rB.centerOfMass + cC.transform.position, Vector3.one * wireBoxScale*3f);
-                    Handles.DrawLine(cC.transform.position + rB.centerOfMass,cC.transform.position +  rB.centerOfMass + cC.transform.forward * rB.velocity.magnitude * 0.25f, 5f);
-                    Handles.Label(cC.transform.position + rB.centerOfMass + Vector3.down * 0.14f,rB.velocity.magnitude.ToString());
+                    Handles.DrawWireCube(com + cC.transform.position, Vector3.one * wireBoxScale*3f);
+                    Handles.DrawLine(cC.transform.position + com,cC.transform.position +  rB.centerOfMass + cC.transform.forward * rB.velocity.magnitude * 0.25f, 5f);
+                    Handles.Label(cC.transform.position + com + Vector3.down * 0.14f,rB.velocity.magnitude.ToString());
                 }
                 
             }

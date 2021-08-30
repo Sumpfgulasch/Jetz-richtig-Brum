@@ -19,7 +19,8 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(G)] public float maxSteerAngle = 30f;
     [TitleGroup(G)] public float motorForce = 50;
     [TitleGroup(G)] public float airRollSpeed = 1f;
-    [TitleGroup(G)] public Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
+    [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
+    [TitleGroup(G)][OdinSerialize] public Vector3 CenterOfMassOffset{get{return centerOfMassOffset;} set{centerOfMassOffset = value; SetCenterOfMass(rB);}}
 
 
     [TitleGroup(M)] public PropulsionMethods propulsionMethod = PropulsionMethods.FrontDrive;
@@ -71,14 +72,15 @@ public class CarController : SerializedMonoBehaviour
     void Start() {
         rB = this.GetComponent<Rigidbody>();
         InitSuspensionDistance();   
+        SetCenterOfMass(rB);
     }
 
     void FixedUpdate()
     {
+
         Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
         Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
         LowRide(lowRideValue, minMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus,frontWheelR, frontWheelL, backWheelR, backWheelL);
-        SetCenterOfMass(rB);
     }
 
     // ----------------------------------------- Setup -----------------------------------------
