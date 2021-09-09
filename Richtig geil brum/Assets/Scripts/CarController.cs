@@ -308,6 +308,12 @@ public class CarController : SerializedMonoBehaviour
         // 2. rotate up
         transform.rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
     }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        print("COLLISION car; " + collision.collider.gameObject);
+    }
 }
 
 public enum PropulsionMethods{
