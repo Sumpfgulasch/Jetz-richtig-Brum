@@ -69,6 +69,8 @@ public class CarController : SerializedMonoBehaviour
 
     [TitleGroup(H)] public bool showDebugHandles = true;
 
+    private bool wheelsOut = false;
+
 
     void Start() {
         rB = this.GetComponent<Rigidbody>();
@@ -81,7 +83,7 @@ public class CarController : SerializedMonoBehaviour
 
         Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
         Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
-        LowRide(lowRideValue, minMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus,frontWheelR, frontWheelL, backWheelR, backWheelL);
+        LowRide(lowRideValue, minMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus, frontWheelR, frontWheelL, backWheelR, backWheelL);
     }
 
     // ----------------------------------------- Setup -----------------------------------------
@@ -247,17 +249,16 @@ public class CarController : SerializedMonoBehaviour
 
             // nimmt das dot product (Skalarprodukt) vom InputVektor und  dem "Radpositions-Vektor" und clampt es auf eine range von 0 bis 1 (voher wars -1 bis 1), 
             // danach wird es mit der intensität des verschubs des sticks multipliziert um die staerke zu bestimmen
-                strengthWheelFR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f, 1f).normalized, _strength.normalized)) * _strength.magnitude;
-            strengthWheelFL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f, 1f).normalized, _strength.normalized)) * _strength.magnitude;
-            strengthWheelBR = Mathf.Clamp01(Vector2.Dot(new Vector2(1f, -1f).normalized, _strength.normalized)) * _strength.magnitude;
-            strengthWheelBL = Mathf.Clamp01(Vector2.Dot(new Vector2(-1f, -1f).normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelFR = Mathf.Clamp01(Vector2.Dot(new Vector2(0, 1f).normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelFL = Mathf.Clamp01(Vector2.Dot(new Vector2(0, 1f).normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelBR = Mathf.Clamp01(Vector2.Dot(new Vector2(0, -1f).normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelBL = Mathf.Clamp01(Vector2.Dot(new Vector2(0, -1f).normalized, _strength.normalized)) * _strength.magnitude;
 
-            
         }
-        _frontWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFR, minMaxGroundDistance, _powerCurve, wheelOffsetMode);
-        _frontWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFL, minMaxGroundDistance, _powerCurve, wheelOffsetMode);
-        _backWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBR, minMaxGroundDistance, _powerCurve, wheelOffsetMode);
-        _backWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBL, minMaxGroundDistance, _powerCurve, wheelOffsetMode);
+        _frontWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFR, minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
+        _frontWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFL, minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
+        _backWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBR, minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
+        _backWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBL, minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
 
     }
 
@@ -281,12 +282,23 @@ public class CarController : SerializedMonoBehaviour
     public void OnLowRide(InputValue inputValue)
     {
         lowRideValue = inputValue.Get<Vector2>();
+
+        
     }
 
     public void OnJump(InputValue inputValue)
     {
         Debug.Log("Jump");
         
+        if (wheelsOut)
+        {
+
+            wheelsOut = false;
+        }
+        else
+        {
+            wheelsOut = true;
+        }
     }
 
     public void OnReset(InputValue inputValue)

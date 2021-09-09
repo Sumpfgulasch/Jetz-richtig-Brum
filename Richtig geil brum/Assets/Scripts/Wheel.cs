@@ -60,18 +60,28 @@ public class Wheel : SerializedMonoBehaviour
         this.wheelModelTransform.rotation = quat;
     }
 
-    public void OffsetWheelGradually(Vector2 _stepSizePlusMinus, float _strength, Vector2 _minMaxGroundDistance, AnimationCurve _powerCurve, WheelOffsetModes _wheelOffsetMode) //Pushes the Wheel towards a goal, by an step amount(so it has to be called multiple times to reach its goal)
+    public void OffsetWheelGradually(Vector2 _stepSizePlusMinus, float _strength, Vector2 _minMaxGroundDistance, AnimationCurve _powerCurve, WheelOffsetModes _wheelOffsetMode, bool invertedStrength = false) //Pushes the Wheel towards a goal, by an step amount(so it has to be called multiple times to reach its goal)
     {
         switch (_wheelOffsetMode)
         {
             case WheelOffsetModes.SuspensionDistance:
             {
+                    // Damit low ride bei JUMP immer noch funzt
+                    if (invertedStrength)
+                    {
+                        _strength = 1f - _strength;
+                    }
+
                 // prozent der aktuellen position von startposition bis maximalposition
-                float currentPercentLowRideDistance = wheelCollider.suspensionDistance / _minMaxGroundDistance.y; // (StartingPos - ).magnitude / _maxDistance; 
+                float currentPercentLowRideDistance = wheelCollider.suspensionDistance / _minMaxGroundDistance.y;
                 // geclampter schritt * _powerCurve multiplicator(based on currentPercent)
-                float stepPercentLowRideDistance = Mathf.Clamp(_strength - currentPercentLowRideDistance, _stepSizePlusMinus.y, _stepSizePlusMinus.x)* _powerCurve.Evaluate(currentPercentLowRideDistance);
+                float stepPercentLowRideDistance = Mathf.Clamp
+                        (_strength - currentPercentLowRideDistance, 
+                        _stepSizePlusMinus.y, 
+                        _stepSizePlusMinus.x)
+                        * _powerCurve.Evaluate(currentPercentLowRideDistance);
                 // geclampte schrittweite + aktuelle prozentuale position = next percent offset
-                float newPercentLowRideDistance = stepPercentLowRideDistance + wheelCollider.suspensionDistance;
+                float newPercentLowRideDistance = wheelCollider.suspensionDistance + stepPercentLowRideDistance;
                 wheelCollider.suspensionDistance = Mathf.Clamp(newPercentLowRideDistance, _minMaxGroundDistance.x, _minMaxGroundDistance.y);
 
                 //shitty shit, used that the target position is reseted to 0.5f (muss leider, sonst kann man nicht gut wechseln zwischen den modis)

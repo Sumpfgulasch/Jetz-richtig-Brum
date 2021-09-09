@@ -2200,8 +2200,9 @@ MonoBehaviour:
   maxSteerAngle: 30
   motorForce: 2500
   airRollSpeed: 1
-  propulsionMethod: 0
-  steeringMethod: 2
+  inAirCarControl: 0
+  propulsionMethod: 2
+  steeringMethod: 0
   wheelOffsetMode: 1
   allignStickToView: 0
   invertRollControls: 1
