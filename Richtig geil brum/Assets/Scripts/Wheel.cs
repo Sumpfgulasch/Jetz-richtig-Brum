@@ -12,6 +12,7 @@ public class Wheel : SerializedMonoBehaviour
     CarController carController;
     public WheelCollider wheelCollider;
     public Transform wheelModelTransform; // visual wheel model
+    [MinMaxSlider(1f,10f)]public Vector2 sidewaysStiffnessMinMax = new Vector2(0f,1f);
 
 
     void Awake()
@@ -49,8 +50,13 @@ public class Wheel : SerializedMonoBehaviour
             UpdateWheelPose();
             transform.hasChanged = false;
         }
+        AdjustStiffnessBasedOnSpeed();
     }
 
+    private void AdjustStiffnessBasedOnSpeed()
+    {
+
+    }
 
     private void UpdateWheelPose()
     {

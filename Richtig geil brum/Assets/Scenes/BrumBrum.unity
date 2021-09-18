@@ -1298,7 +1298,7 @@ WheelCollider:
   m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
   m_Mass: 800
-  m_WheelDampingRate: 50
+  m_WheelDampingRate: 35
   m_ForwardFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
@@ -1335,6 +1335,7 @@ MonoBehaviour:
     SerializationNodes: []
   wheelCollider: {fileID: 749561764}
   wheelModelTransform: {fileID: 6926820944721866070}
+  sidewaysStiffnessMinMax: {x: 0, y: 1}
 --- !u!1 &813547251
 GameObject:
   m_ObjectHideFlags: 3
@@ -1888,7 +1889,7 @@ WheelCollider:
   m_SuspensionDistance: 2.36
   m_ForceAppPointDistance: 0
   m_Mass: 800
-  m_WheelDampingRate: 50
+  m_WheelDampingRate: 35
   m_ForwardFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
@@ -1925,6 +1926,7 @@ MonoBehaviour:
     SerializationNodes: []
   wheelCollider: {fileID: 1197219700}
   wheelModelTransform: {fileID: 7155883020045172237}
+  sidewaysStiffnessMinMax: {x: 0, y: 1}
 --- !u!1 &1209376496
 GameObject:
   m_ObjectHideFlags: 0
@@ -1973,7 +1975,7 @@ WheelCollider:
   m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
   m_Mass: 800
-  m_WheelDampingRate: 50
+  m_WheelDampingRate: 35
   m_ForwardFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
@@ -2010,6 +2012,7 @@ MonoBehaviour:
     SerializationNodes: []
   wheelCollider: {fileID: 1209376498}
   wheelModelTransform: {fileID: 8903108962197718673}
+  sidewaysStiffnessMinMax: {x: 0, y: 1}
 --- !u!1 &1325487846
 GameObject:
   m_ObjectHideFlags: 0
@@ -2197,15 +2200,27 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
+    - Name: autoalignCarInAirSpeed
+      Entry: 4
+      Data: 0.02
+    - Name: autoalignSurfaceDistance
+      Entry: 4
+      Data: 5
   maxSteerAngle: 30
   motorForce: 2500
-  airRollSpeed: 1
-  inAirCarControl: 0
+  airRollSpeedPitchRoll: {x: 0.3, y: 0.3}
+  airRollCenterOffset: {x: 0, y: 0.6, z: 0}
+  autoalignCarInAirSpeed: 0.02
+  autoalignSurfaceDistance: 5
   propulsionMethod: 2
   steeringMethod: 0
   wheelOffsetMode: 1
+  inAirCarControl: 0
+  simplifyLowRide: 0
   allignStickToView: 0
-  invertRollControls: 0
+  invertRollControls: 1
+  autoalignCarInAir: 1
+  autoalignToSurface: 1
   minMaxGroundDistance: {x: 0.15, y: 1.35}
   lowRideStepSizePlusMinus: {x: 0.5, y: -0.02}
   powerCurve:
@@ -2530,7 +2545,7 @@ WheelCollider:
   m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
   m_Mass: 800
-  m_WheelDampingRate: 50
+  m_WheelDampingRate: 35
   m_ForwardFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
@@ -2567,6 +2582,7 @@ MonoBehaviour:
     SerializationNodes: []
   wheelCollider: {fileID: 1831576854}
   wheelModelTransform: {fileID: 6544276161636027100}
+  sidewaysStiffnessMinMax: {x: 0, y: 1}
 --- !u!1 &1890083707
 GameObject:
   m_ObjectHideFlags: 3

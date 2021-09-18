@@ -18,10 +18,12 @@ public class CarController : SerializedMonoBehaviour
 
     [TitleGroup(G)] public float maxSteerAngle = 30f;
     [TitleGroup(G)] public float motorForce = 50;
-    [TitleGroup(G)] public float airRollSpeed = 1f;
+    [TitleGroup(G)] public Vector2 airRollSpeedPitchRoll = Vector2.one;
+    [TitleGroup(G)] public Vector3 airRollCenterOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)][OdinSerialize] public Vector3 CenterOfMassOffset{get{return centerOfMassOffset;} set{centerOfMassOffset = value; SetCenterOfMass(rB);}}
-    [TitleGroup(G)] public bool inAirCarControl = false;
+    [TitleGroup(G)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir")] public float autoalignCarInAirSpeed = 0.1f;
+    [TitleGroup(G)][OdinSerialize, ShowIf("autoAlignToSurfaceBool")] public float autoalignSurfaceDistance = 10f;
 
 
     [TitleGroup(M)] public PropulsionMethods propulsionMethod = PropulsionMethods.FrontDrive;
@@ -29,8 +31,12 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(M)] public WheelOffsetModes wheelOffsetMode = WheelOffsetModes.SuspensionDistance;
 
 
+    [TitleGroup(M)] public bool inAirCarControl = false;
+    [TitleGroup(M)] public bool simplifyLowRide = false;
     [TitleGroup(M)] public bool allignStickToView = false;
     [TitleGroup(M)] public bool invertRollControls = true;
+    [TitleGroup(M)] public bool autoalignCarInAir = true;
+    [TitleGroup(M), ShowIf("autoalignCarInAir")] public bool autoalignToSurface = true;
 
 
     [TitleGroup(LR)] [MinMaxSlider(0f, 2.5f, true)]public Vector2 minMaxGroundDistance = new Vector2(0.1f, 1f);// The minimum/maximum length that the wheels can extend - minimum = x component || maximum = y component
@@ -45,7 +51,10 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(R)] private Vector2 steerValue;
     [TitleGroup(R)] private Vector2 lowRideValue;
     [TitleGroup(R)] private Rigidbody rB;
-    [TitleGroup(R)] [ShowInInspector] DrivingState drivingStateInfo {
+    [TitleGroup(R)] private bool shouldAutoAlign = true;
+    [TitleGroup(R), ShowInInspector] private float inAirTime = 0f;
+    [TitleGroup(R), ShowInInspector] private bool wheelsOut = false;
+    [TitleGroup(R)] [ShowInInspector] public DrivingState drivingStateInfo {
             get
             {
                 if(Wheels != null)
@@ -68,8 +77,7 @@ public class CarController : SerializedMonoBehaviour
         }
 
     [TitleGroup(H)] public bool showDebugHandles = true;
-
-    private bool wheelsOut = false;
+    [TitleGroup(H)] private bool autoAlignToSurfaceBool(){if(autoalignCarInAir && autoalignToSurface){return true;}else{return false;}} // helperfunction for showif
 
 
     void Start() {
@@ -80,10 +88,11 @@ public class CarController : SerializedMonoBehaviour
 
     void FixedUpdate()
     {
-
-        Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
+        SetAirTime(ref inAirTime);
+        AutoAlignCar(autoalignCarInAir,autoalignToSurface,shouldAutoAlign,autoalignCarInAirSpeed,drivingStateInfo);
+        Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL, ref shouldAutoAlign);
         Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
-        LowRide(lowRideValue, minMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus, frontWheelR, frontWheelL, backWheelR, backWheelL);
+        LowRide(lowRideValue, minMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus,frontWheelR, frontWheelL, backWheelR, backWheelL);
     }
 
     // ----------------------------------------- Setup -----------------------------------------
@@ -128,9 +137,10 @@ public class CarController : SerializedMonoBehaviour
 
     // ----------------------------------------- Methods -----------------------------------------
 
-    private void Steer(Vector2 _steeringAngle, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL )
+    private void Steer(Vector2 _steeringAngle, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL, ref bool _shouldAutoAlign)
     {
 
+        #region Steering on Ground
         // brauchen wir hier evtl. deltatime? 
         float targetAngle = _steeringAngle.x * maxSteerAngle;
 
@@ -152,30 +162,48 @@ public class CarController : SerializedMonoBehaviour
             {
                 _frontWheelL.wheelCollider.steerAngle = targetAngle;
                 _frontWheelR.wheelCollider.steerAngle = targetAngle;
-                _backWheelL.wheelCollider.steerAngle = targetAngle;
-                _backWheelR.wheelCollider.steerAngle = targetAngle;
+                _backWheelL.wheelCollider.steerAngle = -targetAngle;
+                _backWheelR.wheelCollider.steerAngle = -targetAngle;
                 break;
             }
         }
-        
+        #endregion
+
+
+        #region Steering in Air
         if(inAirCarControl && drivingStateInfo == DrivingState.InAir) 
         {
-            // complex rotation of the 2 Dimensional inputVector - used as rotationAxis
+            // complex rotation (90deg) of the 2 Dimensional inputVector - used as rotationAxis
             Vector3 inputNormal = new Vector3(-_steeringAngle.y, 0f,_steeringAngle.x);
+
             //flip the rotation Axis 180 deg so that the rotationangle will be opposite
             if(invertRollControls)
             {
                 inputNormal *= -1f;
             }
 
+            if(inputNormal.magnitude > 0.3f) // wenn gelenkt wurde (0.3f ist dabei der threshold zur erkennung der lenkung in der luft) 
+            {
+                _shouldAutoAlign = false;
+            }
+
+            //calculate the rotationspeed for different axis
+            float xAlignmentFactor = Mathf.Abs(Vector3.Dot(inputNormal.normalized,Vector3.right)); //get the alignment factor of the input and the axis by dotting    -   absolute to incorporate left and right as a range between 0 and 1
+            float yAlignmentFactor = Mathf.Abs(Vector3.Dot(inputNormal.normalized,Vector3.forward)); //get the alignment factor of the input and the axis by dotting    -   absolute to incorporate top and bottom as a range between 0 and 1
+
+            float airRollSpeed = xAlignmentFactor * airRollSpeedPitchRoll.x + yAlignmentFactor * airRollSpeedPitchRoll.y;
+
             //rotate around the cars position --- around the inputAxis(which is rotated by the cars rotation) (meaning its now in local space) ---  with the inputspeed * a fixed multiplier
-            this.transform.RotateAround(this.transform.position,this.transform.rotation * inputNormal, airRollSpeed * _steeringAngle.magnitude); // direct control
+            this.transform.RotateAround(this.transform.position + (this.transform.rotation * airRollCenterOffset),this.transform.rotation * inputNormal, airRollSpeed * _steeringAngle.magnitude); // direct control
 
-            // Physics versuch scheint noch nicht zu funktionieren, vlt. ist Add Torque auch nicht das richtige dafuer
-            //rB.AddTorque((Vector3)_steeringAngle * airRollSpeed, ForceMode.Force); // Physics Approach
+            // gib torque entlang der input axis (world space)
+            //rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y,0f,-_steeringAngle.x).normalized * airRollSpeed * 10000f, ForceMode.Force); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
         }
-        
-
+        else //resets the shouldAutoAlign bool.  - ganz unschoener code, vielleicht faellt dir dazu was besseres ein? (sobald man in einer "luftperiode"(grounded -> inAir -> grounded) einmal gelenkt hat, sollte er nichtmehr autoalignen, fuer die luftperiode)
+        {
+            _shouldAutoAlign = true; 
+        }
+        #endregion
     }
 
     private void Thrust(float _strength, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL )
@@ -248,18 +276,63 @@ public class CarController : SerializedMonoBehaviour
             }
 
             // nimmt das dot product (Skalarprodukt) vom InputVektor und  dem "Radpositions-Vektor" und clampt es auf eine range von 0 bis 1 (voher wars -1 bis 1), 
-            // danach wird es mit der intensität des verschubs des sticks multipliziert um die staerke zu bestimmen
-            strengthWheelFR = Mathf.Clamp01(Vector2.Dot(new Vector2(0, 1f).normalized, _strength.normalized)) * _strength.magnitude;
-            strengthWheelFL = Mathf.Clamp01(Vector2.Dot(new Vector2(0, 1f).normalized, _strength.normalized)) * _strength.magnitude;
-            strengthWheelBR = Mathf.Clamp01(Vector2.Dot(new Vector2(0, -1f).normalized, _strength.normalized)) * _strength.magnitude;
-            strengthWheelBL = Mathf.Clamp01(Vector2.Dot(new Vector2(0, -1f).normalized, _strength.normalized)) * _strength.magnitude;
+            // danach wird es mit estimmen
+            strengthWheelFR = Mathf.Clamp01(Vector2.Dot(new Vector2(0f, 1f).normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelFL = Mathf.Clamp01(Vector2.Dot(new Vector2(0f, 1f).normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelBR = Mathf.Clamp01(Vector2.Dot(new Vector2(0f, -1f).normalized, _strength.normalized)) * _strength.magnitude;
+            strengthWheelBL = Mathf.Clamp01(Vector2.Dot(new Vector2(0f, -1f).normalized, _strength.normalized)) * _strength.magnitude;
 
+            
         }
-        _frontWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFR, minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
-        _frontWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFL, minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
-        _backWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBR, minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
-        _backWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBL, minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
+        _frontWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFR, _minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
+        _frontWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFL, _minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
+        _backWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBR, _minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
+        _backWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBL, _minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
+    }
 
+    private void SetAirTime(ref float _inAirTime)
+    {
+        //check if is on ground for autoalignCarInAir and controllinputinterference
+        if(drivingStateInfo == DrivingState.InAir)
+        {
+            _inAirTime += Time.deltaTime;
+        }
+        else
+        {
+            _inAirTime = 0f;
+        }
+    }
+
+    private void AutoAlignCar(bool _autoalignCarInAir, bool _autoalignToSurface, bool _shouldAutoAlign,float _autoalignCarInAirSpeed, DrivingState _drivingStateInfo)
+    {
+        #region Autoalign Car in Air
+        if(_autoalignCarInAir && _shouldAutoAlign && _drivingStateInfo == DrivingState.InAir)    //shouldAutoAlign is coupled with the Input of the car, so the car doesnt autoalign, against the airControl
+        {
+            // can be set through Raycasting
+            Vector3 upNormal = Vector3.up.normalized; 
+
+            if(_autoalignToSurface) // override forwardNormal if alignToSurface is true and a hit was registered
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(this.transform.position, -this.transform.up, out hit, autoalignSurfaceDistance))
+                {
+                    // get the normal of the hit
+                    upNormal = hit.normal;
+                    //Debug.DrawRay(hit.point, hit.normal, Color.yellow,0.2f); // debug the hitpoint
+                }
+            }
+            
+            // the forward component of the transform mapped onto 2D (might fail when it is facing purly up or down
+            Vector3 forwardNormal = forwardNormal = new Vector3(this.transform.forward.x, 0f,this.transform.forward.z).normalized;
+
+            // the target rotation calculated through forward and up vectors.
+            Quaternion targetQuaternion = Quaternion.LookRotation(forwardNormal,upNormal);
+
+            //rotation Calculation
+            rB.rotation = Quaternion.Slerp(rB.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via RB
+            //this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via transform
+        }
+        #endregion
     }
 
 
@@ -282,8 +355,6 @@ public class CarController : SerializedMonoBehaviour
     public void OnLowRide(InputValue inputValue)
     {
         lowRideValue = inputValue.Get<Vector2>();
-
-        
     }
 
     public void OnJump(InputValue inputValue)
@@ -307,12 +378,6 @@ public class CarController : SerializedMonoBehaviour
         transform.position += new Vector3(0, 5, 0);
         // 2. rotate up
         transform.rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
-    }
-
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        print("COLLISION car; " + collision.collider.gameObject);
     }
 }
 
