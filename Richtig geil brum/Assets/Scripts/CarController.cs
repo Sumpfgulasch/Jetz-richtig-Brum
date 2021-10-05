@@ -19,7 +19,7 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(G)] public float maxSteerAngle = 30f;
     [TitleGroup(G)] public float motorForce = 50;
     [TitleGroup(G)] public Vector2 airRollSpeedPitchRoll = Vector2.one;
-    [TitleGroup(G)] public Vector3 airRollCenterOffset = new Vector3(0f,0f,0f);
+    [TitleGroup(G),GUIColor(0.5f,0f,0f)] public Vector3 airRollCenterOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)][OdinSerialize] public Vector3 CenterOfMassOffset{get{return centerOfMassOffset;} set{centerOfMassOffset = value; SetCenterOfMass(rB);}}
     [TitleGroup(G)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir")] public float autoalignCarInAirSpeed = 0.1f;
@@ -29,6 +29,7 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(M)] public PropulsionMethods propulsionMethod = PropulsionMethods.FrontDrive;
     [TitleGroup(M)] public SteeringMethods steeringMethod = SteeringMethods.FrontSteer;
     [TitleGroup(M)] public WheelOffsetModes wheelOffsetMode = WheelOffsetModes.SuspensionDistance;
+    [TitleGroup(M),ShowIf("inAirCarControl")] public AirControllTypes airControllType = AirControllTypes.PureRotation;
 
 
     [TitleGroup(M)] public bool inAirCarControl = false;
@@ -193,12 +194,24 @@ public class CarController : SerializedMonoBehaviour
 
             float airRollSpeed = xAlignmentFactor * airRollSpeedPitchRoll.x + yAlignmentFactor * airRollSpeedPitchRoll.y;
 
-            //rotate around the cars position --- around the inputAxis(which is rotated by the cars rotation) (meaning its now in local space) ---  with the inputspeed * a fixed multiplier
-            this.transform.RotateAround(this.transform.position + (this.transform.rotation * airRollCenterOffset),this.transform.rotation * inputNormal, airRollSpeed * _steeringAngle.magnitude); // direct control
+            switch(airControllType)
+            {
+                case AirControllTypes.PureRotation:
+                {
+                    //rotate around the cars position --- around the inputAxis(which is rotated by the cars rotation) (meaning its now in local space) ---  with the inputspeed * a fixed multiplier
+                    this.transform.RotateAround(this.transform.position,this.transform.rotation * inputNormal, airRollSpeed * _steeringAngle.magnitude); // direct control
+                    break;
+                }
+                case AirControllTypes.PhysicsRotation:
+                {
+                    // gib torque entlang der input axis (world space)
+                    rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y,0f,-_steeringAngle.x).normalized * airRollSpeed * 10000f, ForceMode.Force); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
+                    break;
+                }
+            }
 
-            // gib torque entlang der input axis (world space)
-            //rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y,0f,-_steeringAngle.x).normalized * airRollSpeed * 10000f, ForceMode.Force); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
-        }
+
+            }
         else //resets the shouldAutoAlign bool.  - ganz unschoener code, vielleicht faellt dir dazu was besseres ein? (sobald man in einer "luftperiode"(grounded -> inAir -> grounded) einmal gelenkt hat, sollte er nichtmehr autoalignen, fuer die luftperiode)
         {
             _shouldAutoAlign = true; 
@@ -399,4 +412,8 @@ public enum DrivingState{
 public enum WheelOffsetModes{
     TargetPosition,
     SuspensionDistance
+}
+public enum AirControllTypes{
+    PureRotation,
+    PhysicsRotation
 }
