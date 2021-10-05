@@ -322,7 +322,7 @@ public class CarController : SerializedMonoBehaviour
         if(_autoalignCarInAir && _shouldAutoAlign && _drivingStateInfo == DrivingState.InAir)    //shouldAutoAlign is coupled with the Input of the car, so the car doesnt autoalign, against the airControl
         {
             // can be set through Raycasting
-            Vector3 upNormal = Vector3.up.normalized; 
+            Vector3 targetNormal = Vector3.up.normalized; 
 
             if(_autoalignToSurface) // override forwardNormal if alignToSurface is true and a hit was registered
             {
@@ -330,7 +330,7 @@ public class CarController : SerializedMonoBehaviour
                 if (Physics.Raycast(this.transform.position, -this.transform.up, out hit, autoalignSurfaceDistance))
                 {
                     // get the normal of the hit
-                    upNormal = hit.normal;
+                    targetNormal = hit.normal;
                     //Debug.DrawRay(hit.point, hit.normal, Color.yellow,0.2f); // debug the hitpoint
                 }
             }
@@ -339,10 +339,14 @@ public class CarController : SerializedMonoBehaviour
             Vector3 forwardNormal = forwardNormal = new Vector3(this.transform.forward.x, 0f,this.transform.forward.z).normalized;
 
             // the target rotation calculated through forward and up vectors.
-            Quaternion targetQuaternion = Quaternion.LookRotation(forwardNormal,upNormal);
+            Quaternion targetQuaternion = Quaternion.LookRotation(forwardNormal,targetNormal);
 
             //rotation Calculation
             rB.rotation = Quaternion.Slerp(rB.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via RB
+
+            //rB.AddTorque(targetNormal*10f, ForceMode.Acceleration);
+            //rB.angularVelocity
+
             //this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via transform
         }
         #endregion
@@ -372,8 +376,6 @@ public class CarController : SerializedMonoBehaviour
 
     public void OnJump(InputValue inputValue)
     {
-        Debug.Log("Jump");
-        
         if (wheelsOut)
         {
 
