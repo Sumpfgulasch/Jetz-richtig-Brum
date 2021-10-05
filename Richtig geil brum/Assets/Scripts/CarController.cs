@@ -394,7 +394,18 @@ public class CarController : SerializedMonoBehaviour
         // 2. rotate up
         transform.rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
     }
+
+    public void OnMagnetPower(InputValue inputValue)
+    {
+
+    }
 }
+
+
+
+// -----------------------------------------------------------------------------------------------------
+
+
 
 public enum PropulsionMethods{
     FrontDrive,
