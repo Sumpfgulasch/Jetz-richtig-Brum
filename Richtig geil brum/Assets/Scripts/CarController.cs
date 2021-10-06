@@ -14,6 +14,7 @@ public class CarController : SerializedMonoBehaviour
     const string LR = "LowRide";
     const string R = "References";
     const string H = "Helper";
+    const string MP = "MagnetPower";
 
 
     [TitleGroup(G)] public float maxSteerAngle = 30f;
@@ -22,9 +23,15 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(G),GUIColor(0.5f,0f,0f)] public Vector3 airRollCenterOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)][OdinSerialize] public Vector3 CenterOfMassOffset{get{return centerOfMassOffset;} set{centerOfMassOffset = value; SetCenterOfMass(rB);}}
-    [TitleGroup(G)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir")] public float autoalignCarInAirSpeed = 0.1f;
-    [TitleGroup(G)][OdinSerialize, ShowIf("autoAlignToSurfaceBool")] public float autoalignSurfaceDistance = 10f;
 
+
+    [TitleGroup(MP)] public MagnetPowerMode magnetPowerMode = MagnetPowerMode.TorqueAndBrake;
+    [TitleGroup(MP)] public int magnetPowerTorque = 10;
+    [TitleGroup(MP)] public AnimationCurve magnetPowerTorqueCurve;
+    [TitleGroup(MP)] public AnimationCurve magnetPowerBrakeCurve;
+    [TitleGroup(MP)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir")] public float autoalignCarInAirSpeed = 0.02f;
+    [TitleGroup(MP)][OdinSerialize, ShowIf("autoAlignToSurfaceBool")] public float autoalignSurfaceDistance = 10f;
+    
 
     [TitleGroup(M)] public PropulsionMethods propulsionMethod = PropulsionMethods.FrontDrive;
     [TitleGroup(M)] public SteeringMethods steeringMethod = SteeringMethods.FrontSteer;
@@ -341,13 +348,32 @@ public class CarController : SerializedMonoBehaviour
             // the target rotation calculated through forward and up vectors.
             Quaternion targetQuaternion = Quaternion.LookRotation(forwardNormal,targetNormal);
 
-            //rotation Calculation
-            rB.rotation = Quaternion.Slerp(rB.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via RB
-
-            //rB.AddTorque(targetNormal*10f, ForceMode.Acceleration);
-            //rB.angularVelocity
-
-            //this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via transform
+            // Rotation Calculation
+            switch (magnetPowerMode)
+            {
+                // V1: Set Rotation
+                case MagnetPowerMode.SetRotation:
+                    {
+                        rB.rotation = Quaternion.Slerp(rB.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via RB
+                        //this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via transform
+                        break;
+                    }
+                // V2: AddTorque & brake
+                case MagnetPowerMode.TorqueAndBrake:
+                    {
+                        // 1. Add torque
+                        Vector3 torqueAxis = Vector3.Cross(transform.up, targetNormal);                 // wenn sich die beiden input-vektoren richtungsmäßig nicht unterscheiden, ist der Cross-Vektor gleich 0 (und die resultierende Beschleunigung)
+                        rB.AddTorque(torqueAxis * magnetPowerTorque, ForceMode.Acceleration);
+                        // 2. Brake / angular drag, abhängig von dot-product
+                        float dotProduct = Mathf.Clamp01(Vector3.Dot(transform.up, targetNormal));      // Dotproduct für Winkeldifferenz zwischen Auto-up-Vector und Boden-Normale
+                        float speedMultiplier = magnetPowerBrakeCurve.Evaluate(dotProduct);             // Wert zwischen 0-1
+                        rB.angularVelocity *= speedMultiplier;                                          // Wenn keine Winkeldifferenz, dann angularVel *= 0; wenn Winkeldifferenz >= 90°, dann keine Veränderung
+                        break;
+                    }
+            }
+            
+            
+            
         }
         #endregion
     }
@@ -392,7 +418,8 @@ public class CarController : SerializedMonoBehaviour
         // 1. Put up
         transform.position += new Vector3(0, 5, 0);
         // 2. rotate up
-        transform.rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
+        rB.MoveRotation(Quaternion.LookRotation(transform.forward, Vector3.up));
+        rB.angularVelocity = Vector3.zero;
     }
 
     public void OnMagnetPower(InputValue inputValue)
@@ -429,4 +456,10 @@ public enum WheelOffsetModes{
 public enum AirControllTypes{
     PureRotation,
     PhysicsRotation
+}
+
+public enum MagnetPowerMode
+{
+    TorqueAndBrake,
+    SetRotation
 }

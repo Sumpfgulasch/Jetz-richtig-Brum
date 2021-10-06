@@ -2210,6 +2210,56 @@ MonoBehaviour:
   motorForce: 2500
   airRollSpeedPitchRoll: {x: 0.3, y: 0.3}
   airRollCenterOffset: {x: 0, y: 0.6, z: 0}
+  magnetPowerMode: 0
+  magnetPowerTorque: 10
+  magnetPowerTorqueCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.0022468567
+      value: 1.0055847
+      inSlope: -0.010598224
+      outSlope: -0.005261783
+      tangentMode: 1
+      weightedMode: 3
+      inWeight: 0
+      outWeight: 0.7953306
+    - serializedVersion: 3
+      time: 1
+      value: -0.07542038
+      inSlope: -42.502792
+      outSlope: -42.502792
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.027555542
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  magnetPowerBrakeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.0002185977
+      value: 1.000037
+      inSlope: -0.000098598204
+      outSlope: -0.000098598204
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0
+      outWeight: 0.99487966
+    - serializedVersion: 3
+      time: 0.99855775
+      value: 0.98678
+      inSlope: -4.222156
+      outSlope: -4.222156
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.0031151418
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   autoalignCarInAirSpeed: 0.02
   autoalignSurfaceDistance: 5
   propulsionMethod: 2
