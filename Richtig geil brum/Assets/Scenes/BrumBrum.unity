@@ -2271,7 +2271,7 @@ MonoBehaviour:
   simplifyLowRide: 0
   allignStickToView: 0
   invertRollControls: 0
-  autoalignCarInAir: 1
+  autoalignCarInAir: 0
   autoalignToSurface: 1
   minMaxGroundDistance: {x: 0.15, y: 1.35}
   lowRideStepSizePlusMinus: {x: 0.5, y: -0.02}
