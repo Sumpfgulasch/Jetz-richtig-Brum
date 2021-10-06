@@ -47,7 +47,7 @@
                 },
                 {
                     "name": "MagnetPower",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "cfc1b145-5ee4-4359-ae8b-ce7450a59468",
                     "expectedControlType": "Button",
                     "processors": "",

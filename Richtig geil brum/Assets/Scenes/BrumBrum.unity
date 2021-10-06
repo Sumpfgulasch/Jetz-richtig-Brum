@@ -2212,6 +2212,7 @@ MonoBehaviour:
   airRollCenterOffset: {x: 0, y: 0.6, z: 0}
   magnetPowerMode: 0
   magnetPowerTorque: 10
+  magnetPowerPushForce: 30
   magnetPowerTorqueCurve:
     serializedVersion: 2
     m_Curve:
@@ -2269,7 +2270,7 @@ MonoBehaviour:
   inAirCarControl: 0
   simplifyLowRide: 0
   allignStickToView: 0
-  invertRollControls: 1
+  invertRollControls: 0
   autoalignCarInAir: 1
   autoalignToSurface: 1
   minMaxGroundDistance: {x: 0.15, y: 1.35}

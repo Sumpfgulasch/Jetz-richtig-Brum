@@ -27,6 +27,7 @@ public class CarController : SerializedMonoBehaviour
 
     [TitleGroup(MP)] public MagnetPowerMode magnetPowerMode = MagnetPowerMode.TorqueAndBrake;
     [TitleGroup(MP)] public int magnetPowerTorque = 10;
+    [TitleGroup(MP)] public int magnetPowerPushForce = 10;
     [TitleGroup(MP)] public AnimationCurve magnetPowerTorqueCurve;
     [TitleGroup(MP)] public AnimationCurve magnetPowerBrakeCurve;
     [TitleGroup(MP)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir")] public float autoalignCarInAirSpeed = 0.02f;
@@ -86,6 +87,8 @@ public class CarController : SerializedMonoBehaviour
 
     [TitleGroup(H)] public bool showDebugHandles = true;
     [TitleGroup(H)] private bool autoAlignToSurfaceBool(){if(autoalignCarInAir && autoalignToSurface){return true;}else{return false;}} // helperfunction for showif
+    [TitleGroup(MP)] private IEnumerator magnetPowerRoutine;
+    [TitleGroup(MP)] private bool magnetIsActive;
 
 
     void Start() {
@@ -97,7 +100,10 @@ public class CarController : SerializedMonoBehaviour
     void FixedUpdate()
     {
         SetAirTime(ref inAirTime);
-        AutoAlignCar(autoalignCarInAir,autoalignToSurface,shouldAutoAlign,autoalignCarInAirSpeed,drivingStateInfo);
+        if (autoalignCarInAir)
+        {
+            AutoAlignCar(autoalignCarInAir, autoalignToSurface, shouldAutoAlign, autoalignCarInAirSpeed, drivingStateInfo);
+        }
         Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL, ref shouldAutoAlign);
         Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
         LowRide(lowRideValue, minMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus,frontWheelR, frontWheelL, backWheelR, backWheelL);
@@ -362,9 +368,9 @@ public class CarController : SerializedMonoBehaviour
                 case MagnetPowerMode.TorqueAndBrake:
                     {
                         // 1. Add torque
-                        Vector3 torqueAxis = Vector3.Cross(transform.up, targetNormal);                 // wenn sich die beiden input-vektoren richtungsmäßig nicht unterscheiden, ist der Cross-Vektor gleich 0 (und die resultierende Beschleunigung)
+                        Vector3 torqueAxis = Vector3.Cross(transform.up, targetNormal);                 // Ziel-Rotations-Achse für AddTorque ist das Kreuz-Produkt von up-Vektor und Boden-Normale; wenn sich die beiden input-vektoren richtungsmäßig nicht unterscheiden, ist der Cross-Vektor gleich 0 (und die resultierende Beschleunigung auch)
                         rB.AddTorque(torqueAxis * magnetPowerTorque, ForceMode.Acceleration);
-                        // 2. Brake / angular drag, abhängig von dot-product
+                        // 2. Brake (alternativ angular drag?), abhängig von dot-product
                         float dotProduct = Mathf.Clamp01(Vector3.Dot(transform.up, targetNormal));      // Dotproduct für Winkeldifferenz zwischen Auto-up-Vector und Boden-Normale
                         float speedMultiplier = magnetPowerBrakeCurve.Evaluate(dotProduct);             // Wert zwischen 0-1
                         rB.angularVelocity *= speedMultiplier;                                          // Wenn keine Winkeldifferenz, dann angularVel *= 0; wenn Winkeldifferenz >= 90°, dann keine Veränderung
@@ -376,6 +382,27 @@ public class CarController : SerializedMonoBehaviour
             
         }
         #endregion
+    }
+
+    /// <summary>
+    /// Align car to a surface and add a force of the car to that surface.
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator MagnetPower()
+    {
+        while (magnetIsActive)
+        {
+            AutoAlignCar(true, true, shouldAutoAlign, autoalignCarInAirSpeed, DrivingState.InAir);
+            AddPushForce();
+            yield return null;
+        }
+
+    }
+
+    private void AddPushForce()
+    {
+        Vector3 downVector = -transform.up;
+        rB.AddForce(downVector * magnetPowerPushForce, ForceMode.Acceleration);
     }
 
 
@@ -422,10 +449,25 @@ public class CarController : SerializedMonoBehaviour
         rB.angularVelocity = Vector3.zero;
     }
 
+
+
     public void OnMagnetPower(InputValue inputValue)
     {
+        StopCoroutine(MagnetPower());
 
+        if (inputValue.isPressed)
+        {
+            magnetIsActive = true;
+            StartCoroutine(MagnetPower());
+        }
+        else
+        {
+            magnetIsActive = false;
+        }
     }
+
+
+   
 }
 
 
