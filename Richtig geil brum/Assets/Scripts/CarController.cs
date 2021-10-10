@@ -16,6 +16,8 @@ public class CarController : SerializedMonoBehaviour
     const string H = "Helper";
     const string MP = "MagnetPower";
 
+    public static CarController instance;
+
 
     [TitleGroup(G)] public float maxSteerAngle = 30f;
     [TitleGroup(G)] public float motorForce = 50;
@@ -23,12 +25,13 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(G),GUIColor(0.5f,0f,0f)] public Vector3 airRollCenterOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)][OdinSerialize] public Vector3 CenterOfMassOffset{get{return centerOfMassOffset;} set{centerOfMassOffset = value; SetCenterOfMass(rB);}}
+    [TitleGroup(G)] public float maxSpeed = 20f;        // NOT USED YET
 
 
     [TitleGroup(MP)] public MagnetPowerMode magnetPowerMode = MagnetPowerMode.TorqueAndBrake;
-    [TitleGroup(MP)] public int magnetPowerTorque = 10;
-    [TitleGroup(MP)] public int magnetPowerPushForce = 10;
-    [TitleGroup(MP)] public AnimationCurve magnetPowerTorqueCurve;
+    [TitleGroup(MP)] public int alignmentTorqueForce = 10;
+    [TitleGroup(MP)] public int magnetPowerPullForce = 30;
+    //[TitleGroup(MP)] public AnimationCurve magnetPowerTorqueCurve;            // unused
     [TitleGroup(MP)] public AnimationCurve magnetPowerBrakeCurve;
     [TitleGroup(MP)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir")] public float autoalignCarInAirSpeed = 0.02f;
     [TitleGroup(MP)][OdinSerialize, ShowIf("autoAlignToSurfaceBool")] public float autoalignSurfaceDistance = 10f;
@@ -92,6 +95,7 @@ public class CarController : SerializedMonoBehaviour
 
 
     void Start() {
+        instance = this;
         rB = this.GetComponent<Rigidbody>();
         InitSuspensionDistance();   
         SetCenterOfMass(rB);
@@ -369,7 +373,7 @@ public class CarController : SerializedMonoBehaviour
                     {
                         // 1. Add torque
                         Vector3 torqueAxis = Vector3.Cross(transform.up, targetNormal);                 // Ziel-Rotations-Achse für AddTorque ist das Kreuz-Produkt von up-Vektor und Boden-Normale; wenn sich die beiden input-vektoren richtungsmäßig nicht unterscheiden, ist der Cross-Vektor gleich 0 (und die resultierende Beschleunigung auch)
-                        rB.AddTorque(torqueAxis * magnetPowerTorque, ForceMode.Acceleration);
+                        rB.AddTorque(torqueAxis * alignmentTorqueForce, ForceMode.Acceleration);
                         // 2. Brake (alternativ angular drag?), abhängig von dot-product
                         float dotProduct = Mathf.Clamp01(Vector3.Dot(transform.up, targetNormal));      // Dotproduct für Winkeldifferenz zwischen Auto-up-Vector und Boden-Normale
                         float speedMultiplier = magnetPowerBrakeCurve.Evaluate(dotProduct);             // Wert zwischen 0-1
@@ -402,7 +406,7 @@ public class CarController : SerializedMonoBehaviour
     private void AddPushForce()
     {
         Vector3 downVector = -transform.up;
-        rB.AddForce(downVector * magnetPowerPushForce, ForceMode.Acceleration);
+        rB.AddForce(downVector * magnetPowerPullForce, ForceMode.Acceleration);
     }
 
 
