@@ -31,7 +31,8 @@ public class AudioManager : MonoBehaviour
     {
         float velocity = rb.velocity.magnitude;
         float targetValue = Mathf.Clamp01(velocity.Remap(0, CarController.instance.maxSpeed, 0, 1f));
-        
+        //float targetValue = Mathf.Abs(CarController.instance.thrustValue);
+
         ControlPitchByParameter(engineController1, targetValue);
     }
 

@@ -15,6 +15,7 @@ public class CarController : SerializedMonoBehaviour
     const string R = "References";
     const string H = "Helper";
     const string MP = "MagnetPower";
+    const string AA = "AutoAlign";
 
     public static CarController instance;
 
@@ -28,13 +29,24 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(G)] public float maxSpeed = 20f;        // NOT USED YET
 
 
-    [TitleGroup(MP)] public MagnetPowerMode magnetPowerMode = MagnetPowerMode.TorqueAndBrake;
-    [TitleGroup(MP)] public int alignmentTorqueForce = 10;
-    [TitleGroup(MP)] public int magnetPowerPullForce = 30;
-    //[TitleGroup(MP)] public AnimationCurve magnetPowerTorqueCurve;            // unused
-    [TitleGroup(MP)] public AnimationCurve magnetPowerBrakeCurve;
-    [TitleGroup(MP)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir")] public float autoalignCarInAirSpeed = 0.02f;
-    [TitleGroup(MP)][OdinSerialize, ShowIf("autoAlignToSurfaceBool")] public float autoalignSurfaceDistance = 10f;
+    [TitleGroup(MP)] public int magnetPowerForce = 30;
+    [TitleGroup(MP)] public ButtonMode magnetPowerButtonMode = ButtonMode.DeAndActivate;
+    [TitleGroup(MP), Tooltip("Brake when magnetPower is active and the player doesn't accalerate")] public bool magnetPowerAutoBrake = true;
+    [TitleGroup(MP), Range(0, 1f), ShowIf("magnetPowerAutoBrake")] public float magnetPowerBrakeFactor = 0.9f;
+    [TitleGroup(MP)] public float magnetPowerMaxDistance = 2f;
+    [TitleGroup(MP)] public AnimationCurve magnetPowerDistanceCurve;
+
+
+    [TitleGroup(AA)] public bool autoalignCarInAir = true;
+    [TitleGroup(AA)] public AutoAlignSurface autoAlignSurface = AutoAlignSurface.LowerSurface;
+    //[TitleGroup(AA), ShowIf("autoalignCarInAir")] public bool autoalignToSurface = true;
+    [TitleGroup(AA)] public AutoAlignMethod autoAlignMethod = AutoAlignMethod.TorqueAndBrake;
+    [TitleGroup(AA)] public int autoAlignTorqueForce = 10;
+    //[TitleGroup(MP)] public AnimationCurve autoAlignTorqueCurve;            // unused
+    [TitleGroup(AA), Tooltip("Used to reduce the angular velocity when the car is aligned")] public AnimationCurve autoAlignBrakeCurve;
+    [TitleGroup(AA)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir")] public float autoAlign_setRotationSpeed = 0.02f;   // not used anymore
+    [TitleGroup(AA)][OdinSerialize, ShowIf("autoAlignToSurfaceBool")] public float autoAlignMaxDistance = 10f;
+    [TitleGroup(AA)] public AnimationCurve autoAlignDistanceCurve;
     
 
     [TitleGroup(M)] public PropulsionMethods propulsionMethod = PropulsionMethods.FrontDrive;
@@ -47,8 +59,6 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(M)] public bool simplifyLowRide = false;
     [TitleGroup(M)] public bool allignStickToView = false;
     [TitleGroup(M)] public bool invertRollControls = true;
-    [TitleGroup(M)] public bool autoalignCarInAir = true;
-    [TitleGroup(M), ShowIf("autoalignCarInAir")] public bool autoalignToSurface = true;
 
 
     [TitleGroup(LR)] [MinMaxSlider(0f, 2.5f, true)]public Vector2 minMaxGroundDistance = new Vector2(0.1f, 1f);// The minimum/maximum length that the wheels can extend - minimum = x component || maximum = y component
@@ -59,7 +69,7 @@ public class CarController : SerializedMonoBehaviour
 
     [TitleGroup(R)] public Wheel frontWheelR, frontWheelL, backWheelR, backWheelL;
     [TitleGroup(R)] public Wheel[] Wheels {get{return new Wheel[4]{frontWheelR,frontWheelL,backWheelR,backWheelL};}}
-    [TitleGroup(R)] private float thrustValue;
+    [TitleGroup(R), HideInInspector] public float thrustValue;
     [TitleGroup(R)] private Vector2 steerValue;
     [TitleGroup(R)] private Vector2 lowRideValue;
     [TitleGroup(R)] private Rigidbody rB;
@@ -87,11 +97,15 @@ public class CarController : SerializedMonoBehaviour
                 return DrivingState.Grounded;
             }
         }
+    [TitleGroup(R)] public Material wheels_defaultMat;
+    [TitleGroup(R)] public Material wheels_magnetPowerMat;
+    [TitleGroup(R)] public MeshRenderer[] wheelsMeshes;
 
     [TitleGroup(H)] public bool showDebugHandles = true;
-    [TitleGroup(H)] private bool autoAlignToSurfaceBool(){if(autoalignCarInAir && autoalignToSurface){return true;}else{return false;}} // helperfunction for showif
+    [TitleGroup(H)] private bool autoAlignToSurfaceBool(){if(autoalignCarInAir){return true;}else{return false;}} // helperfunction for showif
     [TitleGroup(MP)] private IEnumerator magnetPowerRoutine;
     [TitleGroup(MP)] private bool magnetIsActive;
+    [TitleGroup(MP)] private float targetSurfaceDistance;
 
 
     void Start() {
@@ -106,11 +120,21 @@ public class CarController : SerializedMonoBehaviour
         SetAirTime(ref inAirTime);
         if (autoalignCarInAir)
         {
-            AutoAlignCar(autoalignCarInAir, autoalignToSurface, shouldAutoAlign, autoalignCarInAirSpeed, drivingStateInfo);
+            AutoAlignCar(autoalignCarInAir, shouldAutoAlign, autoAlign_setRotationSpeed, drivingStateInfo);
         }
         Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL, ref shouldAutoAlign);
         Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
         LowRide(lowRideValue, minMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus,frontWheelR, frontWheelL, backWheelR, backWheelL);
+
+        // MagnetPower AutoBrakeForce
+        if (magnetPowerAutoBrake)
+        {
+            if (magnetIsActive && thrustValue == 0 && drivingStateInfo != DrivingState.InAir)
+            {
+                Brake(rB, magnetPowerBrakeFactor);
+            }
+        }
+        
     }
 
     // ----------------------------------------- Setup -----------------------------------------
@@ -333,23 +357,33 @@ public class CarController : SerializedMonoBehaviour
         }
     }
 
-    private void AutoAlignCar(bool _autoalignCarInAir, bool _autoalignToSurface, bool _shouldAutoAlign,float _autoalignCarInAirSpeed, DrivingState _drivingStateInfo)
+    private void AutoAlignCar(bool _autoalignCarInAir, bool _shouldAutoAlign,float _autoalignCarInAirSpeed, DrivingState _drivingStateInfo)
     {
         #region Autoalign Car in Air
         if(_autoalignCarInAir && _shouldAutoAlign && _drivingStateInfo == DrivingState.InAir)    //shouldAutoAlign is coupled with the Input of the car, so the car doesnt autoalign, against the airControl
         {
-            // can be set through Raycasting
-            Vector3 targetNormal = Vector3.up.normalized; 
+            Vector3 targetNormal = Vector3.up.normalized;
+            RaycastHit hit;
 
-            if(_autoalignToSurface) // override forwardNormal if alignToSurface is true and a hit was registered
+            // Decide to which surface the car should align
+            switch (autoAlignSurface)
             {
-                RaycastHit hit;
-                if (Physics.Raycast(this.transform.position, -this.transform.up, out hit, autoalignSurfaceDistance))
-                {
-                    // get the normal of the hit
-                    targetNormal = hit.normal;
-                    //Debug.DrawRay(hit.point, hit.normal, Color.yellow,0.2f); // debug the hitpoint
-                }
+                case AutoAlignSurface.LowerSurface:
+                    {
+                        
+                        if (Physics.Raycast(this.transform.position, -this.transform.up, out hit, autoAlignMaxDistance))
+                        {
+                            // get the normal of the hit
+                            targetNormal = hit.normal;
+                            targetSurfaceDistance = (hit.point - transform.position).magnitude;
+                        }
+                        break;
+                    }
+                case AutoAlignSurface.ProjectoryCurve:
+                    {
+                        // TO BE DONE
+                        break;
+                    }
             }
             
             // the forward component of the transform mapped onto 2D (might fail when it is facing purly up or down
@@ -359,25 +393,29 @@ public class CarController : SerializedMonoBehaviour
             Quaternion targetQuaternion = Quaternion.LookRotation(forwardNormal,targetNormal);
 
             // Rotation Calculation
-            switch (magnetPowerMode)
+            switch (autoAlignMethod)
             {
                 // V1: Set Rotation
-                case MagnetPowerMode.SetRotation:
+                case AutoAlignMethod.SetRotation:
                     {
                         rB.rotation = Quaternion.Slerp(rB.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via RB
                         //this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via transform
                         break;
                     }
                 // V2: AddTorque & brake
-                case MagnetPowerMode.TorqueAndBrake:
+                case AutoAlignMethod.TorqueAndBrake:
                     {
+                        // Distance factor
+                        float distanceFactor = Mathf.Clamp01(autoAlignDistanceCurve.Evaluate(targetSurfaceDistance));
+
                         // 1. Add torque
-                        Vector3 torqueAxis = Vector3.Cross(transform.up, targetNormal);                 // Ziel-Rotations-Achse für AddTorque ist das Kreuz-Produkt von up-Vektor und Boden-Normale; wenn sich die beiden input-vektoren richtungsmäßig nicht unterscheiden, ist der Cross-Vektor gleich 0 (und die resultierende Beschleunigung auch)
-                        rB.AddTorque(torqueAxis * alignmentTorqueForce, ForceMode.Acceleration);
-                        // 2. Brake (alternativ angular drag?), abhängig von dot-product
-                        float dotProduct = Mathf.Clamp01(Vector3.Dot(transform.up, targetNormal));      // Dotproduct für Winkeldifferenz zwischen Auto-up-Vector und Boden-Normale
-                        float speedMultiplier = magnetPowerBrakeCurve.Evaluate(dotProduct);             // Wert zwischen 0-1
-                        rB.angularVelocity *= speedMultiplier;                                          // Wenn keine Winkeldifferenz, dann angularVel *= 0; wenn Winkeldifferenz >= 90°, dann keine Veränderung
+                        Vector3 torqueAxis = Vector3.Cross(transform.up, targetNormal);               // Ziel-Rotations-Achse für AddTorque: das Kreuz-Produkt von up-Vektor und Boden-Normale; wenn sich die beiden input-vektoren richtungsmäßig nicht unterscheiden, ist der Cross-Vektor gleich 0 (und die resultierende Beschleunigung auch)
+                        rB.AddTorque(torqueAxis * autoAlignTorqueForce * distanceFactor, ForceMode.Acceleration);
+                        // 2. Brake
+                        float dotProduct = Mathf.Clamp01(Vector3.Dot(transform.up, targetNormal));    // Dotproduct für Winkeldifferenz zwischen Auto-up-Vector und Boden-Normale
+                        float speedMultiplier = autoAlignBrakeCurve.Evaluate(dotProduct);             // Wert zwischen 0-1
+                        //rB.angularVelocity *= speedMultiplier * (1-distanceFactor);                   // Wenn keine Winkeldifferenz, dann angularVel *= 0; wenn Winkeldifferenz >= 90°, dann keine Veränderung
+                        rB.angularVelocity *= Mathf.Lerp(1f, speedMultiplier, distanceFactor);
                         break;
                     }
             }
@@ -388,6 +426,11 @@ public class CarController : SerializedMonoBehaviour
         #endregion
     }
 
+    private void Brake(Rigidbody rigid, float factor)
+    {
+        rigid.velocity *= factor;
+    }
+
     /// <summary>
     /// Align car to a surface and add a force of the car to that surface.
     /// </summary>
@@ -396,20 +439,42 @@ public class CarController : SerializedMonoBehaviour
     {
         while (magnetIsActive)
         {
-            AutoAlignCar(true, true, shouldAutoAlign, autoalignCarInAirSpeed, DrivingState.InAir);
-            AddPushForce();
+            AutoAlignCar(true, shouldAutoAlign, autoAlign_setRotationSpeed, DrivingState.InAir);
+            AddPullForce();
             yield return null;
         }
 
     }
 
-    private void AddPushForce()
+    /// <summary>
+    /// Scheiß funktion. Nochmal schön schreiben. Fügt dem Auto Force nach unten hinzu, abhängig von der Distanz der targetSurface.
+    /// </summary>
+    private void AddPullForce()
     {
+        float surfaceDistance = 1000;
+
+        // 1. Get vector pointing downwards from car
         Vector3 downVector = -transform.up;
-        rB.AddForce(downVector * magnetPowerPullForce, ForceMode.Acceleration);
+        
+        // 2. Get distance factor
+        RaycastHit hit;                                                                     // scheiße mit extra raycast, geschieht schon in autoAlignment, aber eben nicht jeden frame...
+        if (Physics.Raycast(transform.position, -this.transform.up, out hit))
+        {
+            surfaceDistance = (hit.point - transform.position).magnitude;
+        }
+        float distanceFactor = Mathf.Clamp01(magnetPowerDistanceCurve.Evaluate(surfaceDistance));
+
+        // 3. Add force
+        rB.AddForce(downVector * magnetPowerForce * distanceFactor, ForceMode.Acceleration);
     }
 
-
+    private void SetWheelsMaterial(Material material)
+    {
+        foreach(MeshRenderer wheel in wheelsMeshes)
+        {
+            wheel.material = material;
+        }
+    }
 
 
 
@@ -457,17 +522,44 @@ public class CarController : SerializedMonoBehaviour
 
     public void OnMagnetPower(InputValue inputValue)
     {
-        StopCoroutine(MagnetPower());
+        // Button mode #1: De- & activate
+        if (magnetPowerButtonMode == ButtonMode.DeAndActivate) 
+        {
+            if (inputValue.isPressed)
+            {
+                if (magnetIsActive)
+                {
+                    magnetIsActive = false;
+                    StopCoroutine(MagnetPower());
+                    SetWheelsMaterial(wheels_defaultMat);
+                }
+                else
+                {
+                    magnetIsActive = true;
+                    StartCoroutine(MagnetPower());
+                    SetWheelsMaterial(wheels_magnetPowerMat);
+                }
+            }
+        }
 
-        if (inputValue.isPressed)
+        // Button mode #2: Pressed
+        else if (magnetPowerButtonMode == ButtonMode.pressed)
         {
-            magnetIsActive = true;
-            StartCoroutine(MagnetPower());
+            if (inputValue.isPressed)
+            {
+                magnetIsActive = true;
+                StartCoroutine(MagnetPower());
+                SetWheelsMaterial(wheels_magnetPowerMat);
+            }
+            else
+            {
+                magnetIsActive = false;
+                StopCoroutine(MagnetPower());
+                SetWheelsMaterial(wheels_defaultMat);
+            }
         }
-        else
-        {
-            magnetIsActive = false;
-        }
+
+        
     }
 
 
@@ -504,8 +596,23 @@ public enum AirControllTypes{
     PhysicsRotation
 }
 
-public enum MagnetPowerMode
+public enum AutoAlignMethod
 {
     TorqueAndBrake,
     SetRotation
 }
+
+public enum ButtonMode
+{
+    DeAndActivate,          // press once to de- or activate
+    pressed                 // hold to perform an action
+}
+
+public enum AutoAlignSurface
+{
+    LowerSurface,
+    WorldUp,
+    ProjectoryCurve
+}
+
+

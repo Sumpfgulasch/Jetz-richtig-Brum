@@ -53,7 +53,7 @@ public class CarControllerEditor : OdinEditor
                     if(cC.drivingStateInfo == DrivingState.InAir) // inAir
                     {
                         float distanceToGround = (hit.point - cC.transform.position).magnitude;
-                        if(distanceToGround < cC.autoalignSurfaceDistance)
+                        if(distanceToGround < cC.autoAlignMaxDistance)
                         {
                             Handles.color = Color.green;
                             Handles.DrawLine(hit.point, hit.point + hit.normal, 1f);//would align
