@@ -53,8 +53,8 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-Assets/AudioHelm/*
-!/Assets/AudioHelm/Scripts/
-!/Assets/AudioHelm/Presets/
+//Assets/AudioHelm/*
+//!/Assets/AudioHelm/Scripts/
+//!/Assets/AudioHelm/Presets/
 
 Assets/Plugins/FMOD/
