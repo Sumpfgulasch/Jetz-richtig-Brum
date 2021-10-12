@@ -33,7 +33,7 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(MP)] public ButtonMode magnetPowerButtonMode = ButtonMode.DeAndActivate;
     [TitleGroup(MP), Tooltip("Brake when magnetPower is active and the player doesn't accalerate")] public bool magnetPowerAutoBrake = true;
     [TitleGroup(MP), Range(0, 1f), ShowIf("magnetPowerAutoBrake")] public float magnetPowerBrakeFactor = 0.9f;
-    [TitleGroup(MP)] public float magnetPowerMaxDistance = 2f;
+    //[TitleGroup(MP)] public float magnetPowerMaxDistance = 2f;
     [TitleGroup(MP)] public AnimationCurve magnetPowerDistanceCurve;
 
 
@@ -44,8 +44,8 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(AA)] public int autoAlignTorqueForce = 10;
     //[TitleGroup(MP)] public AnimationCurve autoAlignTorqueCurve;            // unused
     [TitleGroup(AA), Tooltip("Used to reduce the angular velocity when the car is aligned")] public AnimationCurve autoAlignBrakeCurve;
-    [TitleGroup(AA)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir")] public float autoAlign_setRotationSpeed = 0.02f;   // not used anymore
-    [TitleGroup(AA)][OdinSerialize, ShowIf("autoAlignToSurfaceBool")] public float autoAlignMaxDistance = 10f;
+    [TitleGroup(AA)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir"), ShowIf("autoAlignMethod", AutoAlignMethod.SetRotation)] public float autoAlign_setRotationSpeed = 0.02f;
+    //[TitleGroup(AA)][OdinSerialize, ShowIf("autoAlignToSurfaceBool")] public float autoAlignMaxDistance = 10f;
     [TitleGroup(AA)] public AnimationCurve autoAlignDistanceCurve;
     
 
@@ -371,7 +371,7 @@ public class CarController : SerializedMonoBehaviour
                 case AutoAlignSurface.LowerSurface:
                     {
                         
-                        if (Physics.Raycast(this.transform.position, -this.transform.up, out hit, autoAlignMaxDistance))
+                        if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
                         {
                             // get the normal of the hit
                             targetNormal = hit.normal;
@@ -466,6 +466,7 @@ public class CarController : SerializedMonoBehaviour
 
         // 3. Add force
         rB.AddForce(downVector * magnetPowerForce * distanceFactor, ForceMode.Acceleration);
+        //rB.addfo
     }
 
     private void SetWheelsMaterial(Material material)
@@ -496,7 +497,7 @@ public class CarController : SerializedMonoBehaviour
         lowRideValue = inputValue.Get<Vector2>();
     }
 
-    public void OnJump(InputValue inputValue)
+    public void OnExtendWheels(InputValue inputValue)
     {
         if (wheelsOut)
         {
@@ -509,16 +510,10 @@ public class CarController : SerializedMonoBehaviour
         }
     }
 
-    public void OnReset(InputValue inputValue)
+    public void OnJump(InputValue inputValue)
     {
-        // 1. Put up
-        transform.position += new Vector3(0, 5, 0);
-        // 2. rotate up
-        rB.MoveRotation(Quaternion.LookRotation(transform.forward, Vector3.up));
-        rB.angularVelocity = Vector3.zero;
+
     }
-
-
 
     public void OnMagnetPower(InputValue inputValue)
     {
@@ -543,7 +538,7 @@ public class CarController : SerializedMonoBehaviour
         }
 
         // Button mode #2: Pressed
-        else if (magnetPowerButtonMode == ButtonMode.pressed)
+        else if (magnetPowerButtonMode == ButtonMode.hold)
         {
             if (inputValue.isPressed)
             {
@@ -562,8 +557,17 @@ public class CarController : SerializedMonoBehaviour
         
     }
 
+    public void OnReset(InputValue inputValue)
+    {
+        // 1. Put up
+        transform.position += new Vector3(0, 5, 0);
+        // 2. rotate up
+        rB.MoveRotation(Quaternion.LookRotation(transform.forward, Vector3.up));
+        rB.angularVelocity = Vector3.zero;
+    }
 
-   
+
+
 }
 
 
@@ -605,7 +609,7 @@ public enum AutoAlignMethod
 public enum ButtonMode
 {
     DeAndActivate,          // press once to de- or activate
-    pressed                 // hold to perform an action
+    hold                 // hold to perform an action
 }
 
 public enum AutoAlignSurface

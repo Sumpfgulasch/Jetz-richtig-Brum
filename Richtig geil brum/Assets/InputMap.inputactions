@@ -30,17 +30,9 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Jump",
+                    "name": "ExtendWheels",
                     "type": "Button",
                     "id": "71beb6d0-9a62-486f-a3af-86dcf49fe46d",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Reset",
-                    "type": "Button",
-                    "id": "8ea8bf3b-dd16-4561-9745-570d65d1f145",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -49,6 +41,22 @@
                     "name": "MagnetPower",
                     "type": "Value",
                     "id": "cfc1b145-5ee4-4359-ae8b-ce7450a59468",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Jump",
+                    "type": "Value",
+                    "id": "c646ded3-e1cc-4615-9443-85cdb3b663fc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Reset",
+                    "type": "Button",
+                    "id": "8ea8bf3b-dd16-4561-9745-570d65d1f145",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -260,47 +268,25 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "ExtendWheels",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "ab89497e-870b-4abc-a370-81b23b2e190e",
-                    "path": "<Keyboard>/space",
+                    "path": "<Keyboard>/alt",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "42c28f5e-c279-440f-ad1f-72da769b25ed",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Reset",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "427b84ca-d1b7-405e-8892-ca82485fd68b",
-                    "path": "<Keyboard>/r",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Reset",
+                    "action": "ExtendWheels",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "c474c685-5f84-418f-88b0-c0ac875af1fa",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -316,6 +302,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "MagnetPower",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1e095bb9-bfde-4493-b950-84465a74f3aa",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "63593350-fff6-4d15-b584-46be661fa737",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "42c28f5e-c279-440f-ad1f-72da769b25ed",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reset",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "427b84ca-d1b7-405e-8892-ca82485fd68b",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reset",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
