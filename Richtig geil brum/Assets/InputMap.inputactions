@@ -307,6 +307,28 @@
                 },
                 {
                     "name": "",
+                    "id": "618e56de-2437-417d-9ba1-f050f5e8b18c",
+                    "path": "<Gamepad>/leftStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MagnetPower",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f057418b-ecaf-46f6-b85a-0a672229b143",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MagnetPower",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "1e095bb9-bfde-4493-b950-84465a74f3aa",
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",

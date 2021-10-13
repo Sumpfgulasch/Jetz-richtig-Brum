@@ -56,6 +56,7 @@ public class CarController : SerializedMonoBehaviour
 
 
     [TitleGroup(M)] public bool inAirCarControl = false;
+    [TitleGroup(M), ShowIf("inAirCarControl")] public bool stopAutoaligningAfterInAirControl = true;
     [TitleGroup(M)] public bool simplifyLowRide = false;
     [TitleGroup(M)] public bool allignStickToView = false;
     [TitleGroup(M)] public bool invertRollControls = true;
@@ -226,7 +227,10 @@ public class CarController : SerializedMonoBehaviour
 
             if(inputNormal.magnitude > 0.3f) // wenn gelenkt wurde (0.3f ist dabei der threshold zur erkennung der lenkung in der luft) 
             {
-                _shouldAutoAlign = false;
+                if (stopAutoaligningAfterInAirControl) // wenn er nicht weiter autoalignen soll, sobald in der luft gelenkt wurde
+                { 
+                    _shouldAutoAlign = false;
+                }
             }
 
             //calculate the rotationspeed for different axis
@@ -246,7 +250,7 @@ public class CarController : SerializedMonoBehaviour
                 case AirControllTypes.PhysicsRotation:
                 {
                     // gib torque entlang der input axis (world space)
-                    rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y,0f,-_steeringAngle.x).normalized * airRollSpeed * 10000f, ForceMode.Force); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
+                    rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y,0f,-_steeringAngle.x).normalized * airRollSpeed * 100f, ForceMode.Acceleration); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
                     break;
                 }
             }

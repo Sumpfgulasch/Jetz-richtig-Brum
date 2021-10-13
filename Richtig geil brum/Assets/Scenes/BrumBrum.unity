@@ -219,7 +219,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 170101282}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: WheelColliders
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1174,7 +1174,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 571743563}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wheels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1306,7 +1306,7 @@ GameObject:
   - component: {fileID: 749561763}
   - component: {fileID: 749561764}
   - component: {fileID: 749561765}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wheel_BL
   m_TagString: WheelBL
   m_Icon: {fileID: 0}
@@ -1897,7 +1897,7 @@ GameObject:
   - component: {fileID: 1197219699}
   - component: {fileID: 1197219700}
   - component: {fileID: 1197219701}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wheel_FR
   m_TagString: WheelFR
   m_Icon: {fileID: 0}
@@ -1983,7 +1983,7 @@ GameObject:
   - component: {fileID: 1209376497}
   - component: {fileID: 1209376498}
   - component: {fileID: 1209376499}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wheel_BR
   m_TagString: WheelBR
   m_Icon: {fileID: 0}
@@ -2153,7 +2153,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 1392206433}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -2469,6 +2469,34 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!83 &1392206433
+AudioClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: helm
+  m_LoadType: 0
+  m_Channels: 1
+  m_Frequency: 48000
+  m_BitsPerSample: 32
+  m_Length: 0
+  m_IsTrackerFormat: 0
+  m_Ambisonic: 0
+  m_SubsoundIndex: 0
+  m_PreloadAudioData: 1
+  m_LoadInBackground: 0
+  m_Legacy3D: 0
+  m_Resource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_CompressionFormat: 0
+  m_EditorResource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_EditorCompressionFormat: 0
 --- !u!114 &1474740488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2510,11 +2538,11 @@ MonoBehaviour:
       Data: 0.02
   maxSteerAngle: 30
   motorForce: 2500
-  airRollSpeedPitchRoll: {x: 0.3, y: 0.3}
+  airRollSpeedPitchRoll: {x: 0.1, y: 0.1}
   airRollCenterOffset: {x: 0, y: 0.6, z: 0}
   maxSpeed: 10
   magnetPowerForce: 40
-  magnetPowerButtonMode: 0
+  magnetPowerButtonMode: 1
   magnetPowerAutoBrake: 1
   magnetPowerBrakeFactor: 0.98
   magnetPowerDistanceCurve:
@@ -2553,7 +2581,7 @@ MonoBehaviour:
   autoalignCarInAir: 1
   autoAlignSurface: 0
   autoAlignMethod: 0
-  autoAlignTorqueForce: 10
+  autoAlignTorqueForce: 15
   autoAlignBrakeCurve:
     serializedVersion: 2
     m_Curve:
@@ -2615,8 +2643,9 @@ MonoBehaviour:
   propulsionMethod: 2
   steeringMethod: 0
   wheelOffsetMode: 1
-  airControllType: 0
-  inAirCarControl: 0
+  airControllType: 1
+  inAirCarControl: 1
+  stopAutoaligningAfterInAirControl: 0
   simplifyLowRide: 0
   allignStickToView: 0
   invertRollControls: 0
@@ -2915,7 +2944,7 @@ GameObject:
   - component: {fileID: 1831576853}
   - component: {fileID: 1831576854}
   - component: {fileID: 1831576855}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wheel_FL
   m_TagString: WheelFL
   m_Icon: {fileID: 0}
@@ -3392,7 +3421,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6747697756912961394}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: StossdaempferBackBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3442,8 +3471,9 @@ GameObject:
   - component: {fileID: 1474740488}
   - component: {fileID: 919132148347960409}
   - component: {fileID: 919132148347960408}
+  - component: {fileID: 919132148347960411}
   - component: {fileID: 919132148347960410}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Auto
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3479,20 +3509,138 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!136 &919132148347960410
-CapsuleCollider:
+--- !u!114 &919132148347960410
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132148347960407}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 0.5
-  m_Height: 1.94
-  m_Direction: 2
-  m_Center: {x: 0, y: 0.79, z: -1.02}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460d1d25dabb87b4188249e58fc26644, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: ShowTrajectory
+      Entry: 5
+      Data: true
+    - Name: ShowHitPoint
+      Entry: 5
+      Data: false
+  rayCastLayerMask:
+    serializedVersion: 2
+    m_Bits: 55
+  trajectoryVertDist: 0.25
+  maxCurveLength: 15
+  hitPointGO: {fileID: 0}
+--- !u!120 &919132148347960411
+LineRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148347960407}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    serializedVersion: 3
+    widthMultiplier: 1
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.0024468303
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 0
+    textureMode: 0
+    shadowBias: 0.5
+    generateLightingData: 0
+  m_UseWorldSpace: 1
+  m_Loop: 0
 --- !u!23 &1062266050902803381
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3629,7 +3777,7 @@ GameObject:
   - component: {fileID: 6926820944721866070}
   - component: {fileID: 4460426197376157522}
   - component: {fileID: 4954010889365288044}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wheel_BL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3647,7 +3795,7 @@ GameObject:
   - component: {fileID: 8903108962197718673}
   - component: {fileID: 4862697127949510541}
   - component: {fileID: 8413858477394859538}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wheel_BR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3684,7 +3832,7 @@ GameObject:
   - component: {fileID: 6544276161636027100}
   - component: {fileID: 1177700456082195622}
   - component: {fileID: 1062266050902803381}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wheel_FL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3736,7 +3884,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7182375293666097840}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AutoMesh_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3803,7 +3951,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3212935939740550256}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Auto
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3819,7 +3967,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4011562642006701068}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: StossdaempferBack_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3843,7 +3991,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2038904287234721589}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: StossdaempferFrontBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3930,7 +4078,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3757197748127159356}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: StossdaempferFront_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4060,7 +4208,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7914078221680170320}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AutoBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4077,7 +4225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 673579288550375192}
   - component: {fileID: 1634402140455362610}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AutoMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4095,7 +4243,7 @@ GameObject:
   - component: {fileID: 7155883020045172237}
   - component: {fileID: 6004754984710289889}
   - component: {fileID: 8171800737858675813}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wheel_FR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
