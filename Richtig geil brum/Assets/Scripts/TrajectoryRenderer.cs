@@ -12,12 +12,10 @@ public class TrajectoryRenderer : SerializedMonoBehaviour
     const string D = "Debug";
     const string R = "References";
 
-    public static TrajectoryRenderer instance;
-
     [TitleGroup(S)] public LayerMask rayCastLayerMask = ~ 0; // sets layermask to everything on default ---   this ~  flips the layermask
-    //[TitleGroup(S)] public Vector3 initialVelocity = Vector3.up; // Initial trajectory velocity
     [TitleGroup(S)] public float trajectoryVertDist = 0.25f; // Step distance for the trajectory
     [TitleGroup(S)] public float maxCurveLength = 5; // Max length of the trajectory
+
 
     [TitleGroup(R)] private Rigidbody rB = null;    // Reference to the attached Rigidbody
     [TitleGroup(R)] private LineRenderer lR = null; //Reference to the line renderer to predict trajectory
@@ -46,27 +44,27 @@ public class TrajectoryRenderer : SerializedMonoBehaviour
 
     private void Start()
     {
-        instance = this;
-
         Debug.Log("Dont forget to set your RayCastLayerMask");
 
         lR = this.gameObject.GetComponent<LineRenderer>();
         if (lR == null)
         {
-            Debug.LogWarning("LineRenderer is null, CAREFULL!");
+            lR = this.gameObject.AddComponent<LineRenderer>();
+            Debug.LogWarning("TrajectoryRenderer on " + gameObject.name + ", Added Linerenderer");
         }
 
         rB = this.gameObject.GetComponent<Rigidbody>();
         if (rB == null)
         {
-            Debug.LogWarning("RigidBody is null, CAREFULL!");
+            rB = this.gameObject.AddComponent<Rigidbody>();
+            Debug.LogWarning("TrajectoryRenderer on " + gameObject.name + ", Added Rigidbody");
         }
 
         ShowHitPoint = true;
     }
     private void Update()
     {
-        if(CarController.instance.AutoAlignSurface == AutoAlignSurface.Trajectory) // ehemals ShowTrajectory
+        if(ShowTrajectory) // falls wir das auf mehrere objekte drauftun, sollte der toggle auf dem trajectoryrenderer liegen :), aber die idee die du damit eingebaut hast ist nun dort: Zeile 50 im carController
         {
             Trajectory trajectory = GetTrajectory(this.transform.position, rB.velocity, trajectoryVertDist, maxCurveLength);
             DrawTrajectory(trajectory);

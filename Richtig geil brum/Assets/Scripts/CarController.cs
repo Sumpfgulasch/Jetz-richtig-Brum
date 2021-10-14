@@ -7,6 +7,7 @@ using Sirenix.Serialization;
 using UnityEditor;
 using System.Linq;
 
+[RequireComponent(typeof(Rigidbody), typeof(Trajectory))]
 public class CarController : SerializedMonoBehaviour
 {
     const string G = "General";
@@ -17,15 +18,13 @@ public class CarController : SerializedMonoBehaviour
     const string MP = "MagnetPower";
     const string AA = "AutoAlign";
 
-    public static CarController instance;
-
 
     [TitleGroup(G)] public float maxSteerAngle = 30f;
     [TitleGroup(G)] public float motorForce = 50;
     [TitleGroup(G)] public Vector2 airRollSpeedPitchRoll = Vector2.one;
     [TitleGroup(G),GUIColor(0.5f,0f,0f)] public Vector3 airRollCenterOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
-    [TitleGroup(G)][OdinSerialize] public Vector3 CenterOfMassOffset{get{return centerOfMassOffset;} set{centerOfMassOffset = value; SetCenterOfMass(rB);}}
+    [TitleGroup(G)][OdinSerialize] public Vector3 CenterOfMassOffset{get{return centerOfMassOffset;} set{centerOfMassOffset = value; SetCenterOfMass(rB, true);}}
     [TitleGroup(G)] public float maxSpeed = 20f;        // NOT PROPERLY USED; only for audio
 
 
@@ -43,14 +42,24 @@ public class CarController : SerializedMonoBehaviour
         get 
         {
             return autoAlignSurface;
-        } 
-        set 
-        { 
-            autoAlignSurface = value; 
-            if (value != AutoAlignSurface.Trajectory) 
+        }
+        set
+        {
+            autoAlignSurface = value;
+
+            if (trajectoryRenderer != null) // wenn ein trajectoryrenderer assinged ist
             {
-                TrajectoryRenderer.instance.ClearTrajectory(); 
-            } 
+                if (value != AutoAlignSurface.Trajectory) // wenn der AutoalignSurface bool umgeschaltet wird und nicht auf Trajectory steht
+                {
+                    trajectoryRenderer.ShowTrajectory = false; // schalte im trajectory das updaten aus
+                    trajectoryRenderer.ClearTrajectory(); // loesche den bestehenden Trajectory im linerendeerer
+                }
+            
+                else if (value == AutoAlignSurface.Trajectory) // wenn der AutoalignSurface bool umgeschaltet wird und auf Trajectory steht
+                {
+                    trajectoryRenderer.ShowTrajectory = true; // schalte im trajectory das updaten an
+                }
+            }
         } 
     }
     [TitleGroup(AA)] public RotationMethod autoAlignMethod = RotationMethod.TorqueAndBrake;
@@ -79,10 +88,12 @@ public class CarController : SerializedMonoBehaviour
 
     [TitleGroup(R)] public Wheel frontWheelR, frontWheelL, backWheelR, backWheelL;
     [TitleGroup(R)] public Wheel[] Wheels {get{return new Wheel[4]{frontWheelR,frontWheelL,backWheelR,backWheelL};}}
+    [TitleGroup(R), Required] public TrajectoryRenderer trajectoryRenderer = null;
     [TitleGroup(R), HideInInspector] public float thrustValue;
     [TitleGroup(R)] private Vector2 steerValue;
     [TitleGroup(R)] private Vector2 lowRideValue;
     [TitleGroup(R)] private Rigidbody rB;
+    [TitleGroup(R)] public Rigidbody RB { get { return rB; } }
     [TitleGroup(R)] private bool shouldAutoAlign = true;
     [TitleGroup(R), ShowInInspector] private float inAirTime = 0f;
     [TitleGroup(R), ShowInInspector] private bool wheelsOut = false;
@@ -118,9 +129,20 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(MP)] private float targetSurfaceDistance;
 
 
-    void Start() {
-        instance = this;
+    void Start() 
+    {
+        trajectoryRenderer = this.GetComponent<TrajectoryRenderer>();
+        if (trajectoryRenderer == null)
+        {
+            trajectoryRenderer = this.gameObject.AddComponent<TrajectoryRenderer>();
+        }
+
         rB = this.GetComponent<Rigidbody>();
+        if (rB == null)
+        {
+            rB = this.gameObject.AddComponent<Rigidbody>();
+        }
+
         InitSuspensionDistance();   
         SetCenterOfMass(rB);
     }
@@ -149,11 +171,14 @@ public class CarController : SerializedMonoBehaviour
 
     // ----------------------------------------- Setup -----------------------------------------
 
-    private void SetCenterOfMass(Rigidbody _rb)
+    private void SetCenterOfMass(Rigidbody _rb, bool _setWhileEditor = false)
     {
-        if(_rb == null)
+        if(_rb == null )
         {
-            Debug.LogWarning("Rigidbody ist null - es gibt keinen auf diesem Auto");
+            if (_setWhileEditor == false) // quick hack to use this command in serialisation, without losing the ability to get the logwarning if it fails on runtime.
+            { 
+                Debug.LogWarning("Rigidbody ist null - es gibt keinen auf diesem Auto");
+            }
             return;
         }
         _rb.centerOfMass =  centerOfMassOffset;
@@ -608,10 +633,6 @@ public enum WheelOffsetModes{
     TargetPosition,
     SuspensionDistance
 }
-//public enum AirControllTypes{     // Gibt fast das gleiche als "RotationMethod" :-)
-//    PureRotation,
-//    PhysicsRotation
-//}
 
 public enum RotationMethod
 {

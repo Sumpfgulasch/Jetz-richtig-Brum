@@ -9,13 +9,6 @@ public class AudioManager : MonoBehaviour
     public HelmController engineController1;
     public int engine1Note = 36;        // Midi-value (36 = C1) [0-127]
 
-    [Header("References")]
-    public Rigidbody rb;
-
-
-
-
-
 
     IEnumerator Start()
     {
@@ -29,8 +22,8 @@ public class AudioManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float velocity = rb.velocity.magnitude;
-        float targetValue = Mathf.Clamp01(velocity.Remap(0, CarController.instance.maxSpeed, 0, 1f));
+        float velocity = SceneObjectManager.Instance.carController.RB.velocity.magnitude;
+        float targetValue = Mathf.Clamp01(velocity.Remap(0, SceneObjectManager.Instance.carController.maxSpeed, 0, 1f));
         //float targetValue = Mathf.Abs(CarController.instance.thrustValue);
 
         ControlPitchByParameter(engineController1, targetValue);
