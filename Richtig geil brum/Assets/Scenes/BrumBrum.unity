@@ -2153,7 +2153,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 1392206433}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -2469,34 +2469,6 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!83 &1392206433
-AudioClip:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: helm
-  m_LoadType: 0
-  m_Channels: 1
-  m_Frequency: 48000
-  m_BitsPerSample: 32
-  m_Length: 0
-  m_IsTrackerFormat: 0
-  m_Ambisonic: 0
-  m_SubsoundIndex: 0
-  m_PreloadAudioData: 1
-  m_LoadInBackground: 0
-  m_Legacy3D: 0
-  m_Resource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_CompressionFormat: 0
-  m_EditorResource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_EditorCompressionFormat: 0
 --- !u!114 &1474740488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2533,6 +2505,9 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
+    - Name: AutoAlignSurface
+      Entry: 3
+      Data: 0
     - Name: autoAlign_setRotationSpeed
       Entry: 4
       Data: 0.02
@@ -2542,7 +2517,7 @@ MonoBehaviour:
   airRollCenterOffset: {x: 0, y: 0.6, z: 0}
   maxSpeed: 10
   magnetPowerForce: 40
-  magnetPowerButtonMode: 1
+  magnetPowerButtonMode: 0
   magnetPowerAutoBrake: 1
   magnetPowerBrakeFactor: 0.98
   magnetPowerDistanceCurve:
@@ -2578,8 +2553,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  autoalignCarInAir: 1
-  autoAlignSurface: 0
+  autoalignCarInAir: 0
   autoAlignMethod: 0
   autoAlignTorqueForce: 15
   autoAlignBrakeCurve:
@@ -2643,8 +2617,8 @@ MonoBehaviour:
   propulsionMethod: 2
   steeringMethod: 0
   wheelOffsetMode: 1
-  airControllType: 1
   inAirCarControl: 1
+  airControllType: 0
   stopAutoaligningAfterInAirControl: 0
   simplifyLowRide: 0
   allignStickToView: 0
@@ -3594,7 +3568,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.0024468303
+        value: 0.07651563
         inSlope: 0
         outSlope: 0
         tangentMode: 0

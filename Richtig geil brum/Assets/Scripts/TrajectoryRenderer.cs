@@ -12,6 +12,8 @@ public class TrajectoryRenderer : SerializedMonoBehaviour
     const string D = "Debug";
     const string R = "References";
 
+    public static TrajectoryRenderer instance;
+
     [TitleGroup(S)] public LayerMask rayCastLayerMask = ~ 0; // sets layermask to everything on default ---   this ~  flips the layermask
     //[TitleGroup(S)] public Vector3 initialVelocity = Vector3.up; // Initial trajectory velocity
     [TitleGroup(S)] public float trajectoryVertDist = 0.25f; // Step distance for the trajectory
@@ -44,6 +46,8 @@ public class TrajectoryRenderer : SerializedMonoBehaviour
 
     private void Start()
     {
+        instance = this;
+
         Debug.Log("Dont forget to set your RayCastLayerMask");
 
         lR = this.gameObject.GetComponent<LineRenderer>();
@@ -62,7 +66,7 @@ public class TrajectoryRenderer : SerializedMonoBehaviour
     }
     private void Update()
     {
-        if(ShowTrajectory)
+        if(CarController.instance.AutoAlignSurface == AutoAlignSurface.Trajectory) // ehemals ShowTrajectory
         {
             Trajectory trajectory = GetTrajectory(this.transform.position, rB.velocity, trajectoryVertDist, maxCurveLength);
             DrawTrajectory(trajectory);
@@ -99,7 +103,7 @@ public class TrajectoryRenderer : SerializedMonoBehaviour
             RaycastHit hit;
             Ray ray = new Ray(currentPosition, currentVelocity.normalized);
 
-
+            int counter = 0;
             // Die while schleife kann alles zum abstuerzen bringen... hee hee... ja -  kacke, aber koennen wir later fixen.
             while (!Physics.Raycast(ray, out hit, trajectoryVertDist, rayCastLayerMask) && Vector3.Distance(_initialPosition, currentPosition) < maxCurveLength)  // Loop until hit something or distance is too great
             {
@@ -111,6 +115,14 @@ public class TrajectoryRenderer : SerializedMonoBehaviour
                 curvePoints.Add(currentPosition);   // Add point to the trajectory
 
                 ray = new Ray(currentPosition, currentVelocity.normalized); // Create new ray
+
+                // hot fix gegen Abstürze
+                counter++;
+                if (counter >= 200)
+                {
+                    Debug.Log("STOP TRAJECTORY; mehr als 200 raycasts.");
+                    break;
+                }
             }
 
 
@@ -154,7 +166,7 @@ public class TrajectoryRenderer : SerializedMonoBehaviour
     }
 
 
-    private void ClearTrajectory() // Clears LinePositions
+    public void ClearTrajectory() // Clears LinePositions
     {
         if (lR != null)
         {
