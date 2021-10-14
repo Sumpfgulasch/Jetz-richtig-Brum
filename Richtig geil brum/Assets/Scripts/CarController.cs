@@ -26,36 +26,45 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(G),GUIColor(0.5f,0f,0f)] public Vector3 airRollCenterOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)][OdinSerialize] public Vector3 CenterOfMassOffset{get{return centerOfMassOffset;} set{centerOfMassOffset = value; SetCenterOfMass(rB);}}
-    [TitleGroup(G)] public float maxSpeed = 20f;        // NOT USED YET
+    [TitleGroup(G)] public float maxSpeed = 20f;        // NOT PROPERLY USED; only for audio
 
 
     [TitleGroup(MP)] public int magnetPowerForce = 30;
     [TitleGroup(MP)] public ButtonMode magnetPowerButtonMode = ButtonMode.DeAndActivate;
     [TitleGroup(MP), Tooltip("Brake when magnetPower is active and the player doesn't accalerate")] public bool magnetPowerAutoBrake = true;
     [TitleGroup(MP), Range(0, 1f), ShowIf("magnetPowerAutoBrake")] public float magnetPowerBrakeFactor = 0.9f;
-    //[TitleGroup(MP)] public float magnetPowerMaxDistance = 2f;
     [TitleGroup(MP)] public AnimationCurve magnetPowerDistanceCurve;
 
 
     [TitleGroup(AA)] public bool autoalignCarInAir = true;
-    [TitleGroup(AA)] public AutoAlignSurface autoAlignSurface = AutoAlignSurface.LowerSurface;
-    //[TitleGroup(AA), ShowIf("autoalignCarInAir")] public bool autoalignToSurface = true;
-    [TitleGroup(AA)] public AutoAlignMethod autoAlignMethod = AutoAlignMethod.TorqueAndBrake;
+    [TitleGroup(AA)] private AutoAlignSurface autoAlignSurface = AutoAlignSurface.Trajectory;
+    [TitleGroup(AA)] [OdinSerialize] public AutoAlignSurface AutoAlignSurface 
+    { 
+        get 
+        {
+            return autoAlignSurface;
+        } 
+        set 
+        { 
+            autoAlignSurface = value; 
+            if (value != AutoAlignSurface.Trajectory) 
+            {
+                TrajectoryRenderer.instance.ClearTrajectory(); 
+            } 
+        } 
+    }
+    [TitleGroup(AA)] public RotationMethod autoAlignMethod = RotationMethod.TorqueAndBrake;
     [TitleGroup(AA)] public int autoAlignTorqueForce = 10;
-    //[TitleGroup(MP)] public AnimationCurve autoAlignTorqueCurve;            // unused
     [TitleGroup(AA), Tooltip("Used to reduce the angular velocity when the car is aligned")] public AnimationCurve autoAlignBrakeCurve;
-    [TitleGroup(AA)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir"), ShowIf("autoAlignMethod", AutoAlignMethod.SetRotation)] public float autoAlign_setRotationSpeed = 0.02f;
-    //[TitleGroup(AA)][OdinSerialize, ShowIf("autoAlignToSurfaceBool")] public float autoAlignMaxDistance = 10f;
+    [TitleGroup(AA)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir"), ShowIf("autoAlignMethod", RotationMethod.SetRotation)] public float autoAlign_setRotationSpeed = 0.02f;
     [TitleGroup(AA)] public AnimationCurve autoAlignDistanceCurve;
     
 
     [TitleGroup(M)] public PropulsionMethods propulsionMethod = PropulsionMethods.FrontDrive;
     [TitleGroup(M)] public SteeringMethods steeringMethod = SteeringMethods.FrontSteer;
     [TitleGroup(M)] public WheelOffsetModes wheelOffsetMode = WheelOffsetModes.SuspensionDistance;
-    [TitleGroup(M),ShowIf("inAirCarControl")] public AirControllTypes airControllType = AirControllTypes.PureRotation;
-
-
     [TitleGroup(M)] public bool inAirCarControl = false;
+    [TitleGroup(M),ShowIf("inAirCarControl")] public RotationMethod airControllType = RotationMethod.TorqueAndBrake;
     [TitleGroup(M), ShowIf("inAirCarControl")] public bool stopAutoaligningAfterInAirControl = true;
     [TitleGroup(M)] public bool simplifyLowRide = false;
     [TitleGroup(M)] public bool allignStickToView = false;
@@ -241,13 +250,13 @@ public class CarController : SerializedMonoBehaviour
 
             switch(airControllType)
             {
-                case AirControllTypes.PureRotation:
+                case RotationMethod.SetRotation:
                 {
                     //rotate around the cars position --- around the inputAxis(which is rotated by the cars rotation) (meaning its now in local space) ---  with the inputspeed * a fixed multiplier
                     this.transform.RotateAround(this.transform.position,this.transform.rotation * inputNormal, airRollSpeed * _steeringAngle.magnitude); // direct control
                     break;
                 }
-                case AirControllTypes.PhysicsRotation:
+                case RotationMethod.TorqueAndBrake:
                 {
                     // gib torque entlang der input axis (world space)
                     rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y,0f,-_steeringAngle.x).normalized * airRollSpeed * 100f, ForceMode.Acceleration); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
@@ -370,7 +379,7 @@ public class CarController : SerializedMonoBehaviour
             RaycastHit hit;
 
             // Decide to which surface the car should align
-            switch (autoAlignSurface)
+            switch (AutoAlignSurface)
             {
                 case AutoAlignSurface.LowerSurface:
                     {
@@ -383,7 +392,7 @@ public class CarController : SerializedMonoBehaviour
                         }
                         break;
                     }
-                case AutoAlignSurface.ProjectoryCurve:
+                case AutoAlignSurface.Trajectory:
                     {
                         // TO BE DONE
                         break;
@@ -400,14 +409,14 @@ public class CarController : SerializedMonoBehaviour
             switch (autoAlignMethod)
             {
                 // V1: Set Rotation
-                case AutoAlignMethod.SetRotation:
+                case RotationMethod.SetRotation:
                     {
                         rB.rotation = Quaternion.Slerp(rB.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via RB
                         //this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via transform
                         break;
                     }
                 // V2: AddTorque & brake
-                case AutoAlignMethod.TorqueAndBrake:
+                case RotationMethod.TorqueAndBrake:
                     {
                         // Distance factor
                         float distanceFactor = Mathf.Clamp01(autoAlignDistanceCurve.Evaluate(targetSurfaceDistance));
@@ -542,7 +551,7 @@ public class CarController : SerializedMonoBehaviour
         }
 
         // Button mode #2: Pressed
-        else if (magnetPowerButtonMode == ButtonMode.hold)
+        else if (magnetPowerButtonMode == ButtonMode.Hold)
         {
             if (inputValue.isPressed)
             {
@@ -599,12 +608,12 @@ public enum WheelOffsetModes{
     TargetPosition,
     SuspensionDistance
 }
-public enum AirControllTypes{
-    PureRotation,
-    PhysicsRotation
-}
+//public enum AirControllTypes{     // Gibt fast das gleiche als "RotationMethod" :-)
+//    PureRotation,
+//    PhysicsRotation
+//}
 
-public enum AutoAlignMethod
+public enum RotationMethod
 {
     TorqueAndBrake,
     SetRotation
@@ -613,14 +622,14 @@ public enum AutoAlignMethod
 public enum ButtonMode
 {
     DeAndActivate,          // press once to de- or activate
-    hold                 // hold to perform an action
+    Hold                    // hold to perform an action
 }
 
 public enum AutoAlignSurface
 {
     LowerSurface,
     WorldUp,
-    ProjectoryCurve
+    Trajectory
 }
 
 
