@@ -68,7 +68,7 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(AA), Tooltip("Used to reduce the angular velocity when the car is aligned")] public AnimationCurve autoAlignBrakeCurve;
     [TitleGroup(AA)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir"), ShowIf("autoAlignMethod", RotationMethod.SetRotation)] public float autoAlign_setRotationSpeed = 0.02f;
     [TitleGroup(AA)] public AnimationCurve autoAlignDistanceCurve;
-    [TitleGroup(AA), ShowIf("autoAlignSurface", AutoAlignSurface.Trajectory)] public AnimationCurve trajectorySpeedLerpCurve;
+    //[TitleGroup(AA), ShowIf("autoAlignSurface", AutoAlignSurface.Trajectory)] public AnimationCurve trajectorySpeedLerpCurve;
     [TitleGroup(AA)] public float inAirControlForce = 15f;
     [TitleGroup(AA), Range(0,1f)] public float inAirAngularBrakeFactor = 0.97f;
     
@@ -304,16 +304,24 @@ public class CarController : SerializedMonoBehaviour
                 case RotationMethod.Physics:
                     {
                         // gib torque entlang der input axis (world space)
-                        //rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y, 0f, -_steeringAngle.x).normalized * airRollSpeed * 100f, ForceMode.Acceleration); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
+                        rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y, 0f, -_steeringAngle.x).normalized * airRollSpeed * 100f, ForceMode.Acceleration); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
+                        
+                        // Sorry für Auskommentieren! Ist das gleiche wie deins! Find ich nur schöner zu lesen :-D. Und ich raff deine rotation-Rechnung nicht kannst du mir das erklären
 
                         var localTorqueAxis = new Vector3(_steeringAngle.y, _steeringAngle.x, 0);
                         var globalTorqueAxis = transform.TransformVector(localTorqueAxis);
                         rB.AddTorque(globalTorqueAxis * inAirControlForce, ForceMode.Acceleration);
 
+                        // wird jetz 3 mal im ganzen script berechnet aber egal :-)
+                        RaycastHit hit;
+                        if (Physics.Raycast(transform.position, transform.up, out hit))
+                        {
+                            //Vector3.Cross
+
+                            // HIER WEITERMACHEN
+                        }
+
                         ClampAngularVelocity(maxAngularVelocity);
-
-                        // HIER WEITER
-
                         break;
                     }
             }
@@ -457,7 +465,7 @@ public class CarController : SerializedMonoBehaviour
 
                         if (trajectoryRenderer.trajectory.HasHit)
                         {
-                            if (drivingStateInfo == DrivingState.InAir || lowRideValue != Vector2.zero)
+                            if (drivingStateInfo == DrivingState.InAir || lowRideValue != Vector2.zero || rB.velocity.magnitude < 3.5f)
                             {
                                 targetNormal = trajectoryRenderer.trajectory.HitNormal;
                                 targetSurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
