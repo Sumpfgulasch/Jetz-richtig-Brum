@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine.VFX;
 
 public class SceneObjectManager : SerializedMonoBehaviour
 {
@@ -49,6 +50,7 @@ public class SceneObjectManager : SerializedMonoBehaviour
 
     //the tag "required" shows a warning if something is missing in the inspector.
     [Required] public CarController carController = null; 
+    [Required] public VisualEffectAsset wheelSmokeVisualEffectAsset; 
 
 
     private void Start() // Add all variables here, to log quickly if something is missing
