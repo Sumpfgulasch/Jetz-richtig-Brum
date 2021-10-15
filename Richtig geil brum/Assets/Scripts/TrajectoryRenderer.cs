@@ -40,6 +40,8 @@ public class TrajectoryRenderer : SerializedMonoBehaviour
     }
     [TitleGroup(D)] public GameObject hitPointGO = null;
 
+    [TitleGroup(R), HideInInspector] public Trajectory trajectory;
+
 
 
     private void Start()
@@ -62,11 +64,11 @@ public class TrajectoryRenderer : SerializedMonoBehaviour
 
         ShowHitPoint = true;
     }
-    private void Update()
+    private void FixedUpdate()
     {
         if(ShowTrajectory) // falls wir das auf mehrere objekte drauftun, sollte der toggle auf dem trajectoryrenderer liegen :), aber die idee die du damit eingebaut hast ist nun dort: Zeile 50 im carController
         {
-            Trajectory trajectory = GetTrajectory(this.transform.position, rB.velocity, trajectoryVertDist, maxCurveLength);
+            trajectory = GetTrajectory(this.transform.position, rB.velocity, trajectoryVertDist, maxCurveLength);
             DrawTrajectory(trajectory);
             if (ShowHitPoint)
             {
@@ -139,7 +141,8 @@ public class TrajectoryRenderer : SerializedMonoBehaviour
         else
         {
             Debug.Log("Velocity.magnitude is 0, cant calculate a trajectory");
-            return null;
+            return new Trajectory(new Vector3[0], false);       // macht die Abfragen in anderen Skripten leichter; sorry wenn das programmier-technisch nicht sauber ist :p
+            //return null;
         }
     }
 

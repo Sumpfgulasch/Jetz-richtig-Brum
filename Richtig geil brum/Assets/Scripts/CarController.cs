@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.InputSystem;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
-using UnityEditor;
+using System.Collections;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Rigidbody), typeof(Trajectory))]
+[RequireComponent(typeof(Rigidbody), typeof(TrajectoryRenderer))]
 public class CarController : SerializedMonoBehaviour
 {
     const string G = "General";
@@ -62,18 +60,24 @@ public class CarController : SerializedMonoBehaviour
             }
         } 
     }
-    [TitleGroup(AA)] public RotationMethod autoAlignMethod = RotationMethod.TorqueAndBrake;
+    [TitleGroup(AA)] public RotationMethod autoAlignMethod = RotationMethod.Physics;
+    [TitleGroup(AA)] public float maxAngularVelocity = 5f;
     [TitleGroup(AA)] public int autoAlignTorqueForce = 10;
+    [TitleGroup(AA), Tooltip("Used to control the amount of torque force. x = 1 heißt dass Auto 100% aligned, x = 0 heißt dass Auto 90° gedreht, x = -1 dass 180° gedreht.")] 
+    public AnimationCurve autoAlignAngleCurve;
     [TitleGroup(AA), Tooltip("Used to reduce the angular velocity when the car is aligned")] public AnimationCurve autoAlignBrakeCurve;
     [TitleGroup(AA)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir"), ShowIf("autoAlignMethod", RotationMethod.SetRotation)] public float autoAlign_setRotationSpeed = 0.02f;
     [TitleGroup(AA)] public AnimationCurve autoAlignDistanceCurve;
+    [TitleGroup(AA), ShowIf("autoAlignSurface", AutoAlignSurface.Trajectory)] public AnimationCurve trajectorySpeedLerpCurve;
+    [TitleGroup(AA)] public float inAirControlForce = 15f;
+    [TitleGroup(AA), Range(0,1f)] public float inAirAngularBrakeFactor = 0.97f;
     
 
     [TitleGroup(M)] public PropulsionMethods propulsionMethod = PropulsionMethods.FrontDrive;
     [TitleGroup(M)] public SteeringMethods steeringMethod = SteeringMethods.FrontSteer;
     [TitleGroup(M)] public WheelOffsetModes wheelOffsetMode = WheelOffsetModes.SuspensionDistance;
     [TitleGroup(M)] public bool inAirCarControl = false;
-    [TitleGroup(M),ShowIf("inAirCarControl")] public RotationMethod airControllType = RotationMethod.TorqueAndBrake;
+    [TitleGroup(M),ShowIf("inAirCarControl")] public RotationMethod airControllType = RotationMethod.Physics;
     [TitleGroup(M), ShowIf("inAirCarControl")] public bool stopAutoaligningAfterInAirControl = true;
     [TitleGroup(M)] public bool simplifyLowRide = false;
     [TitleGroup(M)] public bool allignStickToView = false;
@@ -98,26 +102,29 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(R), ShowInInspector] private float inAirTime = 0f;
     [TitleGroup(R), ShowInInspector] private bool wheelsOut = false;
     [TitleGroup(R)] [ShowInInspector] public DrivingState drivingStateInfo {
-            get
+        get
+        {
+            if (Wheels != null)
             {
-                if(Wheels != null)
+                if (!Wheels.Contains(null))
                 {
-                    if(!Wheels.Contains(null))
+                    //int groundedWheels = 0;
+                    foreach (Wheel wheel in Wheels)
                     {
-                        foreach (Wheel wheel in Wheels)
+                        WheelHit hit;
+                        if (wheel.wheelCollider.GetGroundHit(out hit))
                         {
-                            WheelHit hit;
-                            if(wheel.wheelCollider.GetGroundHit(out hit))
-                            {
-                                return DrivingState.Grounded;
-                            }
+                            //groundedWheels++;
+                            return DrivingState.Grounded;
                         }
-                        return DrivingState.InAir;
                     }
+                    //if (groundedWheels < 2)
+                    return DrivingState.InAir;
                 }
-                return DrivingState.Grounded;
             }
+            return DrivingState.Grounded;
         }
+    }
     [TitleGroup(R)] public Material wheels_defaultMat;
     [TitleGroup(R)] public Material wheels_magnetPowerMat;
     [TitleGroup(R)] public MeshRenderer[] wheelsMeshes;
@@ -158,14 +165,27 @@ public class CarController : SerializedMonoBehaviour
         Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
         LowRide(lowRideValue, minMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus,frontWheelR, frontWheelL, backWheelR, backWheelL);
 
-        // MagnetPower AutoBrakeForce
+        // MagnetPower automatic brake
         if (magnetPowerAutoBrake)
         {
             if (magnetIsActive && thrustValue == 0 && drivingStateInfo != DrivingState.InAir)
             {
-                Brake(rB, magnetPowerBrakeFactor);
+                Brake(magnetPowerBrakeFactor);
             }
         }
+        // InAirControl automatic brake
+        if (inAirCarControl)
+        {
+            if (drivingStateInfo == DrivingState.InAir)
+            {
+                if (steerValue == Vector2.zero && !magnetIsActive)
+                {
+                    // Reduce angular velocity
+                    rB.angularVelocity *= inAirAngularBrakeFactor;
+                }
+            }
+        }
+        
         
     }
 
@@ -259,34 +279,43 @@ public class CarController : SerializedMonoBehaviour
                 inputNormal *= -1f;
             }
 
-            if(inputNormal.magnitude > 0.3f) // wenn gelenkt wurde (0.3f ist dabei der threshold zur erkennung der lenkung in der luft) 
+            if (inputNormal.magnitude > 0.3f) // wenn gelenkt wurde (0.3f ist dabei der threshold zur erkennung der lenkung in der luft) 
             {
                 if (stopAutoaligningAfterInAirControl) // wenn er nicht weiter autoalignen soll, sobald in der luft gelenkt wurde
-                { 
+                {
                     _shouldAutoAlign = false;
                 }
             }
 
             //calculate the rotationspeed for different axis
-            float xAlignmentFactor = Mathf.Abs(Vector3.Dot(inputNormal.normalized,Vector3.right)); //get the alignment factor of the input and the axis by dotting    -   absolute to incorporate left and right as a range between 0 and 1
-            float yAlignmentFactor = Mathf.Abs(Vector3.Dot(inputNormal.normalized,Vector3.forward)); //get the alignment factor of the input and the axis by dotting    -   absolute to incorporate top and bottom as a range between 0 and 1
+            float xAlignmentFactor = Mathf.Abs(Vector3.Dot(inputNormal.normalized, Vector3.right)); //get the alignment factor of the input and the axis by dotting    -   absolute to incorporate left and right as a range between 0 and 1
+            float yAlignmentFactor = Mathf.Abs(Vector3.Dot(inputNormal.normalized, Vector3.forward)); //get the alignment factor of the input and the axis by dotting    -   absolute to incorporate top and bottom as a range between 0 and 1
 
             float airRollSpeed = xAlignmentFactor * airRollSpeedPitchRoll.x + yAlignmentFactor * airRollSpeedPitchRoll.y;
 
-            switch(airControllType)
+            switch (airControllType)
             {
                 case RotationMethod.SetRotation:
-                {
-                    //rotate around the cars position --- around the inputAxis(which is rotated by the cars rotation) (meaning its now in local space) ---  with the inputspeed * a fixed multiplier
-                    this.transform.RotateAround(this.transform.position,this.transform.rotation * inputNormal, airRollSpeed * _steeringAngle.magnitude); // direct control
-                    break;
-                }
-                case RotationMethod.TorqueAndBrake:
-                {
-                    // gib torque entlang der input axis (world space)
-                    rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y,0f,-_steeringAngle.x).normalized * airRollSpeed * 100f, ForceMode.Acceleration); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
-                    break;
-                }
+                    {
+                        //rotate around the cars position --- around the inputAxis(which is rotated by the cars rotation) (meaning its now in local space) ---  with the inputspeed * a fixed multiplier
+                        this.transform.RotateAround(this.transform.position, this.transform.rotation * inputNormal, airRollSpeed * _steeringAngle.magnitude); // direct control
+                        break;
+                    }
+                case RotationMethod.Physics:
+                    {
+                        // gib torque entlang der input axis (world space)
+                        //rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y, 0f, -_steeringAngle.x).normalized * airRollSpeed * 100f, ForceMode.Acceleration); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
+
+                        var localTorqueAxis = new Vector3(_steeringAngle.y, _steeringAngle.x, 0);
+                        var globalTorqueAxis = transform.TransformVector(localTorqueAxis);
+                        rB.AddTorque(globalTorqueAxis * inAirControlForce, ForceMode.Acceleration);
+
+                        ClampAngularVelocity(maxAngularVelocity);
+
+                        // HIER WEITER
+
+                        break;
+                    }
             }
 
 
@@ -419,7 +448,21 @@ public class CarController : SerializedMonoBehaviour
                     }
                 case AutoAlignSurface.Trajectory:
                     {
-                        // TO BE DONE
+                        // Ggf. nötig: Hit unter Auto
+                        if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
+                        {
+                            targetNormal = hit.normal;
+                            targetSurfaceDistance = (hit.point - transform.position).magnitude;
+                        }
+
+                        if (trajectoryRenderer.trajectory.HasHit)
+                        {
+                            if (drivingStateInfo == DrivingState.InAir || lowRideValue != Vector2.zero)
+                            {
+                                targetNormal = trajectoryRenderer.trajectory.HitNormal;
+                                targetSurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
+                            }
+                        }
                         break;
                     }
             }
@@ -436,24 +479,13 @@ public class CarController : SerializedMonoBehaviour
                 // V1: Set Rotation
                 case RotationMethod.SetRotation:
                     {
-                        rB.rotation = Quaternion.Slerp(rB.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via RB
-                        //this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetQuaternion, _autoalignCarInAirSpeed); // set the rotation via transform
+                        rB.rotation = Quaternion.Slerp(rB.rotation, targetQuaternion, _autoalignCarInAirSpeed);
                         break;
                     }
                 // V2: AddTorque & brake
-                case RotationMethod.TorqueAndBrake:
+                case RotationMethod.Physics:
                     {
-                        // Distance factor
-                        float distanceFactor = Mathf.Clamp01(autoAlignDistanceCurve.Evaluate(targetSurfaceDistance));
-
-                        // 1. Add torque
-                        Vector3 torqueAxis = Vector3.Cross(transform.up, targetNormal);               // Ziel-Rotations-Achse für AddTorque: das Kreuz-Produkt von up-Vektor und Boden-Normale; wenn sich die beiden input-vektoren richtungsmäßig nicht unterscheiden, ist der Cross-Vektor gleich 0 (und die resultierende Beschleunigung auch)
-                        rB.AddTorque(torqueAxis * autoAlignTorqueForce * distanceFactor, ForceMode.Acceleration);
-                        // 2. Brake
-                        float dotProduct = Mathf.Clamp01(Vector3.Dot(transform.up, targetNormal));    // Dotproduct für Winkeldifferenz zwischen Auto-up-Vector und Boden-Normale
-                        float speedMultiplier = autoAlignBrakeCurve.Evaluate(dotProduct);             // Wert zwischen 0-1
-                        //rB.angularVelocity *= speedMultiplier * (1-distanceFactor);                   // Wenn keine Winkeldifferenz, dann angularVel *= 0; wenn Winkeldifferenz >= 90°, dann keine Veränderung
-                        rB.angularVelocity *= Mathf.Lerp(1f, speedMultiplier, distanceFactor);
+                        AddTorqueAndBrake(targetNormal, autoAlignTorqueForce, maxAngularVelocity, targetSurfaceDistance, autoAlignDistanceCurve, autoAlignAngleCurve, autoAlignBrakeCurve);
                         break;
                     }
             }
@@ -464,9 +496,41 @@ public class CarController : SerializedMonoBehaviour
         #endregion
     }
 
-    private void Brake(Rigidbody rigid, float factor)
+    /// <summary>
+    /// Reduce velocity of the rigidbody.
+    /// </summary>
+    /// <param name="rigid"></param>
+    /// <param name="factor"></param>
+    private void Brake(float factor)
     {
-        rigid.velocity *= factor;
+        rB.velocity *= factor;
+    }
+
+    private void ReduceAngularVelocity(float factor)
+    {
+
+    }
+
+    /// <summary>
+    /// Add a torque and brake if target rotation is achieved. Takes into consideration: distance to the targetSurface, angle difference to the targetSurfaceNormal
+    /// </summary>
+    private void AddTorqueAndBrake(Vector3 targetNormal, float torqueForce, float maxTorqueSpeed, float targetSurfaceDistance = 0, AnimationCurve torqueDistanceCurve = null, AnimationCurve torqueAngleCurve = null, AnimationCurve brakeDistanceCurve = null)
+    {
+        float distanceFactor = Mathf.Clamp01(torqueDistanceCurve.Evaluate(targetSurfaceDistance));                  // Wert zwischen 0 und 1; entscheidet ob torque und brake verrechnet wird
+        float angleDotProduct = Vector3.Dot(transform.up, targetNormal);
+
+        // 1. ADD TORQUE
+        Vector3 torqueAxis = Vector3.Cross(transform.up, targetNormal).normalized;                                  // Rotations-Achse = Kreuzprodukt
+        float torqueAngleFactor = torqueAngleCurve.Evaluate(angleDotProduct);                                       // Faktor je nach Übereinstimmung von Zielnormale und transform.up
+        rB.AddTorque(torqueAxis * torqueForce * distanceFactor * torqueAngleFactor, ForceMode.Acceleration);
+
+        // 2. BRAKE                            
+        float velocityDistanceFactor = brakeDistanceCurve.Evaluate(Mathf.Clamp01(angleDotProduct));                 // Wert wird 1, wenn Distanz zu hoch (-> keine Veränderung), 0 wenn Distanz niedrig
+        rB.angularVelocity *= Mathf.Lerp(1f, velocityDistanceFactor, distanceFactor);                               // Wenn keine Winkeldifferenz, dann angularVel *= 0; wenn Winkeldifferenz >= 90°, dann keine Veränderung
+
+        // 3. Max speed
+        ClampAngularVelocity(maxAngularVelocity);
+        
     }
 
     /// <summary>
@@ -482,6 +546,14 @@ public class CarController : SerializedMonoBehaviour
             yield return null;
         }
 
+    }
+
+    private void ClampAngularVelocity(float max)
+    {
+        if (rB.angularVelocity.magnitude > max)
+        {
+            rB.angularVelocity = rB.angularVelocity.normalized * max;
+        }
     }
 
     /// <summary>
@@ -627,7 +699,8 @@ public enum SteeringMethods{
 }
 public enum DrivingState{
     Grounded,
-    InAir
+    InAir,
+    TwoWheelsGrounded
 }
 public enum WheelOffsetModes{
     TargetPosition,
@@ -636,7 +709,7 @@ public enum WheelOffsetModes{
 
 public enum RotationMethod
 {
-    TorqueAndBrake,
+    Physics,
     SetRotation
 }
 
