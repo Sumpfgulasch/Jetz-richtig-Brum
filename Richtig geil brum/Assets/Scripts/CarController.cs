@@ -267,7 +267,7 @@ public class CarController : SerializedMonoBehaviour
         #endregion
 
 
-        #region Steering in Air
+        #region Manual rotation in air
         if(inAirCarControl && drivingStateInfo == DrivingState.InAir) 
         {
             // complex rotation (90deg) of the 2 Dimensional inputVector - used as rotationAxis
@@ -308,7 +308,7 @@ public class CarController : SerializedMonoBehaviour
                         
                         // Sorry für Auskommentieren! Ist das gleiche wie deins! Find ich nur schöner zu lesen :-D. Und ich raff deine rotation-Rechnung nicht kannst du mir das erklären
 
-                        var localTorqueAxis = new Vector3(_steeringAngle.y, _steeringAngle.x, 0);
+                        var localTorqueAxis = new Vector3(-_steeringAngle.y, _steeringAngle.x, 0);
                         var globalTorqueAxis = transform.TransformVector(localTorqueAxis);
                         rB.AddTorque(globalTorqueAxis * inAirControlForce, ForceMode.Acceleration);
 

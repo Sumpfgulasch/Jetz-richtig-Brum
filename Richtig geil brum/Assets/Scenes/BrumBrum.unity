@@ -976,7 +976,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 391781414}
-  m_LocalRotation: {x: 0.3469958, y: 1e-45, z: -0, w: 0.9378667}
+  m_LocalRotation: {x: 0.3469958, y: -3e-45, z: 1e-45, w: 0.9378667}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1670,7 +1670,7 @@ WheelCollider:
     targetPosition: 0.5
   m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
-  m_Mass: 800
+  m_Mass: 100
   m_WheelDampingRate: 35
   m_ForwardFriction:
     m_ExtremumSlip: 0.2
@@ -2747,7 +2747,7 @@ WheelCollider:
     targetPosition: 0.5
   m_SuspensionDistance: 2.36
   m_ForceAppPointDistance: 0
-  m_Mass: 800
+  m_Mass: 100
   m_WheelDampingRate: 35
   m_ForwardFriction:
     m_ExtremumSlip: 0.2
@@ -2858,7 +2858,7 @@ WheelCollider:
     targetPosition: 0.5
   m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
-  m_Mass: 800
+  m_Mass: 100
   m_WheelDampingRate: 35
   m_ForwardFriction:
     m_ExtremumSlip: 0.2
@@ -2996,7 +2996,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 1590152703}
+  m_audioClip: {fileID: 1455977096}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -3330,6 +3330,34 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 5a39e7d63a1d8694c86906ca0282059d, type: 2}
+--- !u!83 &1455977096
+AudioClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: helm
+  m_LoadType: 0
+  m_Channels: 1
+  m_Frequency: 48000
+  m_BitsPerSample: 32
+  m_Length: 0
+  m_IsTrackerFormat: 0
+  m_Ambisonic: 0
+  m_SubsoundIndex: 0
+  m_PreloadAudioData: 1
+  m_LoadInBackground: 0
+  m_Legacy3D: 0
+  m_Resource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_CompressionFormat: 0
+  m_EditorResource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_EditorCompressionFormat: 0
 --- !u!1 &1459184517
 GameObject:
   m_ObjectHideFlags: 0
@@ -3464,7 +3492,7 @@ MonoBehaviour:
       Data: 
     - Name: AutoAlignSurface
       Entry: 3
-      Data: 0
+      Data: 2
     - Name: autoAlign_setRotationSpeed
       Entry: 4
       Data: 0.02
@@ -3610,7 +3638,7 @@ MonoBehaviour:
   propulsionMethod: 2
   steeringMethod: 0
   wheelOffsetMode: 1
-  inAirCarControl: 0
+  inAirCarControl: 1
   airControllType: 0
   stopAutoaligningAfterInAirControl: 0
   simplifyLowRide: 0
@@ -4038,34 +4066,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -4547275468834853542, guid: 0cbfbecf8c61dc7498e26f9a75f3461c, type: 3}
---- !u!83 &1590152703
-AudioClip:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: helm
-  m_LoadType: 0
-  m_Channels: 1
-  m_Frequency: 48000
-  m_BitsPerSample: 32
-  m_Length: 0
-  m_IsTrackerFormat: 0
-  m_Ambisonic: 0
-  m_SubsoundIndex: 0
-  m_PreloadAudioData: 1
-  m_LoadInBackground: 0
-  m_Legacy3D: 0
-  m_Resource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_CompressionFormat: 0
-  m_EditorResource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_EditorCompressionFormat: 0
 --- !u!1 &1744645320
 GameObject:
   m_ObjectHideFlags: 0
@@ -4274,7 +4274,7 @@ WheelCollider:
     targetPosition: 0.5
   m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
-  m_Mass: 800
+  m_Mass: 100
   m_WheelDampingRate: 35
   m_ForwardFriction:
     m_ExtremumSlip: 0.2
@@ -4386,7 +4386,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1890083707}
-  m_LocalRotation: {x: 0.3639977, y: -0.000000022664214, z: 0.000000008857336, w: 0.9313999}
+  m_LocalRotation: {x: 0.3639977, y: 0.000000022664215, z: -0.000000008857336, w: 0.9313999}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4872,6 +4872,7 @@ GameObject:
   - component: {fileID: 919132148347960410}
   - component: {fileID: 919132148347960412}
   - component: {fileID: 919132148347960414}
+  - component: {fileID: 919132148347960416}
   m_Layer: 6
   m_Name: Auto
   m_TagString: Untagged
@@ -4931,7 +4932,7 @@ MonoBehaviour:
     SerializationNodes:
     - Name: ShowTrajectory
       Entry: 5
-      Data: false
+      Data: true
     - Name: ShowHitPoint
       Entry: 5
       Data: false
@@ -5097,6 +5098,47 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.77826345, z: 0.55507183}
   m_Center: {x: 0, y: 0.7351393, z: -1.4199073}
+--- !u!114 &919132148347960416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148347960407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b679e707ea35048fbb4d8c19a2f37ac3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sampleMode: 1
+  showPosition: 0
+  showPosition_x: 1
+  showPosition_y: 1
+  showPosition_z: 1
+  positionMode: 2
+  positionMin: Infinity
+  positionMax: -Infinity
+  showRotation: 0
+  showRotation_x: 1
+  showRotation_y: 1
+  showRotation_z: 1
+  rotationMode: 0
+  rotationMin: 0
+  rotationMax: 360
+  showVelocity: 1
+  showVelocity_x: 1
+  showVelocity_y: 1
+  showVelocity_z: 1
+  velocityMode: 2
+  velocityMin: Infinity
+  velocityMax: -Infinity
+  showAngularVelocity: 0
+  showAngularVelocity_x: 1
+  showAngularVelocity_y: 1
+  showAngularVelocity_z: 1
+  angularVelocityMode: 2
+  angularVelocityMin: Infinity
+  angularVelocityMax: -Infinity
 --- !u!23 &1062266050902803381
 MeshRenderer:
   m_ObjectHideFlags: 0
