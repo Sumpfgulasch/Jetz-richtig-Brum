@@ -1878,7 +1878,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 813547251}
-  m_LocalRotation: {x: 0.18663867, y: -0.000000016904043, z: 0.000000003211376, w: 0.98242867}
+  m_LocalRotation: {x: 0.18663867, y: 0.000000016904039, z: -0.0000000032113754, w: 0.98242867}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2710,6 +2710,7 @@ GameObject:
   - component: {fileID: 1197219699}
   - component: {fileID: 1197219700}
   - component: {fileID: 1197219701}
+  - component: {fileID: 1197219702}
   m_Layer: 6
   m_Name: Wheel_FR
   m_TagString: WheelFR
@@ -2789,6 +2790,27 @@ MonoBehaviour:
   wheelFrictionSmokeActivationMaximum: 5000
   wheelFrictionSmokeActivationThreshold01: 0.5
   wheelFrictionSmokeParticleAmountRemap: {x: 3, y: 20}
+--- !u!114 &1197219702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197219698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df195b82d4b7c48a6a283b257521efb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  component: {fileID: 1197219701}
+  monitorInputFields:
+  - field:
+    - wheelFriction
+    color: {r: 0.2509804, g: 1, b: 0.53333336, a: 1}
+    fieldTypeName: System.Single
+  mode: 2
+  min: Infinity
+  max: -Infinity
 --- !u!1 &1209376496
 GameObject:
   m_ObjectHideFlags: 0
@@ -2974,7 +2996,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 1827610691}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -4086,34 +4108,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -5624199370966100583, guid: 0cbfbecf8c61dc7498e26f9a75f3461c, type: 3}
---- !u!83 &1827610691
-AudioClip:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: helm
-  m_LoadType: 0
-  m_Channels: 1
-  m_Frequency: 48000
-  m_BitsPerSample: 32
-  m_Length: 0
-  m_IsTrackerFormat: 0
-  m_Ambisonic: 0
-  m_SubsoundIndex: 0
-  m_PreloadAudioData: 1
-  m_LoadInBackground: 0
-  m_Legacy3D: 0
-  m_Resource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_CompressionFormat: 0
-  m_EditorResource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_EditorCompressionFormat: 0
 --- !u!1 &1831576852
 GameObject:
   m_ObjectHideFlags: 0
