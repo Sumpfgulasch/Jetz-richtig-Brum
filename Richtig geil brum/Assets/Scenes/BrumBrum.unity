@@ -2996,7 +2996,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 1674839659}
+  m_audioClip: {fileID: 1590152703}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -4038,7 +4038,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -4547275468834853542, guid: 0cbfbecf8c61dc7498e26f9a75f3461c, type: 3}
---- !u!83 &1674839659
+--- !u!83 &1590152703
 AudioClip:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4386,7 +4386,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1890083707}
-  m_LocalRotation: {x: 0.3639977, y: 0.000000022664215, z: -0.000000008857336, w: 0.9313999}
+  m_LocalRotation: {x: 0.3639977, y: -0.000000022664214, z: 0.000000008857336, w: 0.9313999}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
