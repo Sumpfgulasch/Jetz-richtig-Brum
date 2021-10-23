@@ -61,6 +61,20 @@
                 },
                 "m_SlotId": 1
             }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "c52d1e79ac9247cdb771a5255227d76d"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "cdc413e231ac422a91f2580fa4c4438e"
+                },
+                "m_SlotId": 0
+            }
         }
     ],
     "m_VertexContext": {
@@ -644,7 +658,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
     "m_ObjectId": "ddd4b9571b8c47a5aeb7263f87e1439c",
     "m_Id": 0,
-    "m_DisplayName": "Base (RGB)",
+    "m_DisplayName": "_MainTex",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -659,10 +673,10 @@
     "m_Guid": {
         "m_GuidSerialized": "f468c28f-1a9e-491d-ac28-facf37c016df"
     },
-    "m_Name": "Base (RGB)",
+    "m_Name": "_MainTex",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Base (RGB)",
-    "m_DefaultReferenceName": "Base_RGB",
+    "m_RefNameGeneratedByDisplayName": "_MainTex",
+    "m_DefaultReferenceName": "_MainTex",
     "m_OverrideReferenceName": "_MainTex",
     "m_GeneratePropertyBlock": true,
     "m_Precision": 0,
