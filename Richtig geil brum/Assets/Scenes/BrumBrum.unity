@@ -2996,7 +2996,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 1455977096}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -3330,34 +3330,6 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 5a39e7d63a1d8694c86906ca0282059d, type: 2}
---- !u!83 &1455977096
-AudioClip:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: helm
-  m_LoadType: 0
-  m_Channels: 1
-  m_Frequency: 48000
-  m_BitsPerSample: 32
-  m_Length: 0
-  m_IsTrackerFormat: 0
-  m_Ambisonic: 0
-  m_SubsoundIndex: 0
-  m_PreloadAudioData: 1
-  m_LoadInBackground: 0
-  m_Legacy3D: 0
-  m_Resource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_CompressionFormat: 0
-  m_EditorResource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_EditorCompressionFormat: 0
 --- !u!1 &1459184517
 GameObject:
   m_ObjectHideFlags: 0
@@ -3492,7 +3464,7 @@ MonoBehaviour:
       Data: 
     - Name: AutoAlignSurface
       Entry: 3
-      Data: 2
+      Data: 1
     - Name: autoAlign_setRotationSpeed
       Entry: 4
       Data: 0.02
@@ -3500,8 +3472,9 @@ MonoBehaviour:
   motorForce: 2500
   airRollSpeedPitchRoll: {x: 0.1, y: 0.1}
   airRollCenterOffset: {x: 0, y: 0.6, z: 0}
-  maxSpeed: 10
-  magnetPowerForce: 40
+  maxSpeed: 20
+  magnetPowerAcceleration: 40
+  magnetPowerMaxVelocity: 100
   magnetPowerButtonMode: 0
   magnetPowerAutoBrake: 1
   magnetPowerBrakeFactor: 0.98
@@ -3638,7 +3611,7 @@ MonoBehaviour:
   propulsionMethod: 2
   steeringMethod: 0
   wheelOffsetMode: 1
-  inAirCarControl: 1
+  inAirCarControl: 0
   airControllType: 0
   stopAutoaligningAfterInAirControl: 0
   simplifyLowRide: 0
@@ -3694,6 +3667,7 @@ MonoBehaviour:
   - {fileID: 8413858477394859538}
   - {fileID: 4954010889365288044}
   showDebugHandles: 1
+  rB_velocity: 0
 --- !u!114 &1474740489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5107,38 +5081,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 919132148347960407}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b679e707ea35048fbb4d8c19a2f37ac3, type: 3}
+  m_Script: {fileID: 11500000, guid: df195b82d4b7c48a6a283b257521efb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sampleMode: 1
-  showPosition: 0
-  showPosition_x: 1
-  showPosition_y: 1
-  showPosition_z: 1
-  positionMode: 2
-  positionMin: Infinity
-  positionMax: -Infinity
-  showRotation: 0
-  showRotation_x: 1
-  showRotation_y: 1
-  showRotation_z: 1
-  rotationMode: 0
-  rotationMin: 0
-  rotationMax: 360
-  showVelocity: 1
-  showVelocity_x: 1
-  showVelocity_y: 1
-  showVelocity_z: 1
-  velocityMode: 2
-  velocityMin: Infinity
-  velocityMax: -Infinity
-  showAngularVelocity: 0
-  showAngularVelocity_x: 1
-  showAngularVelocity_y: 1
-  showAngularVelocity_z: 1
-  angularVelocityMode: 2
-  angularVelocityMin: Infinity
-  angularVelocityMax: -Infinity
+  component: {fileID: 1474740488}
+  monitorInputFields:
+  - field:
+    - rB_velocity
+    color: {r: 0.2509804, g: 1, b: 0.53333336, a: 1}
+    fieldTypeName: System.Single
+  mode: 2
+  min: Infinity
+  max: -Infinity
 --- !u!23 &1062266050902803381
 MeshRenderer:
   m_ObjectHideFlags: 0

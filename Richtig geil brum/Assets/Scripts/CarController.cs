@@ -26,7 +26,8 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(G)] public float maxSpeed = 20f;        // NOT PROPERLY USED; only for audio
 
 
-    [TitleGroup(MP)] public int magnetPowerForce = 30;
+    [TitleGroup(MP)] public int magnetPowerAcceleration = 30;
+    [TitleGroup(MP)] public int magnetPowerMaxVelocity = 30;
     [TitleGroup(MP)] public ButtonMode magnetPowerButtonMode = ButtonMode.DeAndActivate;
     [TitleGroup(MP), Tooltip("Brake when magnetPower is active and the player doesn't accalerate")] public bool magnetPowerAutoBrake = true;
     [TitleGroup(MP), Range(0, 1f), ShowIf("magnetPowerAutoBrake")] public float magnetPowerBrakeFactor = 0.9f;
@@ -135,6 +136,8 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(MP)] private bool magnetIsActive;
     [TitleGroup(MP)] private float targetSurfaceDistance;
 
+    [HideInInspector] public float rB_velocity;
+
 
     void Start() 
     {
@@ -185,8 +188,8 @@ public class CarController : SerializedMonoBehaviour
                 }
             }
         }
-        
-        
+
+        rB_velocity = rB.velocity.magnitude;
     }
 
     // ----------------------------------------- Setup -----------------------------------------
@@ -454,7 +457,7 @@ public class CarController : SerializedMonoBehaviour
                         }
                         break;
                     }
-                case AutoAlignSurface.Trajectory:
+                case AutoAlignSurface.ForwardSurface:
                     {
                         // Ggf. nötig: Hit unter Auto
                         if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
@@ -463,12 +466,35 @@ public class CarController : SerializedMonoBehaviour
                             targetSurfaceDistance = (hit.point - transform.position).magnitude;
                         }
 
+                        if (drivingStateInfo == DrivingState.InAir || lowRideValue != Vector2.zero)
+                        {
+                            if (Physics.Raycast(this.transform.position, this.transform.forward, out hit))
+                            {
+                                // get the normal of the hit
+                                targetNormal = hit.normal;
+                                targetSurfaceDistance = (hit.point - transform.position).magnitude;
+                            }
+                        }
+                        break;
+                    }
+                case AutoAlignSurface.Trajectory:
+                    {
+                        // Ggf. nötig: Hit unter Auto
+                        if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
+                        {
+                            targetNormal = hit.normal;
+                            targetSurfaceDistance = (hit.point - transform.position).magnitude;
+                        }
+                        else
+                            print("NO surface hit below");
+
                         if (trajectoryRenderer.trajectory.HasHit)
                         {
-                            if (drivingStateInfo == DrivingState.InAir || lowRideValue != Vector2.zero || rB.velocity.magnitude < 3.5f)
+                            if (drivingStateInfo == DrivingState.InAir || lowRideValue != Vector2.zero) // rB.velocity.magnitude > 5f || 
                             {
                                 targetNormal = trajectoryRenderer.trajectory.HitNormal;
                                 targetSurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
+                                print("rb.vel > 5: " + (rB.velocity.magnitude > 5f) + ", drivingstate: " + drivingStateInfo + ", lowRide != 0: " + (lowRideValue != Vector2.zero));
                             }
                         }
                         break;
@@ -583,7 +609,8 @@ public class CarController : SerializedMonoBehaviour
         float distanceFactor = Mathf.Clamp01(magnetPowerDistanceCurve.Evaluate(surfaceDistance));
 
         // 3. Add force
-        rB.AddForce(downVector * magnetPowerForce * distanceFactor, ForceMode.Acceleration);
+        rB.AddForce(downVector * magnetPowerAcceleration * distanceFactor, ForceMode.Acceleration);
+        rB.velocity = rB.velocity.normalized * Mathf.Clamp(rB.velocity.magnitude, 0, magnetPowerMaxVelocity);
         //rB.addfo
     }
 
@@ -730,8 +757,8 @@ public enum ButtonMode
 public enum AutoAlignSurface
 {
     LowerSurface,
-    WorldUp,
-    Trajectory
+    Trajectory,
+    ForwardSurface
 }
 
 
