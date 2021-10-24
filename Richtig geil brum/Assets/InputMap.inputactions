@@ -31,7 +31,7 @@
                 },
                 {
                     "name": "ExtendWheels",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "71beb6d0-9a62-486f-a3af-86dcf49fe46d",
                     "expectedControlType": "Button",
                     "processors": "",
@@ -271,8 +271,8 @@
                 },
                 {
                     "name": "",
-                    "id": "154e3438-817e-43b0-996b-749c421b701d",
-                    "path": "<Gamepad>/rightStickPress",
+                    "id": "ab89497e-870b-4abc-a370-81b23b2e190e",
+                    "path": "<Keyboard>/ctrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -282,8 +282,19 @@
                 },
                 {
                     "name": "",
-                    "id": "ab89497e-870b-4abc-a370-81b23b2e190e",
-                    "path": "<Keyboard>/alt",
+                    "id": "8a3dbbe1-1c97-44fc-b2fa-3bd4e4531bc7",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ExtendWheels",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "55b8619a-1bed-41a6-94e4-b85c49d7697f",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -359,12 +370,12 @@
                 },
                 {
                     "name": "",
-                    "id": "c474c685-5f84-418f-88b0-c0ac875af1fa",
+                    "id": "13ca7237-ff66-4a50-ba69-0dedee410d66",
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MagnetPowerToggle",
+                    "action": "MagnetPowerPress",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

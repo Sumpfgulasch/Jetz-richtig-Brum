@@ -784,7 +784,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 391781414}
-  m_LocalRotation: {x: 0.3469958, y: 1e-45, z: -1e-45, w: 0.9378667}
+  m_LocalRotation: {x: 0.3469958, y: 1e-45, z: -0, w: 0.9378667}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1546,6 +1546,34 @@ MonoBehaviour:
   transformationDelay: 0
   followingTransform: {fileID: 543450652267489005}
   cameraFollowType: 1
+--- !u!83 &1074181244
+AudioClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: helm
+  m_LoadType: 0
+  m_Channels: 1
+  m_Frequency: 48000
+  m_BitsPerSample: 32
+  m_Length: 0
+  m_IsTrackerFormat: 0
+  m_Ambisonic: 0
+  m_SubsoundIndex: 0
+  m_PreloadAudioData: 1
+  m_LoadInBackground: 0
+  m_Legacy3D: 0
+  m_Resource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_CompressionFormat: 0
+  m_EditorResource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_EditorCompressionFormat: 0
 --- !u!1 &1114307847
 GameObject:
   m_ObjectHideFlags: 0
@@ -1997,7 +2025,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 1309676766}
+  m_audioClip: {fileID: 1074181244}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -2162,34 +2190,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!83 &1309676766
-AudioClip:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: helm
-  m_LoadType: 0
-  m_Channels: 1
-  m_Frequency: 48000
-  m_BitsPerSample: 32
-  m_Length: 0
-  m_IsTrackerFormat: 0
-  m_Ambisonic: 0
-  m_SubsoundIndex: 0
-  m_PreloadAudioData: 1
-  m_LoadInBackground: 0
-  m_Legacy3D: 0
-  m_Resource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_CompressionFormat: 0
-  m_EditorResource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_EditorCompressionFormat: 0
 --- !u!1 &1325487846
 GameObject:
   m_ObjectHideFlags: 0
@@ -2404,7 +2404,6 @@ MonoBehaviour:
   maxSteerAngle: 30
   motorForce: 2500
   airRollSpeedPitchRoll: {x: 0.1, y: 0.1}
-  airRollCenterOffset: {x: 0, y: 0.6, z: 0}
   maxSpeed: 20
   magnetPowerAcceleration: 40
   magnetPowerMaxVelocity: 100
@@ -2544,7 +2543,7 @@ MonoBehaviour:
   propulsionMethod: 2
   steeringMethod: 0
   wheelOffsetMode: 1
-  inAirCarControl: 0
+  inAirCarControl: 1
   airControllType: 0
   stopAutoaligningAfterInAirControl: 0
   simplifyLowRide: 0
