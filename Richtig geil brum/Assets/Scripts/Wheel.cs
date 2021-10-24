@@ -107,7 +107,7 @@ public class Wheel : SerializedMonoBehaviour
 
                 if (wheelFriction01 > wheelFrictionSmokeActivationThreshold01) // set smoke when Threshold is broken
                 {
-                    Debug.Log("Smoke is activated");
+                    //Debug.Log("Smoke is activated");
                     float power = Mathf.Lerp(wheelFrictionSmokeParticleAmountRemap.x, wheelFrictionSmokeParticleAmountRemap.y, wheelFriction01);
                     wheelSmokeVisualEffect.SetFloat("SpawnrateConstant", power);
                 }

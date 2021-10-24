@@ -20,7 +20,6 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(G)] public float maxSteerAngle = 30f;
     [TitleGroup(G)] public float motorForce = 50;
     [TitleGroup(G)] public Vector2 airRollSpeedPitchRoll = Vector2.one;
-    [TitleGroup(G),GUIColor(0.5f,0f,0f)] public Vector3 airRollCenterOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)][OdinSerialize] public Vector3 CenterOfMassOffset{get{return centerOfMassOffset;} set{centerOfMassOffset = value; SetCenterOfMass(rB, true);}}
     [TitleGroup(G)] public float maxSpeed = 20f;        // NOT PROPERLY USED; only for audio
@@ -28,7 +27,7 @@ public class CarController : SerializedMonoBehaviour
 
     [TitleGroup(MP)] public int magnetPowerAcceleration = 30;
     [TitleGroup(MP)] public int magnetPowerMaxVelocity = 30;
-    [TitleGroup(MP)] public ButtonMode magnetPowerButtonMode = ButtonMode.DeAndActivate;
+    [TitleGroup(MP), GUIColor(0.5f, 0f, 0f)] public ButtonMode magnetPowerButtonMode = ButtonMode.DeAndActivate;
     [TitleGroup(MP), Tooltip("Brake when magnetPower is active and the player doesn't accalerate")] public bool magnetPowerAutoBrake = true;
     [TitleGroup(MP), Range(0, 1f), ShowIf("magnetPowerAutoBrake")] public float magnetPowerBrakeFactor = 0.9f;
     [TitleGroup(MP)] public AnimationCurve magnetPowerDistanceCurve;
@@ -660,46 +659,42 @@ public class CarController : SerializedMonoBehaviour
 
     }
 
-    public void OnMagnetPower(InputValue inputValue)
+    public void OnMagnetPowerToggle(InputValue inputValue)
     {
         // Button mode #1: De- & activate
-        if (magnetPowerButtonMode == ButtonMode.DeAndActivate) 
+        if (inputValue.isPressed)
         {
-            if (inputValue.isPressed)
-            {
-                if (magnetIsActive)
-                {
-                    magnetIsActive = false;
-                    StopCoroutine(MagnetPower());
-                    SetWheelsMaterial(wheels_defaultMat);
-                }
-                else
-                {
-                    magnetIsActive = true;
-                    StartCoroutine(MagnetPower());
-                    SetWheelsMaterial(wheels_magnetPowerMat);
-                }
-            }
-        }
-
-        // Button mode #2: Pressed
-        else if (magnetPowerButtonMode == ButtonMode.Hold)
-        {
-            if (inputValue.isPressed)
-            {
-                magnetIsActive = true;
-                StartCoroutine(MagnetPower());
-                SetWheelsMaterial(wheels_magnetPowerMat);
-            }
-            else
+            if (magnetIsActive)
             {
                 magnetIsActive = false;
                 StopCoroutine(MagnetPower());
                 SetWheelsMaterial(wheels_defaultMat);
             }
+            else
+            {
+                magnetIsActive = true;
+                StartCoroutine(MagnetPower());
+                SetWheelsMaterial(wheels_magnetPowerMat);
+            }
         }
 
-        
+
+    }
+    public void OnMagnetPowerPress(InputValue inputValue)
+    {
+        // Button mode #2: Pressed
+        if (inputValue.isPressed)
+        {
+            magnetIsActive = true;
+            StartCoroutine(MagnetPower());
+            SetWheelsMaterial(wheels_magnetPowerMat);
+        }
+        else
+        {
+            magnetIsActive = false;
+            StopCoroutine(MagnetPower());
+            SetWheelsMaterial(wheels_defaultMat);
+        }
     }
 
     public void OnReset(InputValue inputValue)

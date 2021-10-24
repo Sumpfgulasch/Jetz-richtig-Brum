@@ -35,10 +35,10 @@ MonoBehaviour:
   m_Name: UniversalRenderPipelineAsset_Renderer
   m_EditorClassIdentifier: 
   m_RendererFeatures:
-  - {fileID: -3578013608007705010}
   - {fileID: 9158184003046267025}
   - {fileID: 6035586215787480496}
-  m_RendererFeatureMap: 4ede2fa5945758ce91d83c21d467187fb0c54173afb5c253
+  - {fileID: -3578013608007705010}
+  m_RendererFeatureMap: 91d83c21d467187fb0c54173afb5c2534ede2fa5945758ce
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   shaders:

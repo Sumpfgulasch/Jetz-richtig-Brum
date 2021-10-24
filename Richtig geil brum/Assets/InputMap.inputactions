@@ -38,9 +38,17 @@
                     "interactions": ""
                 },
                 {
-                    "name": "MagnetPower",
-                    "type": "Value",
+                    "name": "MagnetPowerToggle",
+                    "type": "Button",
                     "id": "cfc1b145-5ee4-4359-ae8b-ce7450a59468",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "MagnetPowerPress",
+                    "type": "Value",
+                    "id": "eb28766b-1f3f-44b3-b718-5f35d12de6af",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -285,50 +293,6 @@
                 },
                 {
                     "name": "",
-                    "id": "c474c685-5f84-418f-88b0-c0ac875af1fa",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MagnetPower",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "dc87c6bd-e60a-40d1-95cf-fb8d62f7f612",
-                    "path": "<Keyboard>/ctrl",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MagnetPower",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "618e56de-2437-417d-9ba1-f050f5e8b18c",
-                    "path": "<Gamepad>/leftStickPress",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MagnetPower",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f057418b-ecaf-46f6-b85a-0a672229b143",
-                    "path": "<Gamepad>/leftShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MagnetPower",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "1e095bb9-bfde-4493-b950-84465a74f3aa",
                     "path": "<Gamepad>/buttonEast",
                     "interactions": "",
@@ -368,6 +332,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "Reset",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dc87c6bd-e60a-40d1-95cf-fb8d62f7f612",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MagnetPowerPress",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f057418b-ecaf-46f6-b85a-0a672229b143",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MagnetPowerPress",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c474c685-5f84-418f-88b0-c0ac875af1fa",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MagnetPowerToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "618e56de-2437-417d-9ba1-f050f5e8b18c",
+                    "path": "<Gamepad>/leftStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MagnetPowerToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

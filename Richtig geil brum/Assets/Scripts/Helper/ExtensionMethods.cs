@@ -10,4 +10,17 @@ public static class ExtensionMethods
         return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
     }
 
+    public static float CutNumberAtDecimalPlace(this float _f, int _decimalPlaces)
+    {
+        _decimalPlaces = Mathf.Clamp(_decimalPlaces, 0, 10); // make sure no false input gets put in. maxed it to 10, because more than 10 decimal places seems to not happen
+
+        if (_decimalPlaces == 0)
+        {
+            return Mathf.Floor(_f); // cut off all decimal places
+        }
+        float mult = _decimalPlaces * 10f; 
+        _f = Mathf.Floor(_f * mult); // offset the number to the left by the number of decimal places bsp: (decimal places = 1) (float = 5,63)  -> 5,63 * (1*10) = 56,3  then cutoff the decimal places. -> 56
+        return _f / mult; // offset the number to the right by the number of decimal places it was put to the left:   56 -> 5,6
+    }
+
 }

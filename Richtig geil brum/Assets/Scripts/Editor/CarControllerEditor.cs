@@ -19,7 +19,11 @@ public class CarControllerEditor : OdinEditor
     {
         if(cC.showDebugHandles)
         {
-            if(!cC.Wheels.Contains(null)) // wenn wheels gesetzt sind - bzw kein wheel null ist
+            GUIStyle textStyle = new GUIStyle();
+            textStyle.fontStyle = FontStyle.Bold;
+
+
+            if (!cC.Wheels.Contains(null)) // wenn wheels gesetzt sind - bzw kein wheel null ist
             {            
                 //starting Pos boxes
                 Handles.DrawWireCube(cC.frontWheelR.transform.position, Vector3.one * wireBoxScale);
@@ -38,46 +42,32 @@ public class CarControllerEditor : OdinEditor
                 if(rB != null)
                 {
                     Vector3 com = cC.transform.rotation * rB.centerOfMass;
+
+                    Handles.color = Color.green;
+                    textStyle.fontSize = 15;
+                    textStyle.normal.textColor = Color.green;
+                    Handles.DrawWireCube(com + cC.transform.position, Vector3.one * wireBoxScale*1.5f); // center of mass box
+                    Handles.Label(com + cC.transform.position + Vector3.up * 0.14f, "CenterOfMass", textStyle); // Center of Mass label
+
                     Handles.color = Color.red;
-                    Handles.DrawWireCube(com + cC.transform.position, Vector3.one * wireBoxScale*3f);
-                    Handles.DrawLine(cC.transform.position + com,cC.transform.position +  rB.centerOfMass + cC.transform.forward * rB.velocity.magnitude * 0.25f, 5f);
-                    Handles.Label(cC.transform.position + com + Vector3.down * 0.14f,rB.velocity.magnitude.ToString());
+                    textStyle.fontSize = 15;
+                    textStyle.normal.textColor = Color.red;
+                    //Handles.DrawLine(cC.transform.position + com , cC.transform.position +  rB.centerOfMass + cC.transform.forward * rB.velocity.magnitude * 0.25f, 5f); // velocity line
+                    Handles.Label(cC.transform.position + com + Vector3.down * 0.14f, "velocity: " +  rB.velocity.magnitude.CutNumberAtDecimalPlace(2).ToString() + " units Per Sec",textStyle); // velocity as a number
                 }
 
-                //Show raycast Hits
-                Handles.color = Color.red;
-
-                RaycastHit hit;
-                if(Physics.Raycast(cC.transform.position, cC.transform.rotation * Vector3.down, out hit))
-                {
-                    if(cC.drivingStateInfo == DrivingState.InAir) // inAir
-                    {
-                        Handles.DrawLine(hit.point, hit.point + hit.normal, 1f);//would align
-                    }
-                    else // grounded
-                    {
-                       Handles.DrawLine(hit.point, hit.point + hit.normal, 1f);//would not align
-                    }
-                }
-                else
-                {
-                    Debug.Log("RC didnt hit");
-                }
 
                 //Show AirRollCenterOffset
-                Handles.color = Color.magenta;
-                Handles.Label(cC.transform.position + cC.airRollCenterOffset,"rotationCenter");
-                Handles.DrawWireCube(cC.transform.position + (cC.transform.rotation * cC.airRollCenterOffset), Vector3.one * 1.4f * wireBoxScale);
+                //Handles.color = Color.magenta;
+                //Handles.Label(cC.transform.position + cC.airRollCenterOffset,"rotationCenter");
+                //Handles.DrawWireCube(cC.transform.position + (cC.transform.rotation * cC.airRollCenterOffset), Vector3.one * 1.4f * wireBoxScale);
                 
             }
             else
             {
-                GUIStyle textStyle = new GUIStyle();
                 textStyle.normal.textColor = Color.red;
                 textStyle.fontSize = 30;
-                textStyle.fontStyle = FontStyle.Bold;
                 Handles.color = Color.red;
-
                 Handles.DrawWireDisc(cC.transform.position,cC.transform.right,2f,5f);
                 Handles.Label(cC.transform.position, cC.Wheels.Count(x => x == null).ToString(), textStyle);
             }
