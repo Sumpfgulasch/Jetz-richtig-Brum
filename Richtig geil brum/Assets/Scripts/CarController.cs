@@ -23,6 +23,7 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
     [TitleGroup(G)][OdinSerialize] public Vector3 CenterOfMassOffset{get{return centerOfMassOffset;} set{centerOfMassOffset = value; SetCenterOfMass(rB, true);}}
     [TitleGroup(G)] public float maxSpeed = 20f;        // NOT PROPERLY USED; only for audio
+    [TitleGroup(G)] public float jumpForce = 20f;
 
 
     [TitleGroup(MP)] public int magnetPowerAcceleration = 30;
@@ -75,7 +76,7 @@ public class CarController : SerializedMonoBehaviour
 
     [TitleGroup(M)] public PropulsionMethods propulsionMethod = PropulsionMethods.FrontDrive;
     [TitleGroup(M)] public SteeringMethods steeringMethod = SteeringMethods.FrontSteer;
-    [TitleGroup(M)] public WheelOffsetModes wheelOffsetMode = WheelOffsetModes.SuspensionDistance;
+    //[TitleGroup(M)] public WheelOffsetModes wheelOffsetMode = WheelOffsetModes.SuspensionDistance;
     [TitleGroup(M)] public bool inAirCarControl = false;
     [TitleGroup(M),ShowIf("inAirCarControl")] public RotationMethod airControllType = RotationMethod.Physics;
     [TitleGroup(M), ShowIf("inAirCarControl")] public bool stopAutoaligningAfterInAirControl = true;
@@ -310,7 +311,7 @@ public class CarController : SerializedMonoBehaviour
                         
                         // Sorry für Auskommentieren! Ist das gleiche wie deins! Find ich nur schöner zu lesen :-D. Und ich raff deine rotation-Rechnung nicht kannst du mir das erklären
 
-                        var localTorqueAxis = new Vector3(-_steeringAngle.y, _steeringAngle.x, 0);
+                        var localTorqueAxis = new Vector3(_steeringAngle.y, _steeringAngle.x, 0);
                         var globalTorqueAxis = transform.TransformVector(localTorqueAxis);
                         rB.AddTorque(globalTorqueAxis * inAirControlForce, ForceMode.Acceleration);
 
@@ -415,10 +416,10 @@ public class CarController : SerializedMonoBehaviour
 
             
         }
-        _frontWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFR, _minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
-        _frontWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFL, _minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
-        _backWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBR, _minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
-        _backWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBL, _minMaxGroundDistance, _powerCurve, wheelOffsetMode, wheelsOut);
+        _frontWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFR, _minMaxGroundDistance, _powerCurve, wheelsOut);
+        _frontWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFL, _minMaxGroundDistance, _powerCurve, wheelsOut);
+        _backWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBR, _minMaxGroundDistance, _powerCurve, wheelsOut);
+        _backWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBL, _minMaxGroundDistance, _powerCurve, wheelsOut);
     }
 
     private void SetAirTime(ref float _inAirTime)
@@ -484,16 +485,21 @@ public class CarController : SerializedMonoBehaviour
                             targetNormal = hit.normal;
                             targetSurfaceDistance = (hit.point - transform.position).magnitude;
                         }
-                        else
-                            print("NO surface hit below");
 
                         if (trajectoryRenderer.trajectory.HasHit)
                         {
-                            if (drivingStateInfo == DrivingState.InAir || lowRideValue != Vector2.zero) // rB.velocity.magnitude > 5f || 
+                            if (drivingStateInfo == DrivingState.InAir || lowRideValue != Vector2.zero)
                             {
-                                targetNormal = trajectoryRenderer.trajectory.HitNormal;
-                                targetSurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
-                                print("rb.vel > 5: " + (rB.velocity.magnitude > 5f) + ", drivingstate: " + drivingStateInfo + ", lowRide != 0: " + (lowRideValue != Vector2.zero));
+                                var trajectoryNormal = trajectoryRenderer.trajectory.HitNormal;
+                                var trajectorySurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
+
+                                // nur wenn trajectory-fläche näher ist als downward-surface
+                                if (trajectorySurfaceDistance < targetSurfaceDistance)
+                                {
+                                    targetNormal = trajectoryRenderer.trajectory.HitNormal;
+                                    targetSurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
+                                }
+                                
                             }
                         }
                         break;
@@ -656,7 +662,16 @@ public class CarController : SerializedMonoBehaviour
 
     public void OnJump(InputValue inputValue)
     {
+        if (drivingStateInfo == DrivingState.Grounded)
+        {
+            // 1. Deactivate magnet
+            magnetIsActive = false;
+            StopCoroutine(MagnetPower());
+            SetWheelsMaterial(wheels_defaultMat);
 
+            // 2. add up-force
+            rB.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
+        }
     }
 
     public void OnMagnetPowerToggle(InputValue inputValue)
@@ -688,12 +703,18 @@ public class CarController : SerializedMonoBehaviour
             magnetIsActive = true;
             StartCoroutine(MagnetPower());
             SetWheelsMaterial(wheels_magnetPowerMat);
+
+            // ACHTUNG: hard-coded scheiße (mach ich nochmal richtig, wenn wir wissen dass es damit weitergeht)
+            minMaxGroundDistance.y = 1.35f;
         }
         else
         {
             magnetIsActive = false;
             StopCoroutine(MagnetPower());
             SetWheelsMaterial(wheels_defaultMat);
+
+            // ACHTUNG: hard-coded scheiße (mach ich nochmal richtig, wenn wir wissen dass es damit weitergeht)
+            minMaxGroundDistance.y = 0.7f;
         }
     }
 
@@ -732,10 +753,10 @@ public enum DrivingState{
     InAir,
     TwoWheelsGrounded
 }
-public enum WheelOffsetModes{
-    TargetPosition,
-    SuspensionDistance
-}
+//public enum WheelOffsetModes{
+//    TargetPosition,
+//    SuspensionDistance
+//}
 
 public enum RotationMethod
 {

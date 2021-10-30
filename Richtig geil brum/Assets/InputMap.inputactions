@@ -55,7 +55,7 @@
                 },
                 {
                     "name": "Jump",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "c646ded3-e1cc-4615-9443-85cdb3b663fc",
                     "expectedControlType": "Button",
                     "processors": "",
@@ -294,7 +294,7 @@
                 {
                     "name": "",
                     "id": "1e095bb9-bfde-4493-b950-84465a74f3aa",
-                    "path": "<Gamepad>/buttonEast",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -316,7 +316,7 @@
                 {
                     "name": "",
                     "id": "42c28f5e-c279-440f-ad1f-72da769b25ed",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -359,12 +359,12 @@
                 },
                 {
                     "name": "",
-                    "id": "c474c685-5f84-418f-88b0-c0ac875af1fa",
+                    "id": "9e27d723-6a7d-4f62-97a9-63bd701c3ad6",
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MagnetPowerToggle",
+                    "action": "MagnetPowerPress",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
