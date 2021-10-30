@@ -310,7 +310,7 @@ public class CarController : SerializedMonoBehaviour
                         
                         // Sorry für Auskommentieren! Ist das gleiche wie deins! Find ich nur schöner zu lesen :-D. Und ich raff deine rotation-Rechnung nicht kannst du mir das erklären
 
-                        var localTorqueAxis = new Vector3(-inputNormal.x, inputNormal.z, 0);
+                        var localTorqueAxis = new Vector3(-_steeringAngle.y, _steeringAngle.x, 0);
                         var globalTorqueAxis = transform.TransformVector(localTorqueAxis);
                         rB.AddTorque(globalTorqueAxis * inAirControlForce, ForceMode.Acceleration);
 
@@ -484,6 +484,8 @@ public class CarController : SerializedMonoBehaviour
                             targetNormal = hit.normal;
                             targetSurfaceDistance = (hit.point - transform.position).magnitude;
                         }
+                        else
+                            print("NO surface hit below");
 
                         if (trajectoryRenderer.trajectory.HasHit)
                         {
@@ -491,6 +493,7 @@ public class CarController : SerializedMonoBehaviour
                             {
                                 targetNormal = trajectoryRenderer.trajectory.HitNormal;
                                 targetSurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
+                                print("rb.vel > 5: " + (rB.velocity.magnitude > 5f) + ", drivingstate: " + drivingStateInfo + ", lowRide != 0: " + (lowRideValue != Vector2.zero));
                             }
                         }
                         break;
@@ -640,33 +643,14 @@ public class CarController : SerializedMonoBehaviour
 
     public void OnExtendWheels(InputValue inputValue)
     {
-        //if (wheelsOut)
-        //{
-
-        //    wheelsOut = false;
-        //}
-        //else
-        //{
-        //    wheelsOut = true;
-        //}
-
-        if (inputValue.isPressed)
+        if (wheelsOut)
         {
-            wheelsOut = true;
-            //StartCoroutine(SetLowRideValue())
+
+            wheelsOut = false;
         }
         else
         {
-            wheelsOut = false;
-        }
-    }
-
-    private IEnumerator SetLowRideValue(Vector2 value)
-    {
-        while (wheelsOut)
-        {
-            lowRideValue = value;
-            yield return null;
+            wheelsOut = true;
         }
     }
 
