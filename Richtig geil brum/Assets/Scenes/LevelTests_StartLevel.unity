@@ -332,7 +332,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!154 &508513243
 TerrainCollider:
   m_ObjectHideFlags: 0
@@ -446,6 +446,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 754f190ce3dcf0742b383eba367a473f, type: 3}
       propertyPath: m_Name
       value: Environment
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 754f190ce3dcf0742b383eba367a473f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 754f190ce3dcf0742b383eba367a473f, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -926,6 +930,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 0cbfbecf8c61dc7498e26f9a75f3461c, type: 3}
       propertyPath: m_Name
       value: Environment2
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0cbfbecf8c61dc7498e26f9a75f3461c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3090382541025345331, guid: 0cbfbecf8c61dc7498e26f9a75f3461c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0cbfbecf8c61dc7498e26f9a75f3461c, type: 3}

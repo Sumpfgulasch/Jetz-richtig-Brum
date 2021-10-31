@@ -705,7 +705,7 @@ public class CarController : SerializedMonoBehaviour
             SetWheelsMaterial(wheels_magnetPowerMat);
 
             // ACHTUNG: hard-coded scheiße (mach ich nochmal richtig, wenn wir wissen dass es damit weitergeht)
-            minMaxGroundDistance.y = 1.35f;
+            minMaxGroundDistance.x = 1.35f;
         }
         else
         {
@@ -714,7 +714,7 @@ public class CarController : SerializedMonoBehaviour
             SetWheelsMaterial(wheels_defaultMat);
 
             // ACHTUNG: hard-coded scheiße (mach ich nochmal richtig, wenn wir wissen dass es damit weitergeht)
-            minMaxGroundDistance.y = 0.7f;
+            minMaxGroundDistance.x = 0.7f;
         }
     }
 

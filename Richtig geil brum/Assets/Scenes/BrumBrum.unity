@@ -1997,7 +1997,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 1298861089}
+  m_audioClip: {fileID: 1948736559}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -2162,34 +2162,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!83 &1298861089
-AudioClip:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: helm
-  m_LoadType: 0
-  m_Channels: 1
-  m_Frequency: 48000
-  m_BitsPerSample: 32
-  m_Length: 0
-  m_IsTrackerFormat: 0
-  m_Ambisonic: 0
-  m_SubsoundIndex: 0
-  m_PreloadAudioData: 1
-  m_LoadInBackground: 0
-  m_Legacy3D: 0
-  m_Resource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_CompressionFormat: 0
-  m_EditorResource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_EditorCompressionFormat: 0
 --- !u!1 &1325487846
 GameObject:
   m_ObjectHideFlags: 0
@@ -2424,7 +2396,7 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.08246057
     - serializedVersion: 3
-      time: 3.4906878
+      time: 3.990652
       value: 0.99715054
       inSlope: 0.0037659437
       outSlope: 0.0037659437
@@ -2433,7 +2405,7 @@ MonoBehaviour:
       inWeight: 0.4514545
       outWeight: 0.67235255
     - serializedVersion: 3
-      time: 3.5030541
+      time: 5.9978914
       value: -0.013019271
       inSlope: -0.011171036
       outSlope: -0.011171036
@@ -2549,7 +2521,7 @@ MonoBehaviour:
   simplifyLowRide: 0
   allignStickToView: 0
   invertRollControls: 0
-  minMaxGroundDistance: {x: 0.15, y: 1.35}
+  minMaxGroundDistance: {x: 0.7, y: 1.8}
   lowRideStepSizePlusMinus: {x: 0.5, y: -0.02}
   powerCurve:
     serializedVersion: 2
@@ -2855,7 +2827,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1890083707}
-  m_LocalRotation: {x: 0.3639977, y: 0.000000022664215, z: -0.000000008857336, w: 0.9313999}
+  m_LocalRotation: {x: 0.3639977, y: -0.000000022664214, z: 0.000000008857336, w: 0.9313999}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2863,6 +2835,34 @@ Transform:
   m_Father: {fileID: 1114307849}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!83 &1948736559
+AudioClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: helm
+  m_LoadType: 0
+  m_Channels: 1
+  m_Frequency: 48000
+  m_BitsPerSample: 32
+  m_Length: 0
+  m_IsTrackerFormat: 0
+  m_Ambisonic: 0
+  m_SubsoundIndex: 0
+  m_PreloadAudioData: 1
+  m_LoadInBackground: 0
+  m_Legacy3D: 0
+  m_Resource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_CompressionFormat: 0
+  m_EditorResource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_EditorCompressionFormat: 0
 --- !u!1 &1997966423
 GameObject:
   m_ObjectHideFlags: 3
