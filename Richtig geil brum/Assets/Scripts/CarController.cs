@@ -87,6 +87,8 @@ public class CarController : SerializedMonoBehaviour
 
 
     [TitleGroup(LR)] [MinMaxSlider(0f, 2.5f, true)]public Vector2 minMaxGroundDistance = new Vector2(0.1f, 1f);// The minimum/maximum length that the wheels can extend - minimum = x component || maximum = y component
+    [TitleGroup(LR)] public AnimationCurve lowRideActivityCurve;
+    [TitleGroup(LR)] [Range(0, 0.2f)] public float lowRideActivityDecreaseSpeed = 0.01f;
     [TitleGroup(LR)] private Vector2 curMinMaxGroundDistance = new Vector2();
     [TitleGroup(LR)] [Range(0f, 2.5f)] public float extendedWheelsLowRideDistance = 1.2f;
     [TitleGroup(LR)] [MinMaxSlider(0f, 1f, true)] public Vector2 extendWheelsTime = new Vector2(0, 0.2f);
@@ -94,6 +96,7 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(LR)] public AnimationCurve powerCurve = AnimationCurve.Linear(0f,1f,1f,1f); // The maximum length that the wheels can extend
     [TitleGroup(LR)] [Range(0,1f)] public float lowRideSideScale = 0f;
     private List<Coroutine> extendWheelsRoutines = new List<Coroutine>();
+    private Directions lowRideActivity;
 
 
     [TitleGroup(R)] public Wheel frontWheelR, frontWheelL, backWheelR, backWheelL;
@@ -166,6 +169,7 @@ public class CarController : SerializedMonoBehaviour
 
     void FixedUpdate()
     {
+        SetLowRideActivity(lowRideValue);
         SetAirTime(ref inAirTime);
         if (autoalignCarInAir)
         {
@@ -423,10 +427,10 @@ public class CarController : SerializedMonoBehaviour
 
             
         }
-        _frontWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFR, _minMaxGroundDistance, _powerCurve, wheelsOut);
-        _frontWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFL, _minMaxGroundDistance, _powerCurve, wheelsOut);
-        _backWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBR, _minMaxGroundDistance, _powerCurve, wheelsOut);
-        _backWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBL, _minMaxGroundDistance, _powerCurve, wheelsOut);
+        _frontWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFR, _minMaxGroundDistance, _powerCurve);
+        _frontWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelFL, _minMaxGroundDistance, _powerCurve);
+        _backWheelR.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBR, _minMaxGroundDistance, _powerCurve);
+        _backWheelL.OffsetWheelGradually(_lowRideStepSizePlusMinus, strengthWheelBL, _minMaxGroundDistance, _powerCurve);
     }
 
     private void SetAirTime(ref float _inAirTime)
@@ -512,32 +516,9 @@ public class CarController : SerializedMonoBehaviour
                         break;
                     }
             }
-            
-            // the forward component of the transform mapped onto 2D (might fail when it is facing purly up or down
-            Vector3 forwardNormal = forwardNormal = new Vector3(this.transform.forward.x, 0f,this.transform.forward.z).normalized;
 
-            // the target rotation calculated through forward and up vectors.
-            Quaternion targetQuaternion = Quaternion.LookRotation(forwardNormal,targetNormal);
-
-            // Rotation Calculation
-            switch (autoAlignMethod)
-            {
-                // V1: Set Rotation
-                case RotationMethod.SetRotation:
-                    {
-                        rB.rotation = Quaternion.Slerp(rB.rotation, targetQuaternion, _autoalignCarInAirSpeed);
-                        break;
-                    }
-                // V2: AddTorque & brake
-                case RotationMethod.Physics:
-                    {
-                        AddTorqueAndBrake(targetNormal, autoAlignTorqueForce, maxAngularVelocity, targetSurfaceDistance, autoAlignDistanceCurve, autoAlignAngleCurve, autoAlignBrakeCurve);
-                        break;
-                    }
-            }
-            
-            
-            
+            // Rotation Calculation: Add Torque (angular velocity) and brake (angular velocity) if needed.
+            AddTorqueAndBrake(targetNormal, autoAlignTorqueForce, maxAngularVelocity, targetSurfaceDistance, autoAlignDistanceCurve, autoAlignAngleCurve, autoAlignBrakeCurve);
         }
         #endregion
     }
@@ -552,10 +533,6 @@ public class CarController : SerializedMonoBehaviour
         rB.velocity *= factor;
     }
 
-    private void ReduceAngularVelocity(float factor)
-    {
-
-    }
 
     /// <summary>
     /// Add a torque and brake if target rotation is achieved. Takes into consideration: distance to the targetSurface, angle difference to the targetSurfaceNormal
@@ -623,7 +600,6 @@ public class CarController : SerializedMonoBehaviour
         // 3. Add force
         rB.AddForce(downVector * magnetPowerAcceleration * distanceFactor, ForceMode.Acceleration);
         rB.velocity = rB.velocity.normalized * Mathf.Clamp(rB.velocity.magnitude, 0, magnetPowerMaxVelocity);
-        //rB.addfo
     }
 
     private void SetWheelsMaterial(Material material)
@@ -634,72 +610,11 @@ public class CarController : SerializedMonoBehaviour
         }
     }
 
+
     /// <summary>
-    /// Lerp the curMinMaxGroundDistance-variable to another value over time.
+    /// Whenn using magnet+extendWheels, the curMinMaxGroundDistance-variable (which is used for lowRide) shall be overwritten.
     /// </summary>
-    private IEnumerator ShiftMinMaxGroundDistance(Vector2 startMinMax, Vector2 targetMinMax, float time)
-    {
-        float timer = 0;
-        while (timer < time)
-        {
-            curMinMaxGroundDistance = Vector2.Lerp(startMinMax, targetMinMax, timer / time);
-            timer += Time.deltaTime;
-
-            yield return null;
-        }
-        curMinMaxGroundDistance = targetMinMax;
-    }
-
-
-
-    // ----------------------------------------- Input Events -----------------------------------------
-
-
-    public void OnThrust(InputValue inputValue)
-    {
-        thrustValue = inputValue.Get<float>();
-    }
-
-    public void OnSteer(InputValue inputValue)
-    {
-        steerValue = inputValue.Get<Vector2>();
-    }
-
-    public void OnLowRide(InputValue inputValue)
-    {
-        lowRideValue = inputValue.Get<Vector2>();
-    }
-
-    public void OnExtendWheelsToggle(InputValue inputValue)
-    {
-        if (wheelsOut)
-        {
-            wheelsOut = false;
-            ToggleExtendedGroundDistance(false);
-        }
-        else
-        {
-            wheelsOut = true;
-            ToggleExtendedGroundDistance(true);
-        }
-    }
-
-    public void OnExtendWheelsPress(InputValue inputValue)
-    {
-        if (inputValue.isPressed)
-        {
-            wheelsOut = true;
-            ToggleExtendedGroundDistance(true);
-        }
-        else
-        {
-            wheelsOut = false;
-            ToggleExtendedGroundDistance(false);
-        }
-    }
-
-    
-
+    /// <param name="value"></param>
     private void ToggleExtendedGroundDistance(bool value)
     {
         if (value == true)
@@ -731,6 +646,107 @@ public class CarController : SerializedMonoBehaviour
             extendWheelsRoutines.Add(StartCoroutine(ShiftMinMaxGroundDistance(curMinMaxGroundDistance, targetMinMaxGroundDistance, extendWheelsTime.y)));
         }
     }
+
+    /// <summary>
+    /// Lerp the curMinMaxGroundDistance-variable to another value over time.
+    /// </summary>
+    private IEnumerator ShiftMinMaxGroundDistance(Vector2 startMinMax, Vector2 targetMinMax, float time)
+    {
+        float timer = 0;
+        while (timer < time)
+        {
+            curMinMaxGroundDistance = Vector2.Lerp(startMinMax, targetMinMax, timer / time);
+            timer += Time.deltaTime;
+
+            yield return null;
+        }
+        curMinMaxGroundDistance = targetMinMax;
+    }
+
+    /// <summary>
+    /// Set the lowRideActivity-variable, which is used to deactivate the magnetPower temporarily.
+    /// </summary>
+    /// <param name="value"></param>
+    private void SetLowRideActivity(Vector2 value)
+    {
+        // Alle 4 Richtungen der lowRideActivity erhöhen oder verringern (SCHEIß CODE)
+        // front
+        if (value.y > lowRideActivity.front)
+            lowRideActivity.front = lowRideActivityCurve.Evaluate(value.y);                          // increase
+        else
+            lowRideActivity.front = Mathf.Clamp01(lowRideActivity.front - lowRideActivityDecreaseSpeed);    // decrease
+
+        // right
+        if (value.x > lowRideActivity.right)
+            lowRideActivity.right = lowRideActivityCurve.Evaluate(value.x);
+        else
+            lowRideActivity.right = Mathf.Clamp01(lowRideActivity.right - lowRideActivityDecreaseSpeed);
+
+        // back
+        if (-value.y > lowRideActivity.back)
+            lowRideActivity.back = lowRideActivityCurve.Evaluate(-value.y);
+        else
+            lowRideActivity.back = Mathf.Clamp01(lowRideActivity.back - lowRideActivityDecreaseSpeed);
+
+        // left
+        if (-value.x > lowRideActivity.left)
+            lowRideActivity.left = lowRideActivityCurve.Evaluate(-value.x);
+        else
+            lowRideActivity.left = Mathf.Clamp01(lowRideActivity.left - lowRideActivityDecreaseSpeed);
+
+
+    }
+
+
+
+    // ----------------------------------------- Input Events -----------------------------------------
+
+
+    public void OnThrust(InputValue inputValue)
+    {
+        thrustValue = inputValue.Get<float>();
+    }
+
+    public void OnSteer(InputValue inputValue)
+    {
+        steerValue = inputValue.Get<Vector2>();
+    }
+
+    public void OnLowRide(InputValue inputValue)
+    {
+        lowRideValue = inputValue.Get<Vector2>();
+    }
+
+    
+
+    public void OnExtendWheelsToggle(InputValue inputValue)
+    {
+        if (wheelsOut)
+        {
+            wheelsOut = false;
+            ToggleExtendedGroundDistance(false);
+        }
+        else
+        {
+            wheelsOut = true;
+            ToggleExtendedGroundDistance(true);
+        }
+    }
+
+    public void OnExtendWheelsPress(InputValue inputValue)
+    {
+        if (inputValue.isPressed)
+        {
+            wheelsOut = true;
+            ToggleExtendedGroundDistance(true);
+        }
+        else
+        {
+            wheelsOut = false;
+            ToggleExtendedGroundDistance(false);
+        }
+    }
+
 
     public void OnJump(InputValue inputValue)
     {
@@ -799,7 +815,7 @@ public class CarController : SerializedMonoBehaviour
 
 
 
-// -----------------------------------------------------------------------------------------------------
+// -------------------------------------------- HELPER STUFF ------------------------------------------------
 
 
 
@@ -837,6 +853,18 @@ public enum AutoAlignSurface
     LowerSurface,
     Trajectory,
     ForwardSurface
+}
+
+public struct Directions
+{
+    //public enum Direction { front, right, back, left};
+    //public Direction direction;
+
+    //public float[] members = new float[4];
+    public float front;
+    public float right;
+    public float back;
+    public float left;
 }
 
 
