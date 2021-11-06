@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -28,7 +29,7 @@ public class CarController : SerializedMonoBehaviour
 
     [TitleGroup(MP)] public int magnetPowerAcceleration = 30;
     [TitleGroup(MP)] public int magnetPowerMaxVelocity = 30;
-    [TitleGroup(MP), GUIColor(0.5f, 0f, 0f)] public ButtonMode magnetPowerButtonMode = ButtonMode.DeAndActivate;
+    [TitleGroup(MP), GUIColor(0.5f, 0f, 0f)] public ButtonMode magnetPowerButtonMode = ButtonMode.Toggle;
     [TitleGroup(MP), Tooltip("Brake when magnetPower is active and the player doesn't accalerate")] public bool magnetPowerAutoBrake = true;
     [TitleGroup(MP), Range(0, 1f), ShowIf("magnetPowerAutoBrake")] public float magnetPowerBrakeFactor = 0.9f;
     [TitleGroup(MP)] public AnimationCurve magnetPowerDistanceCurve;
@@ -88,9 +89,11 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(LR)] [MinMaxSlider(0f, 2.5f, true)]public Vector2 minMaxGroundDistance = new Vector2(0.1f, 1f);// The minimum/maximum length that the wheels can extend - minimum = x component || maximum = y component
     [TitleGroup(LR)] private Vector2 curMinMaxGroundDistance = new Vector2();
     [TitleGroup(LR)] [Range(0f, 2.5f)] public float extendedWheelsLowRideDistance = 1.2f;
+    [TitleGroup(LR)] [MinMaxSlider(0f, 1f, true)] public Vector2 extendWheelsTime = new Vector2(0, 0.2f);
     [TitleGroup(LR)] [VectorRange(0f,0.5f,-0.5f,0f,true)] public Vector2 lowRideStepSizePlusMinus = new Vector2(0.1f, -0.1f); // the maximum percentage which the wheels move(lowRide) each frame. (based on the maximumGroundDistance) - change when going positive = x component || change  when going negative = y component
     [TitleGroup(LR)] public AnimationCurve powerCurve = AnimationCurve.Linear(0f,1f,1f,1f); // The maximum length that the wheels can extend
     [TitleGroup(LR)] [Range(0,1f)] public float lowRideSideScale = 0f;
+    private List<Coroutine> extendWheelsRoutines = new List<Coroutine>();
 
 
     [TitleGroup(R)] public Wheel frontWheelR, frontWheelL, backWheelR, backWheelL;
@@ -631,6 +634,22 @@ public class CarController : SerializedMonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Lerp the curMinMaxGroundDistance-variable to another value over time.
+    /// </summary>
+    private IEnumerator ShiftMinMaxGroundDistance(Vector2 startMinMax, Vector2 targetMinMax, float time)
+    {
+        float timer = 0;
+        while (timer < time)
+        {
+            curMinMaxGroundDistance = Vector2.Lerp(startMinMax, targetMinMax, timer / time);
+            timer += Time.deltaTime;
+
+            yield return null;
+        }
+        curMinMaxGroundDistance = targetMinMax;
+    }
+
 
 
     // ----------------------------------------- Input Events -----------------------------------------
@@ -679,15 +698,37 @@ public class CarController : SerializedMonoBehaviour
         }
     }
 
+    
+
     private void ToggleExtendedGroundDistance(bool value)
     {
         if (value == true)
         {
-            curMinMaxGroundDistance.Set(minMaxGroundDistance.x + extendedWheelsLowRideDistance, minMaxGroundDistance.y + extendedWheelsLowRideDistance);
+            // 1. Stop all routines (unnötige lange coroutinenscheiße)
+            foreach (Coroutine routine in extendWheelsRoutines)
+            {
+                if (routine != null)
+                    StopCoroutine(routine);
+            }
+            extendWheelsRoutines.Clear();
+
+            // 2. Start new routine
+            Vector2 targetMinMaxGroundDistance = minMaxGroundDistance + Vector2.one * extendedWheelsLowRideDistance;
+            extendWheelsRoutines.Add(StartCoroutine(ShiftMinMaxGroundDistance(curMinMaxGroundDistance, targetMinMaxGroundDistance, extendWheelsTime.x)));
         }
         else
         {
-            curMinMaxGroundDistance = minMaxGroundDistance;
+            // 1. Stop all routines
+            foreach (Coroutine routine in extendWheelsRoutines)
+            {
+                if (routine != null)
+                    StopCoroutine(routine);
+            }
+            extendWheelsRoutines.Clear();
+
+            // 2. Start new routine
+            Vector2 targetMinMaxGroundDistance = minMaxGroundDistance;
+            extendWheelsRoutines.Add(StartCoroutine(ShiftMinMaxGroundDistance(curMinMaxGroundDistance, targetMinMaxGroundDistance, extendWheelsTime.y)));
         }
     }
 
@@ -778,10 +819,6 @@ public enum DrivingState{
     InAir,
     TwoWheelsGrounded
 }
-//public enum WheelOffsetModes{
-//    TargetPosition,
-//    SuspensionDistance
-//}
 
 public enum RotationMethod
 {
@@ -791,8 +828,8 @@ public enum RotationMethod
 
 public enum ButtonMode
 {
-    DeAndActivate,          // press once to de- or activate
-    Hold                    // hold to perform an action
+    Toggle, 
+    Hold 
 }
 
 public enum AutoAlignSurface
