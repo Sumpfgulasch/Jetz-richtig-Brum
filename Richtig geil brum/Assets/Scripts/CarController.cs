@@ -17,7 +17,6 @@ public class CarController : SerializedMonoBehaviour
     const string MP = "MagnetPower";
     const string AA = "AutoAlign";
 
-
     [TitleGroup(G)] public float maxSteerAngle = 30f;
     [TitleGroup(G)] public float motorForce = 50;
     [TitleGroup(G)] public Vector2 airRollSpeedPitchRoll = Vector2.one;
@@ -96,7 +95,7 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(LR)] public AnimationCurve powerCurve = AnimationCurve.Linear(0f,1f,1f,1f); // The maximum length that the wheels can extend
     [TitleGroup(LR)] [Range(0,1f)] public float lowRideSideScale = 0f;
     private List<Coroutine> extendWheelsRoutines = new List<Coroutine>();
-    private Directions lowRideActivity;
+    private LowRideActivity lowRideActivity = new LowRideActivity();
 
 
     [TitleGroup(R)] public Wheel frontWheelR, frontWheelL, backWheelR, backWheelL;
@@ -140,6 +139,10 @@ public class CarController : SerializedMonoBehaviour
 
     [TitleGroup(H)] public bool showDebugHandles = true;
     [TitleGroup(H)] private bool autoAlignToSurfaceBool(){if(autoalignCarInAir){return true;}else{return false;}} // helperfunction for showif
+    [TitleGroup(H)] public Vector4 lowRideActivityValues = new Vector4();
+    [TitleGroup(H)] public float lowRideActivityStrength;
+
+
     [TitleGroup(MP)] private IEnumerator magnetPowerRoutine;
     [TitleGroup(MP)] private bool magnetIsActive;
     [TitleGroup(MP)] private float targetSurfaceDistance;
@@ -446,7 +449,7 @@ public class CarController : SerializedMonoBehaviour
         }
     }
 
-    private void AutoAlignCar(bool _autoalignCarInAir, bool _shouldAutoAlign,float _autoalignCarInAirSpeed, DrivingState _drivingStateInfo)
+    private void AutoAlignCar(bool _autoalignCarInAir, bool _shouldAutoAlign,float _autoalignCarInAirSpeed, DrivingState _drivingStateInfo, float strength = 1f)
     {
         #region Autoalign Car in Air
         if(_autoalignCarInAir && _shouldAutoAlign && _drivingStateInfo == DrivingState.InAir)    //shouldAutoAlign is coupled with the Input of the car, so the car doesnt autoalign, against the airControl
@@ -518,7 +521,7 @@ public class CarController : SerializedMonoBehaviour
             }
 
             // Rotation Calculation: Add Torque (angular velocity) and brake (angular velocity) if needed.
-            AddTorqueAndBrake(targetNormal, autoAlignTorqueForce, maxAngularVelocity, targetSurfaceDistance, autoAlignDistanceCurve, autoAlignAngleCurve, autoAlignBrakeCurve);
+            AddTorqueAndBrake(targetNormal, autoAlignTorqueForce, maxAngularVelocity, targetSurfaceDistance, autoAlignDistanceCurve, autoAlignAngleCurve, autoAlignBrakeCurve, strength);
         }
         #endregion
     }
@@ -537,7 +540,7 @@ public class CarController : SerializedMonoBehaviour
     /// <summary>
     /// Add a torque and brake if target rotation is achieved. Takes into consideration: distance to the targetSurface, angle difference to the targetSurfaceNormal
     /// </summary>
-    private void AddTorqueAndBrake(Vector3 targetNormal, float torqueForce, float maxTorqueSpeed, float targetSurfaceDistance = 0, AnimationCurve torqueDistanceCurve = null, AnimationCurve torqueAngleCurve = null, AnimationCurve brakeDistanceCurve = null)
+    private void AddTorqueAndBrake(Vector3 targetNormal, float torqueForce, float maxTorqueSpeed, float targetSurfaceDistance = 0, AnimationCurve torqueDistanceCurve = null, AnimationCurve torqueAngleCurve = null, AnimationCurve brakeDistanceCurve = null, float strengthPercentage = 1f)
     {
         float distanceFactor = Mathf.Clamp01(torqueDistanceCurve.Evaluate(targetSurfaceDistance));                  // Wert zwischen 0 und 1; entscheidet ob torque und brake verrechnet wird
         float angleDotProduct = Vector3.Dot(transform.up, targetNormal);
@@ -545,11 +548,13 @@ public class CarController : SerializedMonoBehaviour
         // 1. ADD TORQUE
         Vector3 torqueAxis = Vector3.Cross(transform.up, targetNormal).normalized;                                  // Rotations-Achse = Kreuzprodukt
         float torqueAngleFactor = torqueAngleCurve.Evaluate(angleDotProduct);                                       // Faktor je nach Übereinstimmung von Zielnormale und transform.up
-        rB.AddTorque(torqueAxis * torqueForce * distanceFactor * torqueAngleFactor, ForceMode.Acceleration);
+        Vector3 torque = torqueAxis * torqueForce * distanceFactor * torqueAngleFactor * strengthPercentage;        // Finale Torque
+        rB.AddTorque(torque, ForceMode.Acceleration);
 
         // 2. BRAKE                            
         float velocityDistanceFactor = brakeDistanceCurve.Evaluate(Mathf.Clamp01(angleDotProduct));                 // Wert wird 1, wenn Distanz zu hoch (-> keine Veränderung), 0 wenn Distanz niedrig
-        rB.angularVelocity *= Mathf.Lerp(1f, velocityDistanceFactor, distanceFactor);                               // Wenn keine Winkeldifferenz, dann angularVel *= 0; wenn Winkeldifferenz >= 90°, dann keine Veränderung
+        float brakeFactor = Mathf.Lerp(1f, velocityDistanceFactor, distanceFactor);                                 // Wenn keine Winkeldifferenz, dann angularVel *= 0; wenn Winkeldifferenz >= 90°, dann keine Veränderung
+        rB.angularVelocity *= Mathf.Lerp(1f, brakeFactor, strengthPercentage);                                      // Wirke brake Kraft abhängig von strengPercentage
 
         // 3. Max speed
         ClampAngularVelocity(maxAngularVelocity);
@@ -564,8 +569,10 @@ public class CarController : SerializedMonoBehaviour
     {
         while (magnetIsActive)
         {
-            AutoAlignCar(true, shouldAutoAlign, autoAlign_setRotationSpeed, DrivingState.InAir);
-            AddPullForce();
+            float strength = 1f - Mathf.Clamp01(lowRideActivityCurve.Evaluate(lowRideActivity.HighestValue));     // wenn lowRide-Activity: kein autoAlign
+
+            AutoAlignCar(true, shouldAutoAlign, autoAlign_setRotationSpeed, DrivingState.InAir, strength);
+            AddPullForce(strength);
             yield return null;
         }
 
@@ -582,7 +589,8 @@ public class CarController : SerializedMonoBehaviour
     /// <summary>
     /// Scheiß funktion. Nochmal schön schreiben. Fügt dem Auto Force nach unten hinzu, abhängig von der Distanz der targetSurface.
     /// </summary>
-    private void AddPullForce()
+    /// <param name="strength">[0,1]</param>
+    private void AddPullForce(float strength)
     {
         float surfaceDistance = 1000;
 
@@ -598,7 +606,10 @@ public class CarController : SerializedMonoBehaviour
         float distanceFactor = Mathf.Clamp01(magnetPowerDistanceCurve.Evaluate(surfaceDistance));
 
         // 3. Add force
-        rB.AddForce(downVector * magnetPowerAcceleration * distanceFactor, ForceMode.Acceleration);
+        Vector3 force = downVector * magnetPowerAcceleration * distanceFactor * strength;
+        rB.AddForce(force, ForceMode.Acceleration);
+
+        // 4. Max speed
         rB.velocity = rB.velocity.normalized * Mathf.Clamp(rB.velocity.magnitude, 0, magnetPowerMaxVelocity);
     }
 
@@ -666,35 +677,44 @@ public class CarController : SerializedMonoBehaviour
     /// <summary>
     /// Set the lowRideActivity-variable, which is used to deactivate the magnetPower temporarily.
     /// </summary>
-    /// <param name="value"></param>
-    private void SetLowRideActivity(Vector2 value)
+    /// <param name="lowRideValue"></param>
+    private void SetLowRideActivity(Vector2 lowRideValue)
     {
         // Alle 4 Richtungen der lowRideActivity erhöhen oder verringern (SCHEIß CODE)
+
         // front
-        if (value.y > lowRideActivity.front)
-            lowRideActivity.front = lowRideActivityCurve.Evaluate(value.y);                          // increase
+        if (lowRideValue.y > lowRideActivity.values[0])
+            lowRideActivity.values[0] = lowRideActivityCurve.Evaluate(lowRideValue.y);                                     // increase
         else
-            lowRideActivity.front = Mathf.Clamp01(lowRideActivity.front - lowRideActivityDecreaseSpeed);    // decrease
+            lowRideActivity.values[0] -= lowRideActivityDecreaseSpeed;    // decrease
 
         // right
-        if (value.x > lowRideActivity.right)
-            lowRideActivity.right = lowRideActivityCurve.Evaluate(value.x);
+        if (lowRideValue.x > lowRideActivity.values[1])
+            lowRideActivity.values[1] = lowRideActivityCurve.Evaluate(lowRideValue.x);
         else
-            lowRideActivity.right = Mathf.Clamp01(lowRideActivity.right - lowRideActivityDecreaseSpeed);
+            lowRideActivity.values[1] -= lowRideActivityDecreaseSpeed;
 
         // back
-        if (-value.y > lowRideActivity.back)
-            lowRideActivity.back = lowRideActivityCurve.Evaluate(-value.y);
+        if (-lowRideValue.y > lowRideActivity.values[2])
+            lowRideActivity.values[2] = lowRideActivityCurve.Evaluate(-lowRideValue.y);
         else
-            lowRideActivity.back = Mathf.Clamp01(lowRideActivity.back - lowRideActivityDecreaseSpeed);
+            lowRideActivity.values[2] -= lowRideActivityDecreaseSpeed;
 
         // left
-        if (-value.x > lowRideActivity.left)
-            lowRideActivity.left = lowRideActivityCurve.Evaluate(-value.x);
+        if (-lowRideValue.x > lowRideActivity.values[3])
+            lowRideActivity.values[3] = lowRideActivityCurve.Evaluate(-lowRideValue.x);
         else
-            lowRideActivity.left = Mathf.Clamp01(lowRideActivity.left - lowRideActivityDecreaseSpeed);
+            lowRideActivity.values[3] -= lowRideActivityDecreaseSpeed;
 
+        // Clamp01; scheiße, geht bestimmt über property, aber kp wie das mit array geht
+        for (int i=0; i< lowRideActivity.values.Length; i++)
+        {
+            lowRideActivity.values[i] = Mathf.Clamp01(lowRideActivity.values[i]);
+            lowRideActivityValues[i] = lowRideActivity.values[i];                           // debugging
+        }
+        lowRideActivityStrength = lowRideActivity.HighestValue; 
 
+        
     }
 
 
@@ -855,16 +875,47 @@ public enum AutoAlignSurface
     ForwardSurface
 }
 
-public struct Directions
+public class LowRideActivity
 {
-    //public enum Direction { front, right, back, left};
-    //public Direction direction;
+    public enum Direction { front, right, back, left};
+    public Direction direction;
 
-    //public float[] members = new float[4];
-    public float front;
-    public float right;
-    public float back;
-    public float left;
+    public bool IsActive
+    {
+        get
+        {
+            foreach(float value in values)
+            {
+                if (value != 0)
+                    return true;
+            }
+            return false;
+        }
+    }
+    public float HighestValue 
+    { 
+        get
+        {
+            float highestValue = values[0];
+            foreach(float value in values)
+            {
+                if (value > highestValue)
+                    highestValue = value;
+            }
+            return highestValue;
+        } 
+    }
+
+
+    //private float[] values;
+    /// <summary>
+    /// front(0), right(1), back(2), left(3)
+    /// </summary>
+    public float[] values = new float[4];
+    //public float front;
+    //public float right;
+    //public float back;
+    //public float left;
 }
 
 
