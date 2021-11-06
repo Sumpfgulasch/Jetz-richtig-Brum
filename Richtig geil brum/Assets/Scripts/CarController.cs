@@ -78,7 +78,6 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(M)] public SteeringMethods steeringMethod = SteeringMethods.FrontSteer;
     //[TitleGroup(M)] public WheelOffsetModes wheelOffsetMode = WheelOffsetModes.SuspensionDistance;
     [TitleGroup(M)] public bool inAirCarControl = false;
-    [TitleGroup(M),ShowIf("inAirCarControl")] public RotationMethod airControllType = RotationMethod.Physics;
     [TitleGroup(M), ShowIf("inAirCarControl")] public bool stopAutoaligningAfterInAirControl = true;
     [TitleGroup(M)] public bool simplifyLowRide = false;
     [TitleGroup(M)] public bool allignStickToView = false;
@@ -86,7 +85,8 @@ public class CarController : SerializedMonoBehaviour
 
 
     [TitleGroup(LR)] [MinMaxSlider(0f, 2.5f, true)]public Vector2 minMaxGroundDistance = new Vector2(0.1f, 1f);// The minimum/maximum length that the wheels can extend - minimum = x component || maximum = y component
-    [TitleGroup(LR)] public AnimationCurve lowRideActivityCurve;
+    [TitleGroup(LR)] public AnimationCurve lowRideActivityMagnetCurve;
+    [TitleGroup(LR)] public AnimationCurve lowRideActivityAlignCurve;
     [TitleGroup(LR)] [Range(0, 0.2f)] public float lowRideActivityDecreaseSpeed = 0.01f;
     [TitleGroup(LR)] private Vector2 curMinMaxGroundDistance = new Vector2();
     [TitleGroup(LR)] [Range(0f, 2.5f)] public float extendedWheelsLowRideDistance = 1.2f;
@@ -135,6 +135,7 @@ public class CarController : SerializedMonoBehaviour
     }
     [TitleGroup(R)] public Material wheels_defaultMat;
     [TitleGroup(R)] public Material wheels_magnetPowerMat;
+    [TitleGroup(R)] public Transform[] magnetForcePositions = new Transform[4];
     [TitleGroup(R)] public MeshRenderer[] wheelsMeshes;
 
     [TitleGroup(H)] public bool showDebugHandles = true;
@@ -310,41 +311,27 @@ public class CarController : SerializedMonoBehaviour
 
             float airRollSpeed = xAlignmentFactor * airRollSpeedPitchRoll.x + yAlignmentFactor * airRollSpeedPitchRoll.y;
 
-            switch (airControllType)
+
+            // gib torque entlang der input axis (world space)
+            //rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y, 0f, -_steeringAngle.x).normalized * airRollSpeed * 100f, ForceMode.Acceleration); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
+
+            // Sorry für Auskommentieren! Ist das gleiche wie deins! Find ich nur schöner zu lesen :-D. Und ich raff deine rotation-Rechnung nicht kannst du mir das erklären
+
+            var localTorqueAxis = new Vector3(_steeringAngle.y, _steeringAngle.x, 0);
+            var globalTorqueAxis = transform.TransformVector(localTorqueAxis);
+            rB.AddTorque(globalTorqueAxis * inAirControlForce, ForceMode.Acceleration);
+
+            // wird jetz 3 mal im ganzen script berechnet aber egal :-)
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, transform.up, out hit))
             {
-                case RotationMethod.SetRotation:
-                    {
-                        //rotate around the cars position --- around the inputAxis(which is rotated by the cars rotation) (meaning its now in local space) ---  with the inputspeed * a fixed multiplier
-                        this.transform.RotateAround(this.transform.position, this.transform.rotation * inputNormal, airRollSpeed * _steeringAngle.magnitude); // direct control
-                        break;
-                    }
-                case RotationMethod.Physics:
-                    {
-                        // gib torque entlang der input axis (world space)
-                        //rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y, 0f, -_steeringAngle.x).normalized * airRollSpeed * 100f, ForceMode.Acceleration); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
-                        
-                        // Sorry für Auskommentieren! Ist das gleiche wie deins! Find ich nur schöner zu lesen :-D. Und ich raff deine rotation-Rechnung nicht kannst du mir das erklären
+                //Vector3.Cross
 
-                        var localTorqueAxis = new Vector3(_steeringAngle.y, _steeringAngle.x, 0);
-                        var globalTorqueAxis = transform.TransformVector(localTorqueAxis);
-                        rB.AddTorque(globalTorqueAxis * inAirControlForce, ForceMode.Acceleration);
-
-                        // wird jetz 3 mal im ganzen script berechnet aber egal :-)
-                        RaycastHit hit;
-                        if (Physics.Raycast(transform.position, transform.up, out hit))
-                        {
-                            //Vector3.Cross
-
-                            // HIER WEITERMACHEN
-                        }
-
-                        ClampAngularVelocity(maxAngularVelocity);
-                        break;
-                    }
+                // HIER WEITERMACHEN
             }
 
-
-            }
+            ClampAngularVelocity(maxAngularVelocity);
+        }
         else //resets the shouldAutoAlign bool.  - ganz unschoener code, vielleicht faellt dir dazu was besseres ein? (sobald man in einer "luftperiode"(grounded -> inAir -> grounded) einmal gelenkt hat, sollte er nichtmehr autoalignen, fuer die luftperiode)
         {
             _shouldAutoAlign = true; 
@@ -569,10 +556,10 @@ public class CarController : SerializedMonoBehaviour
     {
         while (magnetIsActive)
         {
-            float strength = 1f - Mathf.Clamp01(lowRideActivityCurve.Evaluate(lowRideActivity.HighestValue));     // wenn lowRide-Activity: kein autoAlign
+            float alignStrength = Mathf.Clamp01(lowRideActivityAlignCurve.Evaluate(lowRideActivity.HighestValue));     // wenn lowRide-Activity: kein autoAlign
 
-            AutoAlignCar(true, shouldAutoAlign, autoAlign_setRotationSpeed, DrivingState.InAir, strength);
-            AddPullForce(strength);
+            AutoAlignCar(true, shouldAutoAlign, autoAlign_setRotationSpeed, DrivingState.InAir, alignStrength);
+            AddPullForce(lowRideActivity.values);
             yield return null;
         }
 
@@ -589,8 +576,8 @@ public class CarController : SerializedMonoBehaviour
     /// <summary>
     /// Scheiß funktion. Nochmal schön schreiben. Fügt dem Auto Force nach unten hinzu, abhängig von der Distanz der targetSurface.
     /// </summary>
-    /// <param name="strength">[0,1]</param>
-    private void AddPullForce(float strength)
+    /// <param name="strengths">front, right, back, left. [0,1]</param>
+    private void AddPullForce(float[] strengths)
     {
         float surfaceDistance = 1000;
 
@@ -606,8 +593,12 @@ public class CarController : SerializedMonoBehaviour
         float distanceFactor = Mathf.Clamp01(magnetPowerDistanceCurve.Evaluate(surfaceDistance));
 
         // 3. Add force
-        Vector3 force = downVector * magnetPowerAcceleration * distanceFactor * strength;
-        rB.AddForce(force, ForceMode.Acceleration);
+        Vector3 force = downVector * magnetPowerAcceleration * distanceFactor;
+        //rB.AddForce(force, ForceMode.Acceleration);
+        float frontStrength = Mathf.Clamp01(lowRideActivityMagnetCurve.Evaluate(strengths[0]));
+        float backStrength = Mathf.Clamp01(lowRideActivityMagnetCurve.Evaluate(strengths[2]));
+        rB.AddForceAtPosition(force * 0.5f * frontStrength, magnetForcePositions[0].position, ForceMode.Acceleration);          // front wheels
+        rB.AddForceAtPosition(force * 0.5f * backStrength, magnetForcePositions[2].position, ForceMode.Acceleration);          // back wheels
 
         // 4. Max speed
         rB.velocity = rB.velocity.normalized * Mathf.Clamp(rB.velocity.magnitude, 0, magnetPowerMaxVelocity);
@@ -680,39 +671,38 @@ public class CarController : SerializedMonoBehaviour
     /// <param name="lowRideValue"></param>
     private void SetLowRideActivity(Vector2 lowRideValue)
     {
-        // Alle 4 Richtungen der lowRideActivity erhöhen oder verringern (SCHEIß CODE)
+        // (SCHEIß CODE) Alle 4 Richtungen der lowRideActivity erhöhen oder verringern 
 
         // front
-        if (lowRideValue.y > lowRideActivity.values[0])
-            lowRideActivity.values[0] = lowRideActivityCurve.Evaluate(lowRideValue.y);                                     // increase
+        if (lowRideValue.y > lowRideActivity[0])
+            lowRideActivity[0] = lowRideValue.y;                                    // increase
         else
-            lowRideActivity.values[0] -= lowRideActivityDecreaseSpeed;    // decrease
+            lowRideActivity[0] -= lowRideActivityDecreaseSpeed;                     // decrease
 
         // right
-        if (lowRideValue.x > lowRideActivity.values[1])
-            lowRideActivity.values[1] = lowRideActivityCurve.Evaluate(lowRideValue.x);
+        if (lowRideValue.x > lowRideActivity[1])
+            lowRideActivity[1] = lowRideValue.x;
         else
-            lowRideActivity.values[1] -= lowRideActivityDecreaseSpeed;
+            lowRideActivity[1] -= lowRideActivityDecreaseSpeed;
 
         // back
-        if (-lowRideValue.y > lowRideActivity.values[2])
-            lowRideActivity.values[2] = lowRideActivityCurve.Evaluate(-lowRideValue.y);
+        if (-lowRideValue.y > lowRideActivity[2])
+            lowRideActivity[2] = -lowRideValue.y;
         else
-            lowRideActivity.values[2] -= lowRideActivityDecreaseSpeed;
+            lowRideActivity[2] -= lowRideActivityDecreaseSpeed;
 
         // left
-        if (-lowRideValue.x > lowRideActivity.values[3])
-            lowRideActivity.values[3] = lowRideActivityCurve.Evaluate(-lowRideValue.x);
+        if (-lowRideValue.x > lowRideActivity[3])
+            lowRideActivity[3] = -lowRideValue.x;
         else
-            lowRideActivity.values[3] -= lowRideActivityDecreaseSpeed;
+            lowRideActivity[3] -= lowRideActivityDecreaseSpeed;
 
-        // Clamp01; scheiße, geht bestimmt über property, aber kp wie das mit array geht
-        for (int i=0; i< lowRideActivity.values.Length; i++)
+        // debugging
+        for (int i=0; i< 4; i++)
         {
-            lowRideActivity.values[i] = Mathf.Clamp01(lowRideActivity.values[i]);
-            lowRideActivityValues[i] = lowRideActivity.values[i];                           // debugging
+            lowRideActivityValues[i] = lowRideActivity[i];                           // debugging
         }
-        lowRideActivityStrength = lowRideActivity.HighestValue; 
+        lowRideActivityStrength = lowRideActivity.HighestValue;                     // debugging
 
         
     }
@@ -907,15 +897,24 @@ public class LowRideActivity
     }
 
 
-    //private float[] values;
+    public float this[int i]
+    {
+        get
+        {
+            return values[i];
+        }
+        set
+        {
+            if (i != 1 && i != 3)                       // hack; damit side-bewegung erstmal ignoriert wird
+                values[i] = Mathf.Clamp01(value);
+        }
+    }
+
+
     /// <summary>
     /// front(0), right(1), back(2), left(3)
     /// </summary>
     public float[] values = new float[4];
-    //public float front;
-    //public float right;
-    //public float back;
-    //public float left;
 }
 
 
