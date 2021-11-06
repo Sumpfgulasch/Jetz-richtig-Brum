@@ -647,16 +647,29 @@ public class CarController : SerializedMonoBehaviour
         lowRideValue = inputValue.Get<Vector2>();
     }
 
-    public void OnExtendWheels(InputValue inputValue)
+    public void OnExtendWheelsToggle(InputValue inputValue)
     {
         if (wheelsOut)
         {
-
             wheelsOut = false;
         }
         else
         {
             wheelsOut = true;
+        }
+    }
+
+    public void OnExtendWheelsPress(InputValue inputValue)
+    {
+        if (inputValue.isPressed)
+        {
+            wheelsOut = true;
+            print("extend wheels press; true");
+        }
+        else
+        {
+            wheelsOut = false;
+            print("extend wheels press; FALSE");
         }
     }
 
@@ -703,18 +716,12 @@ public class CarController : SerializedMonoBehaviour
             magnetIsActive = true;
             StartCoroutine(MagnetPower());
             SetWheelsMaterial(wheels_magnetPowerMat);
-
-            // ACHTUNG: hard-coded scheiße (mach ich nochmal richtig, wenn wir wissen dass es damit weitergeht)
-            minMaxGroundDistance.x = 1.35f;
         }
         else
         {
             magnetIsActive = false;
             StopCoroutine(MagnetPower());
             SetWheelsMaterial(wheels_defaultMat);
-
-            // ACHTUNG: hard-coded scheiße (mach ich nochmal richtig, wenn wir wissen dass es damit weitergeht)
-            minMaxGroundDistance.x = 0.7f;
         }
     }
 

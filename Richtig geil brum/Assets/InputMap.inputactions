@@ -30,17 +30,17 @@
                     "interactions": ""
                 },
                 {
-                    "name": "ExtendWheels",
-                    "type": "Button",
+                    "name": "ExtendWheelsPress",
+                    "type": "Value",
                     "id": "71beb6d0-9a62-486f-a3af-86dcf49fe46d",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
                 },
                 {
-                    "name": "MagnetPowerToggle",
+                    "name": "ExtendWheelsToggle",
                     "type": "Button",
-                    "id": "cfc1b145-5ee4-4359-ae8b-ce7450a59468",
+                    "id": "7bd31c6c-4f9f-40ef-91e9-2530eeb294a7",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -49,6 +49,14 @@
                     "name": "MagnetPowerPress",
                     "type": "Value",
                     "id": "eb28766b-1f3f-44b3-b718-5f35d12de6af",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "MagnetPowerToggle",
+                    "type": "Button",
+                    "id": "cfc1b145-5ee4-4359-ae8b-ce7450a59468",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -271,30 +279,30 @@
                 },
                 {
                     "name": "",
-                    "id": "154e3438-817e-43b0-996b-749c421b701d",
-                    "path": "<Gamepad>/rightStickPress",
+                    "id": "ab89497e-870b-4abc-a370-81b23b2e190e",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ExtendWheels",
+                    "action": "ExtendWheelsPress",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "ab89497e-870b-4abc-a370-81b23b2e190e",
-                    "path": "<Keyboard>/alt",
+                    "id": "38d1d3f8-39a2-483f-8840-141352a27c0d",
+                    "path": "<Keyboard>/ctrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ExtendWheels",
+                    "action": "ExtendWheelsPress",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "1e095bb9-bfde-4493-b950-84465a74f3aa",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -337,12 +345,34 @@
                 },
                 {
                     "name": "",
-                    "id": "dc87c6bd-e60a-40d1-95cf-fb8d62f7f612",
-                    "path": "<Keyboard>/ctrl",
+                    "id": "618e56de-2437-417d-9ba1-f050f5e8b18c",
+                    "path": "<Gamepad>/leftStickPress",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "MagnetPowerPress",
+                    "action": "MagnetPowerToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8cd69762-b125-48ac-bc70-498369459792",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MagnetPowerToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "68c20d07-8317-4fc3-8c60-822bb33ca87e",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ExtendWheelsToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -359,23 +389,12 @@
                 },
                 {
                     "name": "",
-                    "id": "9e27d723-6a7d-4f62-97a9-63bd701c3ad6",
-                    "path": "<Gamepad>/buttonWest",
+                    "id": "dc87c6bd-e60a-40d1-95cf-fb8d62f7f612",
+                    "path": "<Keyboard>/ctrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "MagnetPowerPress",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "618e56de-2437-417d-9ba1-f050f5e8b18c",
-                    "path": "<Gamepad>/leftStickPress",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MagnetPowerToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
