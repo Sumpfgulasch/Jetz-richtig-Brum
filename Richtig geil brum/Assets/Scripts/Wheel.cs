@@ -137,10 +137,10 @@ public class Wheel : SerializedMonoBehaviour
     public void OffsetWheelGradually(Vector2 _stepSizePlusMinus, float _strength, Vector2 _minMaxGroundDistance, AnimationCurve _powerCurve, bool invertedStrength = false) //Pushes the Wheel towards a goal, by an step amount(so it has to be called multiple times to reach its goal)
     {
         // Damit low ride bei JUMP immer noch funzt
-        if (invertedStrength)
-        {
-            _strength = 1f - _strength;
-        }
+        //if (invertedStrength)
+        //{
+        //    _strength = 1f - _strength;
+        //}
 
         // prozent der aktuellen position von startposition bis maximalposition
         float currentPercentLowRideDistance = wheelCollider.suspensionDistance / _minMaxGroundDistance.y;

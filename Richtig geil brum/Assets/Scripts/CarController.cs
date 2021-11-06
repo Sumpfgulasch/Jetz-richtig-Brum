@@ -86,6 +86,8 @@ public class CarController : SerializedMonoBehaviour
 
 
     [TitleGroup(LR)] [MinMaxSlider(0f, 2.5f, true)]public Vector2 minMaxGroundDistance = new Vector2(0.1f, 1f);// The minimum/maximum length that the wheels can extend - minimum = x component || maximum = y component
+    [TitleGroup(LR)] private Vector2 curMinMaxGroundDistance = new Vector2();
+    [TitleGroup(LR)] [Range(0f, 2.5f)] public float extendedWheelsLowRideDistance = 1.2f;
     [TitleGroup(LR)] [VectorRange(0f,0.5f,-0.5f,0f,true)] public Vector2 lowRideStepSizePlusMinus = new Vector2(0.1f, -0.1f); // the maximum percentage which the wheels move(lowRide) each frame. (based on the maximumGroundDistance) - change when going positive = x component || change  when going negative = y component
     [TitleGroup(LR)] public AnimationCurve powerCurve = AnimationCurve.Linear(0f,1f,1f,1f); // The maximum length that the wheels can extend
     [TitleGroup(LR)] [Range(0,1f)] public float lowRideSideScale = 0f;
@@ -155,6 +157,8 @@ public class CarController : SerializedMonoBehaviour
 
         InitSuspensionDistance();   
         SetCenterOfMass(rB);
+
+        curMinMaxGroundDistance = minMaxGroundDistance;
     }
 
     void FixedUpdate()
@@ -166,7 +170,7 @@ public class CarController : SerializedMonoBehaviour
         }
         Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL, ref shouldAutoAlign);
         Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
-        LowRide(lowRideValue, minMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus,frontWheelR, frontWheelL, backWheelR, backWheelL);
+        LowRide(lowRideValue, curMinMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus,frontWheelR, frontWheelL, backWheelR, backWheelL);
 
         // MagnetPower automatic brake
         if (magnetPowerAutoBrake)
@@ -652,10 +656,12 @@ public class CarController : SerializedMonoBehaviour
         if (wheelsOut)
         {
             wheelsOut = false;
+            ToggleExtendedGroundDistance(false);
         }
         else
         {
             wheelsOut = true;
+            ToggleExtendedGroundDistance(true);
         }
     }
 
@@ -664,12 +670,24 @@ public class CarController : SerializedMonoBehaviour
         if (inputValue.isPressed)
         {
             wheelsOut = true;
-            print("extend wheels press; true");
+            ToggleExtendedGroundDistance(true);
         }
         else
         {
             wheelsOut = false;
-            print("extend wheels press; FALSE");
+            ToggleExtendedGroundDistance(false);
+        }
+    }
+
+    private void ToggleExtendedGroundDistance(bool value)
+    {
+        if (value == true)
+        {
+            curMinMaxGroundDistance.Set(minMaxGroundDistance.x + extendedWheelsLowRideDistance, minMaxGroundDistance.y + extendedWheelsLowRideDistance);
+        }
+        else
+        {
+            curMinMaxGroundDistance = minMaxGroundDistance;
         }
     }
 
