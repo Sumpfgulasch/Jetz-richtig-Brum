@@ -24,6 +24,7 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(G)][OdinSerialize] public Vector3 CenterOfMassOffset{get{return centerOfMassOffset;} set{centerOfMassOffset = value; SetCenterOfMass(rB, true);}}
     [TitleGroup(G)] public float maxSpeed = 20f;        // NOT PROPERLY USED; only for audio
     [TitleGroup(G)] public float jumpForce = 20f;
+    [TitleGroup(G)] private float defaultMaxSteerAngle;
 
 
     [TitleGroup(MP)] public int magnetPowerAcceleration = 30;
@@ -61,13 +62,13 @@ public class CarController : SerializedMonoBehaviour
             }
         } 
     }
-    [TitleGroup(AA)] public RotationMethod autoAlignMethod = RotationMethod.Physics;
+    //[TitleGroup(AA)] public RotationMethod autoAlignMethod = RotationMethod.Physics;
     [TitleGroup(AA)] public float maxAngularVelocity = 5f;
     [TitleGroup(AA)] public int autoAlignTorqueForce = 10;
     [TitleGroup(AA), Tooltip("Used to control the amount of torque force. x = 1 heißt dass Auto 100% aligned, x = 0 heißt dass Auto 90° gedreht, x = -1 dass 180° gedreht.")] 
     public AnimationCurve autoAlignAngleCurve;
     [TitleGroup(AA), Tooltip("Used to reduce the angular velocity when the car is aligned")] public AnimationCurve autoAlignBrakeCurve;
-    [TitleGroup(AA)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir"), ShowIf("autoAlignMethod", RotationMethod.SetRotation)] public float autoAlign_setRotationSpeed = 0.02f;
+    //[TitleGroup(AA)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir"), ShowIf("autoAlignMethod", RotationMethod.SetRotation)] public float autoAlign_setRotationSpeed = 0.02f;
     [TitleGroup(AA)] public AnimationCurve autoAlignDistanceCurve;
     //[TitleGroup(AA), ShowIf("autoAlignSurface", AutoAlignSurface.Trajectory)] public AnimationCurve trajectorySpeedLerpCurve;
     [TitleGroup(AA)] public float inAirControlForce = 15f;
@@ -82,6 +83,7 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(M)] public bool simplifyLowRide = false;
     [TitleGroup(M)] public bool allignStickToView = false;
     [TitleGroup(M)] public bool invertRollControls = true;
+    [TitleGroup(M)] private SteeringMethods defaultSteeringMethod;
 
 
     [TitleGroup(LR)] [MinMaxSlider(0f, 2.5f, true)]public Vector2 minMaxGroundDistance = new Vector2(0.1f, 1f);// The minimum/maximum length that the wheels can extend - minimum = x component || maximum = y component
@@ -169,6 +171,8 @@ public class CarController : SerializedMonoBehaviour
         SetCenterOfMass(rB);
 
         curMinMaxGroundDistance = minMaxGroundDistance;
+        defaultSteeringMethod = steeringMethod;
+        defaultMaxSteerAngle = maxSteerAngle;
     }
 
     void FixedUpdate()
@@ -177,7 +181,7 @@ public class CarController : SerializedMonoBehaviour
         SetAirTime(ref inAirTime);
         if (autoalignCarInAir)
         {
-            AutoAlignCar(autoalignCarInAir, shouldAutoAlign, autoAlign_setRotationSpeed, drivingStateInfo);
+            AutoAlignCar(autoalignCarInAir, shouldAutoAlign, drivingStateInfo);
         }
         Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL, ref shouldAutoAlign);
         Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
@@ -436,7 +440,7 @@ public class CarController : SerializedMonoBehaviour
         }
     }
 
-    private void AutoAlignCar(bool _autoalignCarInAir, bool _shouldAutoAlign,float _autoalignCarInAirSpeed, DrivingState _drivingStateInfo, float strength = 1f)
+    private void AutoAlignCar(bool _autoalignCarInAir, bool _shouldAutoAlign, DrivingState _drivingStateInfo, float strength = 1f)
     {
         #region Autoalign Car in Air
         if(_autoalignCarInAir && _shouldAutoAlign && _drivingStateInfo == DrivingState.InAir)    //shouldAutoAlign is coupled with the Input of the car, so the car doesnt autoalign, against the airControl
@@ -558,8 +562,8 @@ public class CarController : SerializedMonoBehaviour
         {
             float alignStrength = Mathf.Clamp01(lowRideActivityAlignCurve.Evaluate(lowRideActivity.HighestValue));     // wenn lowRide-Activity: kein autoAlign
 
-            AutoAlignCar(true, shouldAutoAlign, autoAlign_setRotationSpeed, DrivingState.InAir, alignStrength);
-            AddPullForce(lowRideActivity.values);
+            AutoAlignCar(true, shouldAutoAlign, DrivingState.InAir, alignStrength);
+            AddPullForce(lowRideActivity.Values);
             yield return null;
         }
 
@@ -619,6 +623,8 @@ public class CarController : SerializedMonoBehaviour
     /// <param name="value"></param>
     private void ToggleExtendedGroundDistance(bool value)
     {
+        wheelsOut = value;
+
         if (value == true)
         {
             // 1. Stop all routines (unnötige lange coroutinenscheiße)
@@ -733,12 +739,12 @@ public class CarController : SerializedMonoBehaviour
     {
         if (wheelsOut)
         {
-            wheelsOut = false;
+            //wheelsOut = false;
             ToggleExtendedGroundDistance(false);
         }
         else
         {
-            wheelsOut = true;
+            //wheelsOut = true;
             ToggleExtendedGroundDistance(true);
         }
     }
@@ -747,12 +753,12 @@ public class CarController : SerializedMonoBehaviour
     {
         if (inputValue.isPressed)
         {
-            wheelsOut = true;
+            //wheelsOut = true;
             ToggleExtendedGroundDistance(true);
         }
         else
         {
-            wheelsOut = false;
+            //wheelsOut = false;
             ToggleExtendedGroundDistance(false);
         }
     }
@@ -766,6 +772,7 @@ public class CarController : SerializedMonoBehaviour
             magnetIsActive = false;
             StopCoroutine(MagnetPower());
             SetWheelsMaterial(wheels_defaultMat);
+            ToggleExtendedGroundDistance(false);
 
             // 2. add up-force
             rB.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
@@ -819,6 +826,25 @@ public class CarController : SerializedMonoBehaviour
         rB.angularVelocity = Vector3.zero;
     }
 
+    public void OnFourWheelsSteer(InputValue inputValue)
+    {
+        if (inputValue.isPressed)
+        {
+            // Extend
+            maxSteerAngle = 45f;
+            steeringMethod = SteeringMethods.FourWheelSteer;
+        }
+        else
+        {
+            // Reset wheels
+            maxSteerAngle = defaultMaxSteerAngle;
+            steeringMethod = defaultSteeringMethod;
+
+            Wheels[2].wheelCollider.steerAngle = 0;
+            Wheels[3].wheelCollider.steerAngle = 0;
+        }
+    }
+
 
 
 }
@@ -867,14 +893,19 @@ public enum AutoAlignSurface
 
 public class LowRideActivity
 {
-    public enum Direction { front, right, back, left};
-    public Direction direction;
+    private float[] values = new float[4];
+    /// <summary>
+    /// Front(0), right(1), back(2), left(3). Set-access via indexer of class-instance.
+    /// </summary>
+    public float[] Values 
+    { get { return values; } private set { Values = value; } }
+
 
     public bool IsActive
     {
         get
         {
-            foreach(float value in values)
+            foreach(float value in Values)
             {
                 if (value != 0)
                     return true;
@@ -886,8 +917,8 @@ public class LowRideActivity
     { 
         get
         {
-            float highestValue = values[0];
-            foreach(float value in values)
+            float highestValue = Values[0];
+            foreach(float value in Values)
             {
                 if (value > highestValue)
                     highestValue = value;
@@ -895,26 +926,18 @@ public class LowRideActivity
             return highestValue;
         } 
     }
-
-
     public float this[int i]
     {
         get
         {
-            return values[i];
+            return Values[i];
         }
         set
         {
             if (i != 1 && i != 3)                       // hack; damit side-bewegung erstmal ignoriert wird
-                values[i] = Mathf.Clamp01(value);
+                Values[i] = Mathf.Clamp01(value);
         }
     }
-
-
-    /// <summary>
-    /// front(0), right(1), back(2), left(3)
-    /// </summary>
-    public float[] values = new float[4];
 }
 
 

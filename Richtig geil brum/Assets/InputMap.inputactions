@@ -76,6 +76,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "FourWheelsSteer",
+                    "type": "Value",
+                    "id": "a837d31b-d9d8-4737-b727-b75a03f076b9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -324,7 +332,7 @@
                 {
                     "name": "",
                     "id": "42c28f5e-c279-440f-ad1f-72da769b25ed",
-                    "path": "<Gamepad>/buttonEast",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -406,6 +414,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "MagnetPowerPress",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3d1db6e3-a672-400f-a4e5-00844dea3ccf",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FourWheelsSteer",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "57efe723-a0d0-4e6e-b390-b28eda5df6fa",
+                    "path": "<Keyboard>/alt",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FourWheelsSteer",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
