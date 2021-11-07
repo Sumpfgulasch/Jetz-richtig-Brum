@@ -51,6 +51,8 @@ public class SceneObjectManager : SerializedMonoBehaviour
     //the tag "required" shows a warning if something is missing in the inspector.
     [Required] public CarController carController = null; 
     [Required] public VisualEffectAsset wheelSmokeVisualEffectAsset; 
+    [Required] public VisualEffectAsset collectableMechanicVisualEffectAsset; 
+    [Required] public GameObject BasicTextObject;
 
 
     private void Start() // Add all variables here, to log quickly if something is missing

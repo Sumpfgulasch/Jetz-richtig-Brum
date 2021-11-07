@@ -17,6 +17,7 @@ public class CarController : SerializedMonoBehaviour
     const string H = "Helper";
     const string MP = "MagnetPower";
     const string AA = "AutoAlign";
+    const string ME = "MechanicEnabler";
 
     [TitleGroup(G)] public float maxSteerAngle = 30f;
     [TitleGroup(G)] public float extremSteerAngle = 50f;
@@ -141,6 +142,18 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(R)] public MeshRenderer[] wheelsMeshes;
     [TitleGroup(R)] public Image magnetUI;
 
+
+
+    [TitleGroup(ME)] public bool UseDriveForward = true;
+    [TitleGroup(ME)] public bool UseDriveBackward = true;
+    [TitleGroup(ME)] public bool UseMagnet = true;
+    [TitleGroup(ME)] public bool UseInAirControl= true;
+    [TitleGroup(ME)] public bool UseSteerLeft= true;
+    [TitleGroup(ME)] public bool UseSteerRight= true;
+    [TitleGroup(ME)] public bool UseLowRideFrontal= true;
+    [TitleGroup(ME)] public bool UseLowRideBack= true;
+
+
     [TitleGroup(H)] public bool showDebugHandles = true;
     [TitleGroup(H)] public Vector4 lowRideActivityValues = new Vector4();
     [TitleGroup(H)] public float lowRideActivityStrength;
@@ -258,8 +271,16 @@ public class CarController : SerializedMonoBehaviour
         #region Steering on Ground
         // brauchen wir hier evtl. deltatime? 
         float targetAngle = _steeringAngle.x * maxSteerAngle;
+        if (!UseSteerLeft)
+        {
+            targetAngle = Mathf.Clamp(targetAngle, -360f, 0f);
+        }
+        if (!UseSteerRight)
+        {
+            targetAngle = Mathf.Clamp(targetAngle, 0f, 360f);
+        }
 
-        switch(steeringMethod)
+        switch (steeringMethod)
         {
             case SteeringMethods.FrontSteer:
             {
@@ -286,60 +307,63 @@ public class CarController : SerializedMonoBehaviour
 
 
         #region Manual rotation in air
-        if(inAirCarControl && drivingStateInfo == DrivingState.InAir) 
-        {
-            // invert controls
-            if (invertRollControls)
-                _steeringAngle.y *= -1f;
-
-            // complex rotation (90deg) of the 2 Dimensional inputVector - used as rotationAxis
-            Vector3 inputNormal = new Vector3(-_steeringAngle.y, 0f,_steeringAngle.x);
-
-            //flip the rotation Axis 180 deg so that the rotationangle will be opposite
-            //if(invertRollControls)
-            //{
-            //    inputNormal *= -1f;
-            //}
-
-            if (inputNormal.magnitude > 0.3f) // wenn gelenkt wurde (0.3f ist dabei der threshold zur erkennung der lenkung in der luft) 
+        if (UseInAirControl)
+        { 
+            if(inAirCarControl && drivingStateInfo == DrivingState.InAir) 
             {
-                if (stopAutoaligningAfterInAirControl) // wenn er nicht weiter autoalignen soll, sobald in der luft gelenkt wurde
+                // invert controls
+                if (invertRollControls)
+                    _steeringAngle.y *= -1f;
+
+                // complex rotation (90deg) of the 2 Dimensional inputVector - used as rotationAxis
+                Vector3 inputNormal = new Vector3(-_steeringAngle.y, 0f,_steeringAngle.x);
+
+                //flip the rotation Axis 180 deg so that the rotationangle will be opposite
+                //if(invertRollControls)
+                //{
+                //    inputNormal *= -1f;
+                //}
+
+                if (inputNormal.magnitude > 0.3f) // wenn gelenkt wurde (0.3f ist dabei der threshold zur erkennung der lenkung in der luft) 
                 {
-                    _shouldAutoAlign = false;
+                    if (stopAutoaligningAfterInAirControl) // wenn er nicht weiter autoalignen soll, sobald in der luft gelenkt wurde
+                    {
+                        _shouldAutoAlign = false;
+                    }
                 }
+
+                //calculate the rotationspeed for different axis
+                float xAlignmentFactor = Mathf.Abs(Vector3.Dot(inputNormal.normalized, Vector3.right)); //get the alignment factor of the input and the axis by dotting    -   absolute to incorporate left and right as a range between 0 and 1
+                float yAlignmentFactor = Mathf.Abs(Vector3.Dot(inputNormal.normalized, Vector3.forward)); //get the alignment factor of the input and the axis by dotting    -   absolute to incorporate top and bottom as a range between 0 and 1
+
+                float airRollSpeed = xAlignmentFactor * airRollSpeedPitchRoll.x + yAlignmentFactor * airRollSpeedPitchRoll.y;
+
+
+                // gib torque entlang der input axis (world space)
+                //rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y, 0f, -_steeringAngle.x).normalized * airRollSpeed * 100f, ForceMode.Acceleration); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
+
+                // Sorry für Auskommentieren! Ist das gleiche wie deins! Find ich nur schöner zu lesen :-D. Und ich raff deine rotation-Rechnung nicht kannst du mir das erklären
+
+
+                var localTorqueAxis = new Vector3(-_steeringAngle.y, _steeringAngle.x, 0);
+                var globalTorqueAxis = transform.TransformVector(localTorqueAxis);
+                rB.AddTorque(globalTorqueAxis * inAirControlForce, ForceMode.Acceleration);
+
+                // wird jetz 3 mal im ganzen script berechnet aber egal :-)
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, transform.up, out hit))
+                {
+                    //Vector3.Cross
+
+                    // HIER WEITERMACHEN
+                }
+
+                ClampAngularVelocity(maxAngularVelocity);
             }
-
-            //calculate the rotationspeed for different axis
-            float xAlignmentFactor = Mathf.Abs(Vector3.Dot(inputNormal.normalized, Vector3.right)); //get the alignment factor of the input and the axis by dotting    -   absolute to incorporate left and right as a range between 0 and 1
-            float yAlignmentFactor = Mathf.Abs(Vector3.Dot(inputNormal.normalized, Vector3.forward)); //get the alignment factor of the input and the axis by dotting    -   absolute to incorporate top and bottom as a range between 0 and 1
-
-            float airRollSpeed = xAlignmentFactor * airRollSpeedPitchRoll.x + yAlignmentFactor * airRollSpeedPitchRoll.y;
-
-
-            // gib torque entlang der input axis (world space)
-            //rB.AddTorque(this.transform.rotation * new Vector3(_steeringAngle.y, 0f, -_steeringAngle.x).normalized * airRollSpeed * 100f, ForceMode.Acceleration); // Physics Approach - *10000 weil umrechnungsfactor von direkter steuerung zu physics
-
-            // Sorry für Auskommentieren! Ist das gleiche wie deins! Find ich nur schöner zu lesen :-D. Und ich raff deine rotation-Rechnung nicht kannst du mir das erklären
-
-
-            var localTorqueAxis = new Vector3(-_steeringAngle.y, _steeringAngle.x, 0);
-            var globalTorqueAxis = transform.TransformVector(localTorqueAxis);
-            rB.AddTorque(globalTorqueAxis * inAirControlForce, ForceMode.Acceleration);
-
-            // wird jetz 3 mal im ganzen script berechnet aber egal :-)
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.up, out hit))
+            else //resets the shouldAutoAlign bool.  - ganz unschoener code, vielleicht faellt dir dazu was besseres ein? (sobald man in einer "luftperiode"(grounded -> inAir -> grounded) einmal gelenkt hat, sollte er nichtmehr autoalignen, fuer die luftperiode)
             {
-                //Vector3.Cross
-
-                // HIER WEITERMACHEN
+                _shouldAutoAlign = true; 
             }
-
-            ClampAngularVelocity(maxAngularVelocity);
-        }
-        else //resets the shouldAutoAlign bool.  - ganz unschoener code, vielleicht faellt dir dazu was besseres ein? (sobald man in einer "luftperiode"(grounded -> inAir -> grounded) einmal gelenkt hat, sollte er nichtmehr autoalignen, fuer die luftperiode)
-        {
-            _shouldAutoAlign = true; 
         }
         #endregion
     }
@@ -347,6 +371,14 @@ public class CarController : SerializedMonoBehaviour
     private void Thrust(float _strength, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL )
     {
         // brauchen wir hier evtl. deltatime?
+        if (!UseDriveForward)
+        {
+            _strength = Mathf.Clamp(_strength, -1f, 0f);
+        }
+        if (!UseDriveBackward)
+        {
+            _strength = Mathf.Clamp01(_strength);
+        }
 
         switch(propulsionMethod)
         {
@@ -411,6 +443,16 @@ public class CarController : SerializedMonoBehaviour
             if (invertRollControls)
             {
                 _strength *= new Vector2(1f, -1f);
+            }
+
+            if (!UseLowRideFrontal)
+            {
+                _strength = new Vector2(_strength.x, Mathf.Clamp(_strength.y,-1f,0f));
+            }
+
+            if (!UseLowRideBack)
+            {
+                _strength = new Vector2(_strength.x, Mathf.Clamp(_strength.y, 0f, 1f));
             }
 
             // nimmt das dot product (Skalarprodukt) vom InputVektor und  dem "Radpositions-Vektor" und clampt es auf eine range von 0 bis 1 (voher wars -1 bis 1), 
@@ -711,16 +753,19 @@ public class CarController : SerializedMonoBehaviour
 
     private void ToggleMagnet(bool value)
     {
-        magnetIsActive = value;
-        if (value == true)
+        if (UseMagnet)
         {
-            StartCoroutine(MagnetPower());
-            SetWheelsMaterial(wheels_magnetPowerMat);
-        }
-        else
-        {
-            StopCoroutine(MagnetPower());
-            SetWheelsMaterial(wheels_defaultMat);
+            magnetIsActive = value;
+            if (value == true)
+            {
+                StartCoroutine(MagnetPower());
+                SetWheelsMaterial(wheels_magnetPowerMat);
+            }
+            else
+            {
+                StopCoroutine(MagnetPower());
+                SetWheelsMaterial(wheels_defaultMat);
+            }
         }
     }
 
