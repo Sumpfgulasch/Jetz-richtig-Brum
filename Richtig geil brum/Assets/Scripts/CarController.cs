@@ -287,14 +287,18 @@ public class CarController : SerializedMonoBehaviour
         #region Manual rotation in air
         if(inAirCarControl && drivingStateInfo == DrivingState.InAir) 
         {
+            // invert controls
+            if (invertRollControls)
+                _steeringAngle.y *= -1f;
+
             // complex rotation (90deg) of the 2 Dimensional inputVector - used as rotationAxis
             Vector3 inputNormal = new Vector3(-_steeringAngle.y, 0f,_steeringAngle.x);
 
             //flip the rotation Axis 180 deg so that the rotationangle will be opposite
-            if(invertRollControls)
-            {
-                inputNormal *= -1f;
-            }
+            //if(invertRollControls)
+            //{
+            //    inputNormal *= -1f;
+            //}
 
             if (inputNormal.magnitude > 0.3f) // wenn gelenkt wurde (0.3f ist dabei der threshold zur erkennung der lenkung in der luft) 
             {
@@ -316,7 +320,8 @@ public class CarController : SerializedMonoBehaviour
 
             // Sorry für Auskommentieren! Ist das gleiche wie deins! Find ich nur schöner zu lesen :-D. Und ich raff deine rotation-Rechnung nicht kannst du mir das erklären
 
-            var localTorqueAxis = new Vector3(_steeringAngle.y, _steeringAngle.x, 0);
+
+            var localTorqueAxis = new Vector3(-_steeringAngle.y, _steeringAngle.x, 0);
             var globalTorqueAxis = transform.TransformVector(localTorqueAxis);
             rB.AddTorque(globalTorqueAxis * inAirControlForce, ForceMode.Acceleration);
 
@@ -672,6 +677,10 @@ public class CarController : SerializedMonoBehaviour
     /// <param name="lowRideValue"></param>
     private void SetLowRideActivity(Vector2 lowRideValue)
     {
+        // inverted controls
+        if (invertRollControls)
+            lowRideValue.y *= -1f;
+
         // (SCHEIß CODE) Alle 4 Richtungen der lowRideActivity erhöhen oder verringern 
 
         // front
@@ -697,13 +706,6 @@ public class CarController : SerializedMonoBehaviour
             lowRideActivity[3] = -lowRideValue.x;
         else
             lowRideActivity[3] -= lowRideActivityDecreaseSpeed;
-
-        //// debugging
-        //for (int i=0; i< 4; i++)
-        //{
-        //    lowRideActivityValues[i] = lowRideActivity[i];                           // debugging
-        //}
-        //lowRideActivityStrength = lowRideActivity.HighestValue;                     // debugging
     }
 
     private void ToggleMagnet(bool value)
@@ -765,12 +767,10 @@ public class CarController : SerializedMonoBehaviour
     {
         if (wheelsOut)
         {
-            //wheelsOut = false;
             ToggleExtendedGroundDistance(false);
         }
         else
         {
-            //wheelsOut = true;
             ToggleExtendedGroundDistance(true);
         }
     }
@@ -779,12 +779,10 @@ public class CarController : SerializedMonoBehaviour
     {
         if (inputValue.isPressed)
         {
-            //wheelsOut = true;
             ToggleExtendedGroundDistance(true);
         }
         else
         {
-            //wheelsOut = false;
             ToggleExtendedGroundDistance(false);
         }
     }
@@ -848,7 +846,7 @@ public class CarController : SerializedMonoBehaviour
         if (inputValue.isPressed)
         {
             // Extend steering ability
-            maxSteerAngle = 45f;
+            maxSteerAngle = 60f;
             steeringMethod = SteeringMethods.FourWheelSteer;
         }
         else
@@ -951,7 +949,7 @@ public class LowRideActivity
         }
         set
         {
-            if (i != 1 && i != 3)                       // hack; damit side-bewegung erstmal ignoriert wird
+            if (i != 1 && i != 3)                       // side-stick-bewegung erstmal ignorieren
                 Values[i] = Mathf.Clamp01(value);
         }
     }
