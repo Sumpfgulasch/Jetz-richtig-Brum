@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody), typeof(TrajectoryRenderer))]
 public class CarController : SerializedMonoBehaviour
@@ -29,10 +30,14 @@ public class CarController : SerializedMonoBehaviour
 
     [TitleGroup(MP)] public int magnetPowerAcceleration = 30;
     [TitleGroup(MP)] public int magnetPowerMaxVelocity = 30;
-    [TitleGroup(MP), GUIColor(0.5f, 0f, 0f)] public ButtonMode magnetPowerButtonMode = ButtonMode.Toggle;
     [TitleGroup(MP), Tooltip("Brake when magnetPower is active and the player doesn't accalerate")] public bool magnetPowerAutoBrake = true;
     [TitleGroup(MP), Range(0, 1f), ShowIf("magnetPowerAutoBrake")] public float magnetPowerBrakeFactor = 0.9f;
     [TitleGroup(MP)] public AnimationCurve magnetPowerDistanceCurve;
+    [TitleGroup(MP)] public bool limitMagnetTime = true;
+    [TitleGroup(MP), ShowIf("limitMagnetTime")] public float magnetMaxTime = 15f;
+    [TitleGroup(MP)] private float magnetTimer = 0;
+    [TitleGroup(MP)] private bool magnetIsActive;
+    [TitleGroup(MP)] private float targetSurfaceDistance;
 
 
     [TitleGroup(AA)] public bool autoalignCarInAir = true;
@@ -62,22 +67,18 @@ public class CarController : SerializedMonoBehaviour
             }
         } 
     }
-    //[TitleGroup(AA)] public RotationMethod autoAlignMethod = RotationMethod.Physics;
     [TitleGroup(AA)] public float maxAngularVelocity = 5f;
     [TitleGroup(AA)] public int autoAlignTorqueForce = 10;
     [TitleGroup(AA), Tooltip("Used to control the amount of torque force. x = 1 heißt dass Auto 100% aligned, x = 0 heißt dass Auto 90° gedreht, x = -1 dass 180° gedreht.")] 
     public AnimationCurve autoAlignAngleCurve;
     [TitleGroup(AA), Tooltip("Used to reduce the angular velocity when the car is aligned")] public AnimationCurve autoAlignBrakeCurve;
-    //[TitleGroup(AA)][OdinSerialize, Range(0f,0.2f), ShowIf("autoalignCarInAir"), ShowIf("autoAlignMethod", RotationMethod.SetRotation)] public float autoAlign_setRotationSpeed = 0.02f;
     [TitleGroup(AA)] public AnimationCurve autoAlignDistanceCurve;
-    //[TitleGroup(AA), ShowIf("autoAlignSurface", AutoAlignSurface.Trajectory)] public AnimationCurve trajectorySpeedLerpCurve;
     [TitleGroup(AA)] public float inAirControlForce = 15f;
     [TitleGroup(AA), Range(0,1f)] public float inAirAngularBrakeFactor = 0.97f;
     
 
     [TitleGroup(M)] public PropulsionMethods propulsionMethod = PropulsionMethods.FrontDrive;
     [TitleGroup(M)] public SteeringMethods steeringMethod = SteeringMethods.FrontSteer;
-    //[TitleGroup(M)] public WheelOffsetModes wheelOffsetMode = WheelOffsetModes.SuspensionDistance;
     [TitleGroup(M)] public bool inAirCarControl = false;
     [TitleGroup(M), ShowIf("inAirCarControl")] public bool stopAutoaligningAfterInAirControl = true;
     [TitleGroup(M)] public bool simplifyLowRide = false;
@@ -87,11 +88,11 @@ public class CarController : SerializedMonoBehaviour
 
 
     [TitleGroup(LR)] [MinMaxSlider(0f, 2.5f, true)]public Vector2 minMaxGroundDistance = new Vector2(0.1f, 1f);// The minimum/maximum length that the wheels can extend - minimum = x component || maximum = y component
+    [TitleGroup(LR)] [Range(0f, 2.5f)] public float extendedWheelsLowRideDistance = 1.2f;
     [TitleGroup(LR)] public AnimationCurve lowRideActivityMagnetCurve;
     [TitleGroup(LR)] public AnimationCurve lowRideActivityAlignCurve;
     [TitleGroup(LR)] [Range(0, 0.2f)] public float lowRideActivityDecreaseSpeed = 0.01f;
     [TitleGroup(LR)] private Vector2 curMinMaxGroundDistance = new Vector2();
-    [TitleGroup(LR)] [Range(0f, 2.5f)] public float extendedWheelsLowRideDistance = 1.2f;
     [TitleGroup(LR)] [MinMaxSlider(0f, 1f, true)] public Vector2 extendWheelsTime = new Vector2(0, 0.2f);
     [TitleGroup(LR)] [VectorRange(0f,0.5f,-0.5f,0f,true)] public Vector2 lowRideStepSizePlusMinus = new Vector2(0.1f, -0.1f); // the maximum percentage which the wheels move(lowRide) each frame. (based on the maximumGroundDistance) - change when going positive = x component || change  when going negative = y component
     [TitleGroup(LR)] public AnimationCurve powerCurve = AnimationCurve.Linear(0f,1f,1f,1f); // The maximum length that the wheels can extend
@@ -118,17 +119,14 @@ public class CarController : SerializedMonoBehaviour
             {
                 if (!Wheels.Contains(null))
                 {
-                    //int groundedWheels = 0;
                     foreach (Wheel wheel in Wheels)
                     {
                         WheelHit hit;
                         if (wheel.wheelCollider.GetGroundHit(out hit))
                         {
-                            //groundedWheels++;
                             return DrivingState.Grounded;
                         }
                     }
-                    //if (groundedWheels < 2)
                     return DrivingState.InAir;
                 }
             }
@@ -139,16 +137,11 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(R)] public Material wheels_magnetPowerMat;
     [TitleGroup(R)] public Transform[] magnetForcePositions = new Transform[4];
     [TitleGroup(R)] public MeshRenderer[] wheelsMeshes;
+    [TitleGroup(R)] public Image magnetUI;
 
     [TitleGroup(H)] public bool showDebugHandles = true;
-    [TitleGroup(H)] private bool autoAlignToSurfaceBool(){if(autoalignCarInAir){return true;}else{return false;}} // helperfunction for showif
     [TitleGroup(H)] public Vector4 lowRideActivityValues = new Vector4();
     [TitleGroup(H)] public float lowRideActivityStrength;
-
-
-    [TitleGroup(MP)] private IEnumerator magnetPowerRoutine;
-    [TitleGroup(MP)] private bool magnetIsActive;
-    [TitleGroup(MP)] private float targetSurfaceDistance;
 
     [HideInInspector] public float rB_velocity;
 
@@ -186,6 +179,7 @@ public class CarController : SerializedMonoBehaviour
         Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL, ref shouldAutoAlign);
         Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
         LowRide(lowRideValue, curMinMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus,frontWheelR, frontWheelL, backWheelR, backWheelL);
+        ManageMagnetTimeLimit();
 
         // MagnetPower automatic brake
         if (magnetPowerAutoBrake)
@@ -207,7 +201,6 @@ public class CarController : SerializedMonoBehaviour
                 }
             }
         }
-
         rB_velocity = rB.velocity.magnitude;
     }
 
@@ -223,7 +216,7 @@ public class CarController : SerializedMonoBehaviour
             }
             return;
         }
-        _rb.centerOfMass =  centerOfMassOffset;
+        _rb.centerOfMass = centerOfMassOffset;
     }
 
     public void InitSuspensionDistance()
@@ -703,14 +696,30 @@ public class CarController : SerializedMonoBehaviour
         else
             lowRideActivity[3] -= lowRideActivityDecreaseSpeed;
 
-        // debugging
-        for (int i=0; i< 4; i++)
-        {
-            lowRideActivityValues[i] = lowRideActivity[i];                           // debugging
-        }
-        lowRideActivityStrength = lowRideActivity.HighestValue;                     // debugging
+        //// debugging
+        //for (int i=0; i< 4; i++)
+        //{
+        //    lowRideActivityValues[i] = lowRideActivity[i];                           // debugging
+        //}
+        //lowRideActivityStrength = lowRideActivity.HighestValue;                     // debugging
+    }
 
-        
+    private void ManageMagnetTimeLimit()
+    {
+        // UI
+        if (magnetIsActive)
+            magnetTimer = Mathf.Clamp(magnetTimer + Time.deltaTime, 0, magnetMaxTime);
+        else
+            magnetTimer = Mathf.Clamp(magnetTimer - 3f*Time.deltaTime, 0, magnetMaxTime);
+        magnetUI.fillAmount = 1f - magnetTimer / magnetMaxTime;
+        magnetUI.color = Color.Lerp(Color.red, Color.green, magnetUI.fillAmount);
+
+        // Deactivate magnet
+        if (magnetTimer == magnetMaxTime)
+        {
+            ToggleMagnet(false);
+            ToggleExtendedGroundDistance(false);
+        }
     }
 
 
@@ -786,15 +795,19 @@ public class CarController : SerializedMonoBehaviour
         {
             if (magnetIsActive)
             {
-                magnetIsActive = false;
-                StopCoroutine(MagnetPower());
-                SetWheelsMaterial(wheels_defaultMat);
+                //magnetIsActive = false;
+                //StopCoroutine(MagnetPower());
+                //SetWheelsMaterial(wheels_defaultMat);
+
+                ToggleMagnet(false);
             }
             else
             {
-                magnetIsActive = true;
-                StartCoroutine(MagnetPower());
-                SetWheelsMaterial(wheels_magnetPowerMat);
+                //magnetIsActive = true;
+                //StartCoroutine(MagnetPower());
+                //SetWheelsMaterial(wheels_magnetPowerMat);
+
+                ToggleMagnet(true);
             }
         }
 
@@ -805,13 +818,32 @@ public class CarController : SerializedMonoBehaviour
         // Button mode #2: Pressed
         if (inputValue.isPressed)
         {
-            magnetIsActive = true;
+            //magnetIsActive = true;
+            //StartCoroutine(MagnetPower());
+            //SetWheelsMaterial(wheels_magnetPowerMat);
+
+            ToggleMagnet(true);
+        }
+        else
+        {
+            //magnetIsActive = false;
+            //StopCoroutine(MagnetPower());
+            //SetWheelsMaterial(wheels_defaultMat);
+
+            ToggleMagnet(false);
+        }
+    }
+
+    private void ToggleMagnet(bool value)
+    {
+        magnetIsActive = value;
+        if (value == true)
+        {
             StartCoroutine(MagnetPower());
             SetWheelsMaterial(wheels_magnetPowerMat);
         }
         else
         {
-            magnetIsActive = false;
             StopCoroutine(MagnetPower());
             SetWheelsMaterial(wheels_defaultMat);
         }
@@ -830,7 +862,7 @@ public class CarController : SerializedMonoBehaviour
     {
         if (inputValue.isPressed)
         {
-            // Extend
+            // Extend steering ability
             maxSteerAngle = 45f;
             steeringMethod = SteeringMethods.FourWheelSteer;
         }
