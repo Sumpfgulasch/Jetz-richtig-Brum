@@ -19,6 +19,7 @@ public class CarController : SerializedMonoBehaviour
     const string AA = "AutoAlign";
 
     [TitleGroup(G)] public float maxSteerAngle = 30f;
+    [TitleGroup(G)] public float extremSteerAngle = 50f;
     [TitleGroup(G)] public float motorForce = 50;
     [TitleGroup(G)] public Vector2 airRollSpeedPitchRoll = Vector2.one;
     [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f,0f,0f);
@@ -846,7 +847,7 @@ public class CarController : SerializedMonoBehaviour
         if (inputValue.isPressed)
         {
             // Extend steering ability
-            maxSteerAngle = 60f;
+            maxSteerAngle = extremSteerAngle;
             steeringMethod = SteeringMethods.FourWheelSteer;
         }
         else
