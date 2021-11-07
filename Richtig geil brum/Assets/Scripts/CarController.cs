@@ -35,6 +35,7 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(MP)] public AnimationCurve magnetPowerDistanceCurve;
     [TitleGroup(MP)] public bool limitMagnetTime = true;
     [TitleGroup(MP), ShowIf("limitMagnetTime")] public float magnetMaxTime = 15f;
+    [TitleGroup(MP), ShowIf("limitMagnetTime")] public float magnetRefillFactor = 4f;
     [TitleGroup(MP)] private float magnetTimer = 0;
     [TitleGroup(MP)] private bool magnetIsActive;
     [TitleGroup(MP)] private float targetSurfaceDistance;
@@ -179,7 +180,8 @@ public class CarController : SerializedMonoBehaviour
         Steer(steerValue,frontWheelR, frontWheelL, backWheelR, backWheelL, ref shouldAutoAlign);
         Thrust(thrustValue,frontWheelR, frontWheelL, backWheelR, backWheelL);
         LowRide(lowRideValue, curMinMaxGroundDistance, powerCurve, lowRideStepSizePlusMinus,frontWheelR, frontWheelL, backWheelR, backWheelL);
-        ManageMagnetTimeLimit();
+        if (limitMagnetTime)
+            ManageMagnetTimeLimit();
 
         // MagnetPower automatic brake
         if (magnetPowerAutoBrake)
@@ -704,13 +706,28 @@ public class CarController : SerializedMonoBehaviour
         //lowRideActivityStrength = lowRideActivity.HighestValue;                     // debugging
     }
 
+    private void ToggleMagnet(bool value)
+    {
+        magnetIsActive = value;
+        if (value == true)
+        {
+            StartCoroutine(MagnetPower());
+            SetWheelsMaterial(wheels_magnetPowerMat);
+        }
+        else
+        {
+            StopCoroutine(MagnetPower());
+            SetWheelsMaterial(wheels_defaultMat);
+        }
+    }
+
     private void ManageMagnetTimeLimit()
     {
         // UI
         if (magnetIsActive)
             magnetTimer = Mathf.Clamp(magnetTimer + Time.deltaTime, 0, magnetMaxTime);
         else
-            magnetTimer = Mathf.Clamp(magnetTimer - 3f*Time.deltaTime, 0, magnetMaxTime);
+            magnetTimer = Mathf.Clamp(magnetTimer - magnetRefillFactor * Time.deltaTime, 0, magnetMaxTime);
         magnetUI.fillAmount = 1f - magnetTimer / magnetMaxTime;
         magnetUI.color = Color.Lerp(Color.red, Color.green, magnetUI.fillAmount);
 
@@ -795,57 +812,25 @@ public class CarController : SerializedMonoBehaviour
         {
             if (magnetIsActive)
             {
-                //magnetIsActive = false;
-                //StopCoroutine(MagnetPower());
-                //SetWheelsMaterial(wheels_defaultMat);
-
                 ToggleMagnet(false);
             }
             else
             {
-                //magnetIsActive = true;
-                //StartCoroutine(MagnetPower());
-                //SetWheelsMaterial(wheels_magnetPowerMat);
-
                 ToggleMagnet(true);
             }
         }
-
-
     }
+
     public void OnMagnetPowerPress(InputValue inputValue)
     {
         // Button mode #2: Pressed
         if (inputValue.isPressed)
         {
-            //magnetIsActive = true;
-            //StartCoroutine(MagnetPower());
-            //SetWheelsMaterial(wheels_magnetPowerMat);
-
             ToggleMagnet(true);
         }
         else
         {
-            //magnetIsActive = false;
-            //StopCoroutine(MagnetPower());
-            //SetWheelsMaterial(wheels_defaultMat);
-
             ToggleMagnet(false);
-        }
-    }
-
-    private void ToggleMagnet(bool value)
-    {
-        magnetIsActive = value;
-        if (value == true)
-        {
-            StartCoroutine(MagnetPower());
-            SetWheelsMaterial(wheels_magnetPowerMat);
-        }
-        else
-        {
-            StopCoroutine(MagnetPower());
-            SetWheelsMaterial(wheels_defaultMat);
         }
     }
 
