@@ -53,6 +53,9 @@ public class SceneObjectManager : SerializedMonoBehaviour
     [Required] public VisualEffectAsset wheelSmokeVisualEffectAsset; 
     [Required] public VisualEffectAsset collectableMechanicVisualEffectAsset; 
     [Required] public GameObject BasicTextObject;
+    [Required] public Material WheelDefaultMaterial;
+    [Required] public Material WheelMagnetMaterial;
+
 
 
     private void Start() // Add all variables here, to log quickly if something is missing

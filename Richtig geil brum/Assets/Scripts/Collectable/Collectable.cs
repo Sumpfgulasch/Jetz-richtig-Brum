@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine.VFX;
 
 //Require Component creates a ColliderComponent when this script is attached to any Object.
 [RequireComponent(typeof(Collider))]
@@ -31,5 +32,15 @@ public abstract class Collectable : SerializedMonoBehaviour
     }
 
     public abstract void OnCollect(bool _enable); // OnCollect is abstract -> every class that inherits from collectable has to implement the OnCollect function.
+
+    public void SpawnAndKillParticle(Vector3 _pos,VisualEffectAsset _vfxAsset, float _destructionTime = 5f)
+    {
+        //SPAWN AND KILL PARTICLE.
+        GameObject particle = new GameObject("CollectableParticle");
+        particle.transform.position = _pos;
+        VisualEffect particleEffect = particle.AddComponent<VisualEffect>();
+        particleEffect.visualEffectAsset = _vfxAsset;
+        Destroy(particle, _destructionTime); // kill after 5 seconds
+    }
 }
 

@@ -54,50 +54,46 @@ public class CollectableMechanic : Collectable
     {
         switch (mechanicType)
         {
-            case MechanicTypes.DriveForward:
-                cC.UseDriveForward = _enable;
-                break;
-            case MechanicTypes.DriveBackwards:
-                cC.UseDriveBackward = _enable;
-                break;
-            case MechanicTypes.MagnetShort:
-                cC.UseMagnet = _enable;
-                cC.magnetMaxTime = 3f;
-                break;
-            case MechanicTypes.MagnetMedium:
-                cC.UseMagnet = _enable;
-                cC.magnetMaxTime = 8f;
-                break;
-            case MechanicTypes.MagnetLong:
-                cC.UseMagnet = _enable;
-                cC.magnetMaxTime = 15f;
-                break;
-            case MechanicTypes.InAirControl:
-                cC.UseInAirControl = _enable;
-                break;
-            case MechanicTypes.SteerLeft:
-                cC.UseSteerLeft = _enable;
-                break;
-            case MechanicTypes.SteerRight:
-                cC.UseSteerRight = _enable;
-                break;
-            case MechanicTypes.LowRideFrontal:
-                cC.UseLowRideFrontal = _enable;
-                break;
-            case MechanicTypes.LowRideBack:
-                cC.UseLowRideBack = _enable;
-                break;
-            default:
-                Debug.Log("Collectable is of no type");
-                break;
+            //case MechanicTypes.DriveForward:
+            //    cC.UseDriveForward = _enable;
+            //    break;
+            //case MechanicTypes.DriveBackwards:
+            //    cC.UseDriveBackward = _enable;
+            //    break;
+            //case MechanicTypes.MagnetShort:
+            //    cC.UseMagnet = _enable;
+            //    cC.magnetMaxTime = 3f;
+            //    break;
+            //case MechanicTypes.MagnetMedium:
+            //    cC.UseMagnet = _enable;
+            //    cC.magnetMaxTime = 8f;
+            //    break;
+            //case MechanicTypes.MagnetLong:
+            //    cC.UseMagnet = _enable;
+            //    cC.magnetMaxTime = 15f;
+            //    break;
+            //case MechanicTypes.InAirControl:
+            //    cC.UseInAirControl = _enable;
+            //    break;
+            //case MechanicTypes.SteerLeft:
+            //    cC.UseSteerLeft = _enable;
+            //    break;
+            //case MechanicTypes.SteerRight:
+            //    cC.UseSteerRight = _enable;
+            //    break;
+            //case MechanicTypes.LowRideFrontal:
+            //    cC.UseLowRideFrontal = _enable;
+            //    break;
+            //case MechanicTypes.LowRideBack:
+            //    cC.UseLowRideBack = _enable;
+            //    break;
+            //default:
+            //    Debug.Log("Collectable is of no type");
+            //    break;
         }
 
         //SPAWN AND KILL PARTICLE.
-        GameObject particle = new GameObject("CollectableParticles");
-        particle.transform.position = this.transform.position;
-        VisualEffect particleEffect = particle.AddComponent<VisualEffect>();
-        particleEffect.visualEffectAsset = SceneObjectManager.Instance.collectableMechanicVisualEffectAsset;
-        Destroy(particle, 2f);
+        SpawnAndKillParticle(this.transform.position, SceneObjectManager.Instance.collectableMechanicVisualEffectAsset, 5f);
     }
 
 

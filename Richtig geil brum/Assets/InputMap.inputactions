@@ -70,7 +70,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Reset",
+                    "name": "Teleport",
                     "type": "Button",
                     "id": "8ea8bf3b-dd16-4561-9745-570d65d1f145",
                     "expectedControlType": "Button",
@@ -336,7 +336,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Reset",
+                    "action": "Teleport",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -347,7 +347,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Reset",
+                    "action": "Teleport",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

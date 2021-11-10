@@ -123,6 +123,134 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &503636
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 503639}
+  - component: {fileID: 503638}
+  - component: {fileID: 503637}
+  m_Layer: 0
+  m_Name: CollectableExplosion
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!73398921 &503637
+VFXRenderer:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503636}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!2083052967 &503638
+VisualEffect:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503636}
+  m_Enabled: 1
+  m_Asset: {fileID: 8926484042661614526, guid: 483b2c34fd61bc94dae9eab87642e53c, type: 3}
+  m_InitialEventName: OnPlay
+  m_InitialEventNameOverriden: 0
+  m_StartSeed: 0
+  m_ResetSeedOnPlay: 1
+  m_ResourceVersion: 1
+  m_PropertySheet:
+    m_Float:
+      m_Array:
+      - m_Value: 5.95
+        m_Name: TravelDistance
+        m_Overridden: 1
+      - m_Value: 83.1
+        m_Name: MaxVelocity
+        m_Overridden: 1
+      - m_Value: 11.5
+        m_Name: Drag
+        m_Overridden: 1
+      - m_Value: 20.3
+        m_Name: Turbolence
+        m_Overridden: 1
+    m_Vector2f:
+      m_Array: []
+    m_Vector3f:
+      m_Array: []
+    m_Vector4f:
+      m_Array:
+      - m_Value: {x: 0, y: 4.408391, z: 5.3403144, w: 1}
+        m_Name: ParticleColor
+        m_Overridden: 1
+    m_Uint:
+      m_Array: []
+    m_Int:
+      m_Array: []
+    m_Matrix4x4f:
+      m_Array: []
+    m_AnimationCurve:
+      m_Array: []
+    m_Gradient:
+      m_Array: []
+    m_NamedObject:
+      m_Array:
+      - m_Value: {fileID: 2800000, guid: 9aebf5eaf632b8a4898b295d2cb20c0d, type: 3}
+        m_Name: ParticleTexture
+        m_Overridden: 1
+    m_Bool:
+      m_Array: []
+--- !u!4 &503639
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503636}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.58, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &54303022
 GameObject:
   m_ObjectHideFlags: 0
@@ -467,6 +595,8 @@ MonoBehaviour:
   wheelSmokeVisualEffectAsset: {fileID: 8926484042661614526, guid: 650d93899ab782444b9665e7a7c8a6ac, type: 3}
   collectableMechanicVisualEffectAsset: {fileID: 8926484042661614526, guid: 483b2c34fd61bc94dae9eab87642e53c, type: 3}
   BasicTextObject: {fileID: 1699258127261474408, guid: f00ea89e80c4be54bb71ed1cdd502c8e, type: 3}
+  WheelDefaultMaterial: {fileID: 2100000, guid: 752635dfc2839374ba7782604f0d30aa, type: 2}
+  WheelMagnetMaterial: {fileID: 2100000, guid: 9e177831218c3d146aab8abbbc807cbf, type: 2}
 --- !u!1 &216355783
 GameObject:
   m_ObjectHideFlags: 0
@@ -512,6 +642,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bpm_: 120
   pause_: 0
+--- !u!83 &271319767
+AudioClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: helm
+  m_LoadType: 0
+  m_Channels: 1
+  m_Frequency: 48000
+  m_BitsPerSample: 32
+  m_Length: 0
+  m_IsTrackerFormat: 0
+  m_Ambisonic: 0
+  m_SubsoundIndex: 0
+  m_PreloadAudioData: 1
+  m_LoadInBackground: 0
+  m_Legacy3D: 0
+  m_Resource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_CompressionFormat: 0
+  m_EditorResource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_EditorCompressionFormat: 0
 --- !u!1 &271817094
 GameObject:
   m_ObjectHideFlags: 3
@@ -844,7 +1002,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7785286, y: 1}
+    m_SensorSize: {x: 1.7778637, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -860,7 +1018,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 391781414}
-  m_LocalRotation: {x: 0.3469958, y: 1e-45, z: -0, w: 0.9378667}
+  m_LocalRotation: {x: 0.3469958, y: -3e-45, z: 1e-45, w: 0.9378667}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1198,7 +1356,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7785286, y: 1}
+    m_SensorSize: {x: 1.7778637, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1335,34 +1493,6 @@ Transform:
   m_Father: {fileID: 3212935939740550256}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!83 &684257280
-AudioClip:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: helm
-  m_LoadType: 0
-  m_Channels: 1
-  m_Frequency: 48000
-  m_BitsPerSample: 32
-  m_Length: 0
-  m_IsTrackerFormat: 0
-  m_Ambisonic: 0
-  m_SubsoundIndex: 0
-  m_PreloadAudioData: 1
-  m_LoadInBackground: 0
-  m_Legacy3D: 0
-  m_Resource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_CompressionFormat: 0
-  m_EditorResource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_EditorCompressionFormat: 0
 --- !u!1 &727664311
 GameObject:
   m_ObjectHideFlags: 0
@@ -1581,7 +1711,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7785286, y: 1}
+    m_SensorSize: {x: 1.7778637, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -2338,7 +2468,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 684257280}
+  m_audioClip: {fileID: 271319767}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -2745,275 +2875,17 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: AutoAlignSurface
-      Entry: 3
-      Data: 1
-  maxSteerAngle: 30
-  extremSteerAngle: 50
-  motorForce: 2500
-  airRollSpeedPitchRoll: {x: 0.1, y: 0.1}
   maxSpeed: 20
-  jumpForce: 10.3
-  magnetPowerAcceleration: 40
-  magnetPowerMaxVelocity: 100
-  magnetPowerAutoBrake: 1
-  magnetPowerBrakeFactor: 0.98
-  magnetPowerDistanceCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: -0.008763194
-      value: 0.99677193
-      inSlope: 0.0035857793
-      outSlope: 0.0035857793
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.08246057
-    - serializedVersion: 3
-      time: 3.990652
-      value: 0.99715054
-      inSlope: 0.0037659437
-      outSlope: 0.0037659437
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.4514545
-      outWeight: 0.67235255
-    - serializedVersion: 3
-      time: 5.9978914
-      value: -0.013019271
-      inSlope: -0.011171036
-      outSlope: -0.011171036
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.27189222
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  limitMagnetTime: 1
-  magnetMaxTime: 15
-  magnetRefillFactor: 4
-  autoalignCarInAir: 0
-  maxAngularVelocity: 4
-  autoAlignTorqueForce: 40
-  autoAlignAngleCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: -1.0021197
-      value: 1.0087106
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: -0.0024975024
-      value: 1.0058072
-      inSlope: -0.0058054826
-      outSlope: -0.0058054826
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.99837655
-      value: 0.006968623
-      inSlope: -2.7892342
-      outSlope: -2.7892342
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.082361415
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  autoAlignBrakeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0.0002185977
-      value: 1.000037
-      inSlope: -0.000098598204
-      outSlope: -0.000098598204
-      tangentMode: 0
-      weightedMode: 3
-      inWeight: 0
-      outWeight: 0.99487966
-    - serializedVersion: 3
-      time: 0.99855775
-      value: 0.98678
-      inSlope: -4.222156
-      outSlope: -4.222156
-      tangentMode: 0
-      weightedMode: 3
-      inWeight: 0.0031151418
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  autoAlignDistanceCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: -0.022979736
-      value: 0.98635864
-      inSlope: -0.0023115664
-      outSlope: -0.0023115664
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.0678558
-    - serializedVersion: 3
-      time: 12.51716
-      value: 0.9763127
-      inSlope: -0.00856321
-      outSlope: -0.00856321
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 12.832907
-      value: -2.9888566
-      inSlope: -0.022457307
-      outSlope: -0.022457307
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.06806198
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  inAirControlForce: 7
-  inAirAngularBrakeFactor: 0.99
-  propulsionMethod: 2
-  steeringMethod: 0
-  inAirCarControl: 1
-  stopAutoaligningAfterInAirControl: 0
-  simplifyLowRide: 0
-  allignStickToView: 0
-  invertRollControls: 0
-  minMaxGroundDistance: {x: 0.15, y: 1.35}
-  extendedWheelsLowRideDistance: 1.2
-  lowRideActivityMagnetCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -1
-      outSlope: -1
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: -1
-      outSlope: -1
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  lowRideActivityAlignCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -0.5
-      outSlope: -0.5
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.5
-      inSlope: -0.5
-      outSlope: -0.5
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  lowRideActivityDecreaseSpeed: 0.012
-  extendWheelsTime: {x: 0.1, y: 0.5}
-  lowRideStepSizePlusMinus: {x: 0.5, y: -0.02}
-  powerCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 6.902312
-      outSlope: 6.902312
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.10807416
-    - serializedVersion: 3
-      time: 0.49437717
-      value: 1.4670475
-      inSlope: -2.2790265
-      outSlope: -2.2790265
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.15283321
-    - serializedVersion: 3
-      time: 1.0015469
-      value: 2.0033655
-      inSlope: 2.1330285
-      outSlope: 2.1330285
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.412923
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  lowRideSideScale: 0.3
+  initialSuspensionDistance: 1
+  frontWheelRMesh: {fileID: 8171800737858675813}
+  frontWheelLMesh: {fileID: 1062266050902803381}
+  backWheelRMesh: {fileID: 8413858477394859538}
+  backWheelLMesh: {fileID: 4954010889365288044}
   frontWheelR: {fileID: 1197219701}
   frontWheelL: {fileID: 1831576855}
   backWheelR: {fileID: 1209376499}
   backWheelL: {fileID: 749561765}
-  trajectoryRenderer: {fileID: 919132148347960410}
-  thrustValue: 0
-  wheels_defaultMat: {fileID: 2100000, guid: 752635dfc2839374ba7782604f0d30aa, type: 2}
-  wheels_magnetPowerMat: {fileID: 2100000, guid: 9e177831218c3d146aab8abbbc807cbf, type: 2}
-  magnetForcePositions:
-  - {fileID: 451195999}
-  - {fileID: 0}
-  - {fileID: 2024914151}
-  - {fileID: 0}
-  wheelsMeshes:
-  - {fileID: 8171800737858675813}
-  - {fileID: 1062266050902803381}
-  - {fileID: 8413858477394859538}
-  - {fileID: 4954010889365288044}
-  magnetUI: {fileID: 1563962274}
-  UseDriveForward: 1
-  UseDriveBackward: 1
-  UseMagnet: 1
-  UseInAirControl: 1
-  UseSteerLeft: 1
-  UseSteerRight: 1
-  UseLowRideFrontal: 1
-  UseLowRideBack: 1
   showDebugHandles: 1
-  lowRideActivityValues: {x: 0, y: 0, z: 0, w: 0}
-  lowRideActivityStrength: 0
-  rB_velocity: 0
 --- !u!114 &1474740489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3038,7 +2910,47 @@ MonoBehaviour:
   m_ControlsChangedEvent:
     m_PersistentCalls:
       m_Calls: []
-  m_ActionEvents: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cbde285c-abba-48e6-b2da-6f5f51f71aa4
+    m_ActionName: Gameplay/Thrust[/Keyboard/downArrow,/Keyboard/upArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e0ab1e28-1e69-4b9c-a0cc-bd32ec367ee1
+    m_ActionName: Gameplay/Steer[/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 955466bf-83e1-4c49-9ea0-e6f793edea17
+    m_ActionName: Gameplay/LowRide[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 71beb6d0-9a62-486f-a3af-86dcf49fe46d
+    m_ActionName: Gameplay/ExtendWheelsPress[/Keyboard/ctrl]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7bd31c6c-4f9f-40ef-91e9-2530eeb294a7
+    m_ActionName: Gameplay/ExtendWheelsToggle[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: eb28766b-1f3f-44b3-b718-5f35d12de6af
+    m_ActionName: Gameplay/MagnetPowerPress
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cfc1b145-5ee4-4359-ae8b-ce7450a59468
+    m_ActionName: Gameplay/MagnetPowerToggle[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c646ded3-e1cc-4615-9443-85cdb3b663fc
+    m_ActionName: Gameplay/Jump[/Keyboard/ctrl]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8ea8bf3b-dd16-4561-9745-570d65d1f145
+    m_ActionName: Gameplay/Reset[/Keyboard/r]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a837d31b-d9d8-4737-b727-b75a03f076b9
+    m_ActionName: Gameplay/FourWheelsSteer[/Keyboard/alt]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Gameplay
@@ -3328,7 +3240,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7785286, y: 1}
+    m_SensorSize: {x: 1.7778637, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -3344,7 +3256,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1890083707}
-  m_LocalRotation: {x: 0.3639977, y: 0.000000022664215, z: -0.000000008857336, w: 0.9313999}
+  m_LocalRotation: {x: 0.3639977, y: -0.000000022664214, z: 0.000000008857336, w: 0.9313999}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3659,15 +3571,23 @@ GameObject:
   m_Component:
   - component: {fileID: 543450652267489005}
   - component: {fileID: 1474740489}
-  - component: {fileID: 1474740488}
   - component: {fileID: 919132148347960409}
   - component: {fileID: 919132148347960408}
   - component: {fileID: 919132148347960413}
   - component: {fileID: 919132148347960415}
   - component: {fileID: 919132148347960411}
-  - component: {fileID: 919132148347960410}
   - component: {fileID: 919132148347960412}
   - component: {fileID: 919132148347960414}
+  - component: {fileID: 1474740488}
+  - component: {fileID: 919132148347960410}
+  - component: {fileID: 919132148347960417}
+  - component: {fileID: 919132148347960424}
+  - component: {fileID: 919132148347960423}
+  - component: {fileID: 919132148347960422}
+  - component: {fileID: 919132148347960421}
+  - component: {fileID: 919132148347960420}
+  - component: {fileID: 919132148347960419}
+  - component: {fileID: 919132148347960418}
   - component: {fileID: 919132148347960416}
   m_Layer: 6
   m_Name: Auto
@@ -3737,9 +3657,9 @@ MonoBehaviour:
       Data: 
   rayCastLayerMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 119
   trajectoryVertDist: 0.25
-  maxCurveLength: 15
+  maxCurveLength: 5
   hitPointGO: {fileID: 0}
 --- !u!120 &919132148347960411
 LineRenderer:
@@ -3903,18 +3823,346 @@ MonoBehaviour:
   m_GameObject: {fileID: 919132148347960407}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df195b82d4b7c48a6a283b257521efb0, type: 3}
+  m_Script: {fileID: 11500000, guid: e7233944927f8114daafe5a45e80d70b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  component: {fileID: 1474740488}
-  monitorInputFields:
-  - field:
-    - rB_velocity
-    color: {r: 0.2509804, g: 1, b: 0.53333336, a: 1}
-    fieldTypeName: System.Single
-  mode: 2
-  min: Infinity
-  max: -Infinity
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  EnabledBehavior: 1
+  ExecutionPriority: 0
+  initializedSuccessfully: 0
+  motorForce: 2500
+  propulsionMethod: 2
+  UseDriveForward: 1
+  UseDriveBackward: 1
+--- !u!114 &919132148347960417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148347960407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6788245406d9cb46a1e6102258c9c4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  EnabledBehavior: 1
+  ExecutionPriority: 0
+  initializedSuccessfully: 0
+  maxSteerAngle: 30
+  steeringMethod: 0
+  useAlternativeValues: 0
+  alternativeMaxSteerAngle: 50
+  alternativeSteeringMethod: 2
+  UseSteerLeft: 1
+  UseSteerRight: 1
+--- !u!114 &919132148347960418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148347960407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a00027764326e2049a1566ae1a28bc83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  EnabledBehavior: 1
+  ExecutionPriority: 0
+  initializedSuccessfully: 0
+  teleportOnNextFrame: 0
+--- !u!114 &919132148347960419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148347960407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 442e03c39c6d16642afa79e0722909c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  EnabledBehavior: 1
+  ExecutionPriority: 0
+  initializedSuccessfully: 0
+  magnetPowerAcceleration: 40
+  magnetPowerMaxVelocity: 100
+  minMaxGroundDistance: {x: 0.1, y: 1}
+  magnetPowerAutoBrake: 1
+  magnetPowerBrakeFactor: 0.98
+  magnetPowerDistanceCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  limitMagnetTime: 1
+  magnetMaxTime: 8
+  magnetRefillFactor: 4
+  lowRideActivityValues: {x: 0, y: 0, z: 0, w: 0}
+  lowRideActivityStrength: 0
+  lowRideActivityMagnetCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lowRideActivityAlignCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  extendedWheelsLowRideDistance: 1.2
+  extendWheelsTime: {x: 0, y: 0.2}
+  wheels_defaultMat: {fileID: 0}
+  wheels_magnetPowerMat: {fileID: 0}
+  wheelMeshes: []
+  magnetForcePositions:
+  - {x: 0, y: -0.22, z: -1.839}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: -0.22, z: 1.926}
+  - {x: 0, y: 0, z: 0}
+  magnetUI: {fileID: 0}
+--- !u!114 &919132148347960420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148347960407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30bad6defd684444ab3de306b742238b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  EnabledBehavior: 1
+  ExecutionPriority: 0
+  initializedSuccessfully: 0
+  UseLowRideFrontal: 1
+  UseLowRideBack: 1
+  invertLowRideControls: 1
+  allignStickToView: 0
+  minMaxGroundDistance: {x: 0.15, y: 1.35}
+  extendedWheelsLowRideDistance: 1.2
+  extendWheelsTime: {x: 0.1, y: 0.5}
+  lowRideActivityDecreaseSpeed: 0.012
+  lowRideStepSizePlusMinus: {x: 0.5, y: -0.02}
+  powerCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lowRideSideScale: 0.3
+  simplifyLowRide: 0
+  lowRideActivityValues: {x: 0, y: 0, z: 0, w: 0}
+  lowRideActivityStrength: 0
+  lowRideActivityMagnetCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lowRideActivityAlignCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &919132148347960421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148347960407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1df23d4573c7baf4ca1c55a243c46172, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  EnabledBehavior: 1
+  ExecutionPriority: 0
+  initializedSuccessfully: 0
+  jumpForce: 10.3
+  jumpNextFrame: 0
+--- !u!114 &919132148347960422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148347960407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 786d9ad210e6c214cb21610c45e86d0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  EnabledBehavior: 1
+  ExecutionPriority: 0
+  initializedSuccessfully: 0
+  maxAngularVelocity: 4
+  inAirControlForce: 7
+  airRollSpeedPitchRoll: {x: 0.1, y: 0.1}
+  invertRollControls: 1
+--- !u!114 &919132148347960423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148347960407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12505326739e588408b01a4036df7a93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  EnabledBehavior: 1
+  ExecutionPriority: 0
+  initializedSuccessfully: 0
+  inAirAngularBrakeFactor: 0.99
+--- !u!114 &919132148347960424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148347960407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ed191b0632633e4caacd18c02374975, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: AutoAlignSurface
+      Entry: 3
+      Data: 1
+  EnabledBehavior: 1
+  ExecutionPriority: 0
+  initializedSuccessfully: 0
+  stopAutoaligningAfterInAirControl: 0
+  autoalignCarInAir: 0
+  maxAngularVelocity: 4
+  autoAlignTorqueForce: 40
+  autoAlignAngleCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  autoAlignBrakeCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  autoAlignDistanceCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  trajectoryRenderer: {fileID: 0}
 --- !u!23 &1062266050902803381
 MeshRenderer:
   m_ObjectHideFlags: 0

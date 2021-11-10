@@ -23,4 +23,22 @@ public static class ExtensionMethods
         return _f / mult; // offset the number to the right by the number of decimal places it was put to the left:   56 -> 5,6
     }
 
+    public static void ClampAngularVelocity(this Rigidbody _rB, float _max)
+    {
+        if (_rB.angularVelocity.magnitude > _max)
+        {
+            _rB.angularVelocity = _rB.angularVelocity.normalized * _max;
+        }
+    }
+    public static void BrakeVelocity(this Rigidbody _rB, float _factor)
+    {
+        _factor = Mathf.Clamp01(_factor);
+        _rB.velocity *= _factor;
+    }
+    public static void BrakeAngularVelocity(this Rigidbody _rB, float _factor)
+    {
+        _factor = Mathf.Clamp01(_factor);
+        _rB.angularVelocity *= _factor;
+    }
+
 }
