@@ -642,34 +642,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bpm_: 120
   pause_: 0
---- !u!83 &271319767
-AudioClip:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: helm
-  m_LoadType: 0
-  m_Channels: 1
-  m_Frequency: 48000
-  m_BitsPerSample: 32
-  m_Length: 0
-  m_IsTrackerFormat: 0
-  m_Ambisonic: 0
-  m_SubsoundIndex: 0
-  m_PreloadAudioData: 1
-  m_LoadInBackground: 0
-  m_Legacy3D: 0
-  m_Resource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_CompressionFormat: 0
-  m_EditorResource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_EditorCompressionFormat: 0
 --- !u!1 &271817094
 GameObject:
   m_ObjectHideFlags: 3
@@ -1002,7 +974,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7778637, y: 1}
+    m_SensorSize: {x: 1.778799, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1018,7 +990,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 391781414}
-  m_LocalRotation: {x: 0.3469958, y: -3e-45, z: 1e-45, w: 0.9378667}
+  m_LocalRotation: {x: 0.3469958, y: 1e-45, z: -1e-45, w: 0.9378667}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1356,7 +1328,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7778637, y: 1}
+    m_SensorSize: {x: 1.778799, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1493,6 +1465,34 @@ Transform:
   m_Father: {fileID: 3212935939740550256}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!83 &583705934
+AudioClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: helm
+  m_LoadType: 0
+  m_Channels: 1
+  m_Frequency: 48000
+  m_BitsPerSample: 32
+  m_Length: 0
+  m_IsTrackerFormat: 0
+  m_Ambisonic: 0
+  m_SubsoundIndex: 0
+  m_PreloadAudioData: 1
+  m_LoadInBackground: 0
+  m_Legacy3D: 0
+  m_Resource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_CompressionFormat: 0
+  m_EditorResource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_EditorCompressionFormat: 0
 --- !u!1 &727664311
 GameObject:
   m_ObjectHideFlags: 0
@@ -1711,7 +1711,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7778637, y: 1}
+    m_SensorSize: {x: 1.778799, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -2468,7 +2468,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 271319767}
+  m_audioClip: {fileID: 583705934}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -3240,7 +3240,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7778637, y: 1}
+    m_SensorSize: {x: 1.778799, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -3929,24 +3929,85 @@ MonoBehaviour:
   magnetPowerBrakeFactor: 0.98
   magnetPowerDistanceCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 3.7091322
+      value: 1.0012636
+      inSlope: -0.0037491804
+      outSlope: -0.0037491804
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.2963712
+    - serializedVersion: 3
+      time: 6
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   limitMagnetTime: 1
   magnetMaxTime: 8
   magnetRefillFactor: 4
-  lowRideActivityValues: {x: 0, y: 0, z: 0, w: 0}
-  lowRideActivityStrength: 0
   lowRideActivityMagnetCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: -1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   lowRideActivityAlignCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: -1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -3989,6 +4050,7 @@ MonoBehaviour:
   UseLowRideBack: 1
   invertLowRideControls: 1
   allignStickToView: 0
+  simplifyLowRide: 0
   minMaxGroundDistance: {x: 0.15, y: 1.35}
   extendedWheelsLowRideDistance: 1.2
   extendWheelsTime: {x: 0.1, y: 0.5}
@@ -4000,16 +4062,82 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1
+      inSlope: 7.110156
+      outSlope: 7.110156
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.2998343
+    - serializedVersion: 3
+      time: 0.25780955
+      value: 1.8069125
+      inSlope: 0.16994618
+      outSlope: 0.16994618
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.09083472
+    - serializedVersion: 3
+      time: 0.5278738
+      value: 1.4395516
+      inSlope: -1.2329719
+      outSlope: -1.2329719
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.11377766
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 2.3395002
+      outSlope: 2.3395002
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.061497826
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lowRideActivityMagnetCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
       inSlope: 0
-      outSlope: 0
+      outSlope: -1
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
       time: 1
+      value: 0
+      inSlope: -1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  lowRideActivityAlignCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
       value: 1
       inSlope: 0
+      outSlope: -1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
@@ -4019,21 +4147,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   lowRideSideScale: 0.3
-  simplifyLowRide: 0
-  lowRideActivityValues: {x: 0, y: 0, z: 0, w: 0}
-  lowRideActivityStrength: 0
-  lowRideActivityMagnetCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  lowRideActivityAlignCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!114 &919132148347960421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4059,7 +4172,6 @@ MonoBehaviour:
   ExecutionPriority: 0
   initializedSuccessfully: 0
   jumpForce: 10.3
-  jumpNextFrame: 0
 --- !u!114 &919132148347960422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4146,19 +4258,100 @@ MonoBehaviour:
   autoAlignTorqueForce: 40
   autoAlignAngleCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.55748487
+      value: 0.9991393
+      inSlope: -0.051430546
+      outSlope: -0.051430546
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.22080266
+    - serializedVersion: 3
+      time: 1
+      value: 0.0014648438
+      inSlope: -5.893573
+      outSlope: -5.893573
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.03578891
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   autoAlignBrakeCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0.0005901337
+      outSlope: 0.0005901337
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.22058822
+    - serializedVersion: 3
+      time: 0.83663666
+      value: 0.99777514
+      inSlope: -0.00946881
+      outSlope: -0.00946881
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.28007174
+    - serializedVersion: 3
+      time: 1
+      value: 0.98
+      inSlope: -0.21790835
+      outSlope: -0.21790835
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.19884494
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   autoAlignDistanceCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 9.876718
+      value: 0.8812655
+      inSlope: -0.041602235
+      outSlope: -0.041602235
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.17809175
+    - serializedVersion: 3
+      time: 13
+      value: 0
+      inSlope: -0.410857
+      outSlope: -0.410857
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.11434971
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4

@@ -45,9 +45,10 @@ public class AutoAlignBehavior : CarBehavior
     [TitleGroup(S)] public float maxAngularVelocity = 4f;
     [TitleGroup(S)] public int autoAlignTorqueForce = 40;
     [TitleGroup(S)] [Tooltip("Used to control the amount of torque force. x = 1 heiﬂt dass Auto 100% aligned, x = 0 heiﬂt dass Auto 90∞ gedreht, x = -1 dass 180∞ gedreht.")] 
-    public AnimationCurve autoAlignAngleCurve;
-    [TitleGroup(S)] [Tooltip("Used to reduce the angular velocity when the car is aligned")] public AnimationCurve autoAlignBrakeCurve;
-    [TitleGroup(S)] public AnimationCurve autoAlignDistanceCurve;
+    public AnimationCurve autoAlignAngleCurve = AnimationCurve.Linear(0f,1f,1f,0f);
+    [TitleGroup(S)] [Tooltip("Used to reduce the angular velocity when the car is aligned")] 
+    public AnimationCurve autoAlignBrakeCurve = AnimationCurve.EaseInOut(0f,1f,1f,0.98f);
+    [TitleGroup(S)] public AnimationCurve autoAlignDistanceCurve = AnimationCurve.EaseInOut(0f,1f,13f,0f);
     [TitleGroup(S)] private float targetSurfaceDistance;
 
     [TitleGroup(R)] public TrajectoryRenderer trajectoryRenderer = null;

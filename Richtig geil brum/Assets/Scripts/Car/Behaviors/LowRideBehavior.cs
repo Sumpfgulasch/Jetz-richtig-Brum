@@ -28,7 +28,9 @@ public class LowRideBehavior : CarBehavior
 
     [TitleGroup(S)] [Range(0, 0.2f)] public float lowRideActivityDecreaseSpeed = 0.012f;
     [TitleGroup(S)] [VectorRange(0f, 0.5f, -0.5f, 0f, true)] public Vector2 lowRideStepSizePlusMinus = new Vector2(0.5f, -0.02f); // the maximum percentage which the wheels move(lowRide) each frame. (based on the maximumGroundDistance) - change when going positive = x component || change  when going negative = y component
-    [TitleGroup(S)] public AnimationCurve powerCurve = AnimationCurve.Linear(0f, 1f, 1f, 1f); // The maximum length that the wheels can extend
+    [TitleGroup(S)] public AnimationCurve powerCurve = AnimationCurve.Linear(0f, 1f, 1f, 2f); // The maximum length that the wheels can extend
+    [TitleGroup(S)] public AnimationCurve lowRideActivityMagnetCurve = AnimationCurve.Linear(0f,1f,1f,0f);
+    [TitleGroup(S)] public AnimationCurve lowRideActivityAlignCurve = AnimationCurve.Linear(0f, 1f, 1f, 0f);
     [TitleGroup(S)] [Range(0, 1f)] public float lowRideSideScale = 0.3f;
 
 
@@ -39,11 +41,7 @@ public class LowRideBehavior : CarBehavior
 
     [TitleGroup(I)] private Vector2 lowRideInputVal;
     [TitleGroup(I)] public Vector2 LowRideInputVal { get => lowRideInputVal; private set => lowRideInputVal = value; }
-
     [TitleGroup(I)] private LowRideActivity lowRideActivity = new LowRideActivity();
-
-    [TitleGroup(S)] public AnimationCurve lowRideActivityMagnetCurve;
-    [TitleGroup(S)] public AnimationCurve lowRideActivityAlignCurve;
 
 
     //------------------------ SETUP

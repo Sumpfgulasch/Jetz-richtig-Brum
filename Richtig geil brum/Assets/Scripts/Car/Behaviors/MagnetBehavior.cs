@@ -25,7 +25,7 @@ public class MagnetBehavior : CarBehavior
 
     [TitleGroup(S)] [Tooltip("Brake when magnetPower is active and the player doesn't accalerate")] public bool magnetPowerAutoBrake = true;
     [TitleGroup(S)] [Range(0, 1f), ShowIf("magnetPowerAutoBrake")] public float magnetPowerBrakeFactor = 0.98f;
-    [TitleGroup(S)] public AnimationCurve magnetPowerDistanceCurve;
+    [TitleGroup(S)] public AnimationCurve magnetPowerDistanceCurve = AnimationCurve.EaseInOut(0f,1f,6f,0f);
     [TitleGroup(S)] public bool limitMagnetTime = true;
     [TitleGroup(S)] [ShowIf("limitMagnetTime")] public float magnetMaxTime = 8f;
     [TitleGroup(S)] [ShowIf("limitMagnetTime")] public float magnetRefillFactor = 4f;
@@ -38,8 +38,8 @@ public class MagnetBehavior : CarBehavior
 
 
     [TitleGroup(I)] private LowRideActivity lowRideActivity = new LowRideActivity();
-    [TitleGroup(S)] public AnimationCurve lowRideActivityMagnetCurve;
-    [TitleGroup(S)] public AnimationCurve lowRideActivityAlignCurve;
+    [TitleGroup(S)] public AnimationCurve lowRideActivityMagnetCurve = AnimationCurve.Linear(0f,1f,1f,0f);
+    [TitleGroup(S)] public AnimationCurve lowRideActivityAlignCurve = AnimationCurve.Linear(0f, 1f, 1f, 0f);
 
 
     [TitleGroup(S)] [Range(0f, 2.5f)] public float extendedWheelsLowRideDistance = 1.2f;
