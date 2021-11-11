@@ -87,29 +87,25 @@ public class AutoBreakInAirBehavior : CarBehavior
     //------------------------ BEHAVIOR
     public override void ExecuteBehavior(Func<bool> _shouldExecute)
     {
-        if (EnabledBehavior)
+        // InAirControl automatic brake
+        if (hasAirControlBehavior)
         {
-            // InAirControl automatic brake
-            if (hasAirControlBehavior)
+            if (cC.drivingStateInfo == DrivingState.InAir) // wenn das auto in der luft ist.
             {
-                if (cC.drivingStateInfo == DrivingState.InAir) // wenn das auto in der luft ist.
+                if (hasMagnetBehavior && hasSteeringBehavior) // wenn es ein Steering und ein Magnetbehavior hat - muss steering inaktiv sein und der magnet inaktiv sein
                 {
-                    if (hasMagnetBehavior && hasSteeringBehavior) // wenn es ein Steering und ein Magnetbehavior hat - muss steering inaktiv sein und der magnet inaktiv sein
+                    if (steeringBehavior.SteerInputVal == Vector2.zero && !magnetBehavior.MagnetIsActive) 
                     {
-                        if (steeringBehavior.SteerInputVal == Vector2.zero && !magnetBehavior.MagnetIsActive) 
-                        {
-                            // Reduce angular velocity
-                            rB.BrakeAngularVelocity(inAirAngularBrakeFactor);
-                        }
+                        // Reduce angular velocity
+                        rB.BrakeAngularVelocity(inAirAngularBrakeFactor);
                     }
-                    else // wenn es kein Behavior hat.
-                    {
-                        rB.BrakeAngularVelocity(inAirAngularBrakeFactor); // breake einfach immer in der luft.
-                    }
-
                 }
+                else // wenn es kein Behavior hat.
+                {
+                    rB.BrakeAngularVelocity(inAirAngularBrakeFactor); // breake einfach immer in der luft.
+                }
+
             }
         }
-
     }
 }

@@ -59,10 +59,7 @@ public class ThrustBehavior : CarBehavior
 
     public override void ExecuteBehavior(Func<bool> _shouldExecute)
     {
-        if (_shouldExecute())
-        { 
-            Thrust(ThrustInputVal, frontWheelR, frontWheelL, backWheelR, backWheelL);
-        }
+        Thrust(ThrustInputVal, frontWheelR, frontWheelL, backWheelR, backWheelL);
     }
 
     private void Thrust(float _strength, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL)

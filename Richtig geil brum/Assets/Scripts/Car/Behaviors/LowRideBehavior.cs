@@ -144,36 +144,36 @@ public class LowRideBehavior : CarBehavior
     /// <summary>
     /// Set the lowRideActivity-variable, which is used to deactivate the magnetPower temporarily.
     /// </summary>
-    /// <param name="lowRideValue"></param>
-    private void SetLowRideActivity(Vector2 lowRideValue)
+    /// <param name="_lowRideValue"></param>
+    private void SetLowRideActivity(Vector2 _lowRideValue)
     {
         // inverted controls
         if (invertLowRideControls)
-            lowRideValue.y *= -1f;
+            _lowRideValue.y *= -1f;
 
         // (SCHEIß CODE) Alle 4 Richtungen der lowRideActivity erhöhen oder verringern 
 
         // front
-        if (lowRideValue.y > lowRideActivity[0])
-            lowRideActivity[0] = lowRideValue.y;                                    // increase
+        if (_lowRideValue.y > lowRideActivity[0])
+            lowRideActivity[0] = _lowRideValue.y;                                    // increase
         else
             lowRideActivity[0] -= lowRideActivityDecreaseSpeed;                     // decrease
 
         // right
-        if (lowRideValue.x > lowRideActivity[1])
-            lowRideActivity[1] = lowRideValue.x;
+        if (_lowRideValue.x > lowRideActivity[1])
+            lowRideActivity[1] = _lowRideValue.x;
         else
             lowRideActivity[1] -= lowRideActivityDecreaseSpeed;
 
         // back
-        if (-lowRideValue.y > lowRideActivity[2])
-            lowRideActivity[2] = -lowRideValue.y;
+        if (-_lowRideValue.y > lowRideActivity[2])
+            lowRideActivity[2] = -_lowRideValue.y;
         else
             lowRideActivity[2] -= lowRideActivityDecreaseSpeed;
 
         // left
-        if (-lowRideValue.x > lowRideActivity[3])
-            lowRideActivity[3] = -lowRideValue.x;
+        if (-_lowRideValue.x > lowRideActivity[3])
+            lowRideActivity[3] = -_lowRideValue.x;
         else
             lowRideActivity[3] -= lowRideActivityDecreaseSpeed;
     }
@@ -225,4 +225,12 @@ public class LowRideActivity
                 Values[i] = Mathf.Clamp01(value);
         }
     }
+}
+
+public enum IsWheel // man koennte dieses Enum benutzen um auf den Indexer zuzugreifen - ich bin mir da noch nicht sicher, aber das koennte es lesbarer machen :)
+{ 
+    FL,
+    FR,
+    BL,
+    BR
 }

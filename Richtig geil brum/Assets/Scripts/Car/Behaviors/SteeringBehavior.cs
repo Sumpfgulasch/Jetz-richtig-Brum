@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEngine.InputSystem;
 using Sirenix.OdinInspector;
 
+
 public class SteeringBehavior : CarBehavior
 {
     const string R = "References";
@@ -70,16 +71,13 @@ public class SteeringBehavior : CarBehavior
     //------------------------ BEHAVIOR
     public override void ExecuteBehavior(Func<bool> _shouldExecute)
     {
-        if(_shouldExecute())
-        { 
-            if (useAlternativeValues)
-            {
-                Steer(steerInputVal,alternativeSteeringMethod,alternativeMaxSteerAngle, frontWheelR, frontWheelL, backWheelR, backWheelL);
-            }
-            else
-            {
-                Steer(steerInputVal, steeringMethod, maxSteerAngle, frontWheelR, frontWheelL, backWheelR, backWheelL);
-            }
+        if (useAlternativeValues)
+        {
+            Steer(steerInputVal,alternativeSteeringMethod,alternativeMaxSteerAngle, frontWheelR, frontWheelL, backWheelR, backWheelL);
+        }
+        else
+        {
+            Steer(steerInputVal, steeringMethod, maxSteerAngle, frontWheelR, frontWheelL, backWheelR, backWheelL);
         }
     }
 

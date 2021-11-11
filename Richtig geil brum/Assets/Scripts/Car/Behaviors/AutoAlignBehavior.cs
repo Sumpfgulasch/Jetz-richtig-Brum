@@ -102,12 +102,9 @@ public class AutoAlignBehavior : CarBehavior
 
     public override void ExecuteBehavior(Func<bool> _shouldExecute)
     {
-        if (EnabledBehavior)
-        { 
-            if (autoalignCarInAir)
-            {
-                AutoAlignCar(cC.drivingStateInfo);
-            }
+        if (autoalignCarInAir)
+        {
+            AutoAlignCar(cC.drivingStateInfo);
         }
     }
 

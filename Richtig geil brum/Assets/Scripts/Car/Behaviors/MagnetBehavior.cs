@@ -210,8 +210,6 @@ public class MagnetBehavior : CarBehavior
                     }
                 }
             }
-
-
         }
     }
 

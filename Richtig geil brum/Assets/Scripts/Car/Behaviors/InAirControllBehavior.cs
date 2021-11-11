@@ -56,10 +56,7 @@ public class InAirControllBehavior : CarBehavior
     //------------------------ BEHAVIOR
     public override void ExecuteBehavior(Func<bool> _shouldExecute)
     {
-        if (_shouldExecute())
-        {
-            InAirControl(InAirSteerInputVal, ref hasSteeredWhileInAir);
-        }
+        InAirControl(InAirSteerInputVal, ref hasSteeredWhileInAir);
     }
 
 

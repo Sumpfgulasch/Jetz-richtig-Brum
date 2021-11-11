@@ -50,17 +50,14 @@ public class TeleportBehavior : CarBehavior
     {
         if (teleportOnNextFrame)
         {
-            if (_shouldExecute())
-            {
-                // 1. Put up
-                transform.position += new Vector3(0, 5, 0);
-                // 2. rotate up
-                rB.MoveRotation(Quaternion.LookRotation(transform.forward, Vector3.up));
-                rB.angularVelocity = Vector3.zero;
+            // 1. Put up
+            transform.position += new Vector3(0, 5, 0);
+            // 2. rotate up
+            rB.MoveRotation(Quaternion.LookRotation(transform.forward, Vector3.up));
+            rB.angularVelocity = Vector3.zero;
 
-                // 3. ResetTeleportBool
-                teleportOnNextFrame = false;
-            }
+            // 3. ResetTeleportBool
+            teleportOnNextFrame = false;
         }
     }
 

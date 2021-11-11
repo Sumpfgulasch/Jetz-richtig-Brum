@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using System;
 
+[Serializable]
 [RequireComponent(typeof(CarController))] // every carBehavior needs a CarController on the same Gameobject.
 public abstract class CarBehavior : SerializedMonoBehaviour // abstract class, so it only can be inherited from, and not be instantiated by its own., inherits from SerializedMonobehavior, so everything inherits from it.
 {
@@ -20,8 +21,8 @@ public abstract class CarBehavior : SerializedMonoBehaviour // abstract class, s
     /// <summary>
     /// A Reference to the CarController this Behavior Belongs to, for easy and guaranteed access
     /// </summary>
-    [TitleGroup(B)] private CarController carController = null;
-    [TitleGroup(B)] public CarController cC { get => carController; private set => carController = value; }
+    private CarController carController = null;
+    public CarController cC { get => carController; private set => carController = value; }
     /// <summary>
     /// A bool to check if a Script was initialized Successfully, it is the value that is returned by the SetRequirements value. It can be used to prevent the game from crashing 
     /// if behaviors arent initialized completely.

@@ -66,21 +66,19 @@ public class JumpBehavior : CarBehavior
     {
         if (jumpNextFrame)
         { 
-            if (_shouldExecute())
-            {
-                // 1. Deactivate magnet, if cC has magnet behavior
-                if (hasMagnetBehavior)
-                { 
-                    magnetBehavior.MagnetIsActive = false;
-                    magnetBehavior.ToggleExtendedGroundDistance(false);
-                }
-
-                // 2. add up-force
-                rB.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
-
-                // 3. Reset Jumpbool
-                jumpNextFrame = false;
+            // 1. Deactivate magnet, if cC has magnet behavior
+            if (hasMagnetBehavior)
+            { 
+                magnetBehavior.MagnetIsActive = false;
+                magnetBehavior.ToggleExtendedGroundDistance(false);
             }
+
+            // 2. add up-force
+            rB.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
+
+            // 3. Reset Jumpbool
+            jumpNextFrame = false;
+
         }
     }
 

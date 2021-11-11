@@ -43,32 +43,41 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(R)] [ShowInInspector] public DrivingState drivingStateInfo {
         get
         {
-            if (Wheels != null)
+            if (Wheels != null) // wenn es das array gibt.
             {
-                if (!Wheels.Contains(null))
+                if (!Wheels.Contains(null)) // wenn wheels assigned sind
                 {
-                    foreach (Wheel wheel in Wheels)
+                    foreach (Wheel wheel in Wheels) // gehe durch alle Wheels
                     {
                         WheelHit hit;
-                        if (wheel.wheelCollider.GetGroundHit(out hit))
+                        if (wheel.wheelCollider.GetGroundHit(out hit)) // wenn ein wheel den Boden beruehrt
                         {
-                            return DrivingState.Grounded;
+                            return DrivingState.Grounded; // gib grounded zurueck
                         }
                     }
-                    return DrivingState.InAir;
+                    return DrivingState.InAir; // ansonsten gib InAir zurueck
                 }
             }
-            return DrivingState.Grounded;
+            return DrivingState.Grounded; // wenn es nix gibt dann gib grounded zurueck
         }
     }
 
-    [TitleGroup(CB)] [ShowInInspector] CarBehavior[] carBehaviors = new CarBehavior[0];
+
+    [TitleGroup(CB)][OdinSerialize] List<CarBehavior> carBehaviors = new List<CarBehavior>();
 
 
     [TitleGroup(H)] public bool showDebugHandles = true;
 
 
+    private void Reset() // is called when this component is assigned somewhere or the "reset" function on the component is activated.
+    {
+        FindWheels();
+        FindWheelMeshes();
 
+        AssignCarBehaviors();
+        OrderCarBehaviors();
+        AssignExecutionPriorityBySortation();
+    }
 
     private void OnEnable()
     {
@@ -82,6 +91,7 @@ public class CarController : SerializedMonoBehaviour
         //Initialize Car Behaviors
         AssignCarBehaviors();
         OrderCarBehaviors();
+        AssignExecutionPriorityBySortation();
 
     }
 
@@ -97,7 +107,7 @@ public class CarController : SerializedMonoBehaviour
 
         foreach (CarBehavior cB in carBehaviors) // fuer jedes Carbehavior
         {
-            if (cB.initializedSuccessfully) // wenn es erfolgreich initialisiert wurde
+            if (cB.initializedSuccessfully && cB.EnabledBehavior) // wenn es erfolgreich initialisiert wurde
             {
                 cB.ExecuteBehavior(()=>true); // fuehre die Executemethode aus. // lambdaexpression that always returns true. here we could implement a SWITCH that checks what type the carBehavior is, and apply a Rule, for different behaviors.
             }
@@ -109,21 +119,20 @@ public class CarController : SerializedMonoBehaviour
     [TitleGroup(CB)][Button]
     public void AssignCarBehaviors()
     {
-        
-        carBehaviors = this.gameObject.GetComponents<CarBehavior>();// find all CarBehaviors on this Object
+        carBehaviors = this.gameObject.GetComponents<CarBehavior>().ToList();// find all CarBehaviors on this Object
     }
 
     [TitleGroup(CB)][Button]
     public void OrderCarBehaviors()
     {
-        carBehaviors = carBehaviors.OrderByDescending(x => x.ExecutionPriority).ToArray(); // sorts the carbehaviors by priority (hopefully :D)
-        carBehaviors = carBehaviors.Reverse().ToArray(); // make accending.
+        carBehaviors = carBehaviors.OrderByDescending(x => x.ExecutionPriority).ToList(); // sorts the carbehaviors by priority (hopefully :D)
+        carBehaviors = carBehaviors.Reverse<CarBehavior>().ToList();//carBehaviors.Reverse().ToList(); // make accending.
     }
 
     [TitleGroup(CB)][Button]
     public void AssignExecutionPriorityBySortation()
     {
-        for (int i = 0; i < carBehaviors.Length; i++)
+        for (int i = 0; i < carBehaviors.Count; i++)
         {
             carBehaviors[i].ExecutionPriority = i;
         }
