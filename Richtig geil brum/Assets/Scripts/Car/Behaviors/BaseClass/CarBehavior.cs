@@ -63,6 +63,9 @@ public abstract class CarBehavior : SerializedMonoBehaviour // abstract class, s
 
 //[RequireComponent(typeof(TypenDenDasScriptBraucht))]
 
+//const string R = "References";
+//const string S = "Settings";
+//const string I = "Input";
 //VARIABLES
 
 //------------------------ SETUP

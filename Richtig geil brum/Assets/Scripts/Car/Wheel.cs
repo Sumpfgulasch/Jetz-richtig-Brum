@@ -16,9 +16,6 @@ public class Wheel : SerializedMonoBehaviour
     [TitleGroup(R)] public Transform wheelModelTransform; // visual wheel model
     [TitleGroup(R)] public VisualEffect wheelSmokeVisualEffect; // smoke effect for this wheel
 
-
-    [TitleGroup(S), GUIColor(0.5f, 0f, 0f)] [MinMaxSlider(0f,10f)] public Vector2 sidewaysStiffnessMinMax = new Vector2(1f,10f);
-
     [TitleGroup(S)] [Range(0f, 10000f)] public float wheelFrictionSmokeActivationMaximum = 5000f; // sorry fuer die bennenung : is an arbitrary METRIC to remap non realistic friction forces into a 0 to 1 range
     [TitleGroup(S)] [Range(0f, 1f)] public float wheelFrictionSmokeActivationThreshold01 = 0.5f; // sorry fuer die bennenung : is an arbitrary unit which determines when the smoke should be generated
     [TitleGroup(S)] [MinMaxSlider(0f,50f)] public Vector2 wheelFrictionSmokeParticleAmountRemap = new Vector2(3f,20f); // sorry fuer die bennenung : remaps the "wheelFrictionSmokeActivationMaximum  to 1" friction to the particle Spawn Rate
@@ -81,14 +78,10 @@ public class Wheel : SerializedMonoBehaviour
             UpdateWheelPose();
             transform.hasChanged = false;
         }
-        AdjustStiffnessBasedOnSpeed();
         ProduceSmoke();
     }
 
-    private void AdjustStiffnessBasedOnSpeed() // can be used to prohibit Drifting
-    {
-        //Todo.
-    }
+
     public void ProduceSmoke()
     {
         if(wheelSmokeVisualEffect != null)
