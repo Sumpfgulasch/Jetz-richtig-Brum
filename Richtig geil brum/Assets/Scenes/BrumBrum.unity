@@ -974,7 +974,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.778799, y: 1}
+    m_SensorSize: {x: 1.7767296, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -990,7 +990,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 391781414}
-  m_LocalRotation: {x: 0.3469958, y: 1e-45, z: -1e-45, w: 0.9378667}
+  m_LocalRotation: {x: 0.3469958, y: 1e-45, z: -0, w: 0.9378667}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1028,7 +1028,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 543450652267489005}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!73398921 &409500045
 VFXRenderer:
@@ -1328,7 +1328,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.778799, y: 1}
+    m_SensorSize: {x: 1.7767296, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1337,6 +1337,34 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 571555596}
+--- !u!83 &547298005
+AudioClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: helm
+  m_LoadType: 0
+  m_Channels: 1
+  m_Frequency: 48000
+  m_BitsPerSample: 32
+  m_Length: 0
+  m_IsTrackerFormat: 0
+  m_Ambisonic: 0
+  m_SubsoundIndex: 0
+  m_PreloadAudioData: 1
+  m_LoadInBackground: 0
+  m_Legacy3D: 0
+  m_Resource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_CompressionFormat: 0
+  m_EditorResource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_EditorCompressionFormat: 0
 --- !u!1 &571555595
 GameObject:
   m_ObjectHideFlags: 3
@@ -1622,14 +1650,86 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
-  wheelCollider: {fileID: 749561764}
-  wheelModelTransform: {fileID: 6926820944721866070}
-  wheelSmokeVisualEffect: {fileID: 0}
-  sidewaysStiffnessMinMax: {x: 1, y: 10}
+    SerializationNodes:
+    - Name: TargetExtensionPercent
+      Entry: 4
+      Data: 0
+    - Name: CurrentExtensionPercent
+      Entry: 4
+      Data: 0
+    - Name: TargetExtensionDistanceMinMax
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.15
+    - Name: 
+      Entry: 4
+      Data: 1.35
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: CurrentExtensionDistanceMinMax
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.15
+    - Name: 
+      Entry: 4
+      Data: 1.35
+    - Name: 
+      Entry: 8
+      Data: 
+  extensionStrengthStepMultiplier:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 7.110156
+      outSlope: 7.110156
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.2998343
+    - serializedVersion: 3
+      time: 0.25780955
+      value: 1.8069125
+      inSlope: 0.16994618
+      outSlope: 0.16994618
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.09083472
+    - serializedVersion: 3
+      time: 0.5278738
+      value: 1.4395516
+      inSlope: -1.2329719
+      outSlope: -1.2329719
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.11377766
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 2.3395002
+      outSlope: 2.3395002
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.061497826
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  extensionStepPercentPlusMinus: {x: 0.5, y: -0.02}
   wheelFrictionSmokeActivationMaximum: 5000
   wheelFrictionSmokeActivationThreshold01: 0.5
   wheelFrictionSmokeParticleAmountRemap: {x: 3, y: 20}
+  wheelCollider: {fileID: 749561764}
+  wheelModelTransform: {fileID: 6926820944721866070}
+  wheelSmokeVisualEffect: {fileID: 0}
 --- !u!1 &813547251
 GameObject:
   m_ObjectHideFlags: 3
@@ -1683,7 +1783,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.778799, y: 1}
+    m_SensorSize: {x: 1.7767296, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1833,6 +1933,108 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &964824163
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 964824164}
+  - component: {fileID: 964824169}
+  - component: {fileID: 964824168}
+  - component: {fileID: 964824167}
+  - component: {fileID: 964824166}
+  - component: {fileID: 964824165}
+  m_Layer: 6
+  m_Name: AutoColliders
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &964824164
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964824163}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 543450652267489005}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &964824165
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964824163}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.34
+  m_Height: 1.3
+  m_Direction: 0
+  m_Center: {x: 0, y: 0.67, z: -1.69}
+--- !u!136 &964824166
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964824163}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.34
+  m_Height: 1.3
+  m_Direction: 0
+  m_Center: {x: 0, y: 0.67, z: 1.66}
+--- !u!65 &964824167
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964824163}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.77826345, z: 0.55507183}
+  m_Center: {x: 0, y: 0.7351393, z: -1.4199073}
+--- !u!65 &964824168
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964824163}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.61463356, z: 1.4700495}
+  m_Center: {x: 0, y: 0.65332437, z: 0.94161946}
+--- !u!65 &964824169
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964824163}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1.1945634, z: 1.334732}
+  m_Center: {x: 0, y: 0.94790006, z: -0.4666443}
 --- !u!1 &982844889
 GameObject:
   m_ObjectHideFlags: 0
@@ -2226,14 +2428,86 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
-  wheelCollider: {fileID: 1197219700}
-  wheelModelTransform: {fileID: 7155883020045172237}
-  wheelSmokeVisualEffect: {fileID: 0}
-  sidewaysStiffnessMinMax: {x: 1, y: 10}
+    SerializationNodes:
+    - Name: TargetExtensionPercent
+      Entry: 4
+      Data: 0
+    - Name: CurrentExtensionPercent
+      Entry: 4
+      Data: 0
+    - Name: TargetExtensionDistanceMinMax
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.15
+    - Name: 
+      Entry: 4
+      Data: 1.35
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: CurrentExtensionDistanceMinMax
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.15
+    - Name: 
+      Entry: 4
+      Data: 1.35
+    - Name: 
+      Entry: 8
+      Data: 
+  extensionStrengthStepMultiplier:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 7.110156
+      outSlope: 7.110156
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.2998343
+    - serializedVersion: 3
+      time: 0.25780955
+      value: 1.8069125
+      inSlope: 0.16994618
+      outSlope: 0.16994618
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.09083472
+    - serializedVersion: 3
+      time: 0.5278738
+      value: 1.4395516
+      inSlope: -1.2329719
+      outSlope: -1.2329719
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.11377766
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 2.3395002
+      outSlope: 2.3395002
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.061497826
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  extensionStepPercentPlusMinus: {x: 0.5, y: -0.02}
   wheelFrictionSmokeActivationMaximum: 5000
   wheelFrictionSmokeActivationThreshold01: 0.5
   wheelFrictionSmokeParticleAmountRemap: {x: 3, y: 20}
+  wheelCollider: {fileID: 1197219700}
+  wheelModelTransform: {fileID: 7155883020045172237}
+  wheelSmokeVisualEffect: {fileID: 0}
 --- !u!114 &1197219702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2337,14 +2611,86 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
-  wheelCollider: {fileID: 1209376498}
-  wheelModelTransform: {fileID: 8903108962197718673}
-  wheelSmokeVisualEffect: {fileID: 0}
-  sidewaysStiffnessMinMax: {x: 0, y: 10}
+    SerializationNodes:
+    - Name: TargetExtensionPercent
+      Entry: 4
+      Data: 0
+    - Name: CurrentExtensionPercent
+      Entry: 4
+      Data: 0
+    - Name: TargetExtensionDistanceMinMax
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.15
+    - Name: 
+      Entry: 4
+      Data: 1.35
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: CurrentExtensionDistanceMinMax
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.15
+    - Name: 
+      Entry: 4
+      Data: 1.35
+    - Name: 
+      Entry: 8
+      Data: 
+  extensionStrengthStepMultiplier:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 7.110156
+      outSlope: 7.110156
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.2998343
+    - serializedVersion: 3
+      time: 0.25780955
+      value: 1.8069125
+      inSlope: 0.16994618
+      outSlope: 0.16994618
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.09083472
+    - serializedVersion: 3
+      time: 0.5278738
+      value: 1.4395516
+      inSlope: -1.2329719
+      outSlope: -1.2329719
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.11377766
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 2.3395002
+      outSlope: 2.3395002
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.061497826
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  extensionStepPercentPlusMinus: {x: 0.5, y: -0.02}
   wheelFrictionSmokeActivationMaximum: 5000
   wheelFrictionSmokeActivationThreshold01: 0.5
   wheelFrictionSmokeParticleAmountRemap: {x: 3, y: 20}
+  wheelCollider: {fileID: 1209376498}
+  wheelModelTransform: {fileID: 8903108962197718673}
+  wheelSmokeVisualEffect: {fileID: 0}
 --- !u!1 &1211075183
 GameObject:
   m_ObjectHideFlags: 0
@@ -2440,7 +2786,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 547298005}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -2777,7 +3123,7 @@ MonoBehaviour:
   m_IgnoreTimeScale: 0
   m_WorldUpOverride: {fileID: 0}
   m_UpdateMethod: 2
-  m_BlendUpdateMethod: 1
+  m_BlendUpdateMethod: 0
   m_DefaultBlend:
     m_Style: 1
     m_Time: 2
@@ -3200,14 +3546,86 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
-  wheelCollider: {fileID: 1831576854}
-  wheelModelTransform: {fileID: 6544276161636027100}
-  wheelSmokeVisualEffect: {fileID: 0}
-  sidewaysStiffnessMinMax: {x: 1, y: 10}
+    SerializationNodes:
+    - Name: TargetExtensionPercent
+      Entry: 4
+      Data: 0
+    - Name: CurrentExtensionPercent
+      Entry: 4
+      Data: 0
+    - Name: TargetExtensionDistanceMinMax
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.15
+    - Name: 
+      Entry: 4
+      Data: 1.35
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: CurrentExtensionDistanceMinMax
+      Entry: 7
+      Data: UnityEngine.Vector2, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.15
+    - Name: 
+      Entry: 4
+      Data: 1.35
+    - Name: 
+      Entry: 8
+      Data: 
+  extensionStrengthStepMultiplier:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 7.110156
+      outSlope: 7.110156
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.2998343
+    - serializedVersion: 3
+      time: 0.25780955
+      value: 1.8069125
+      inSlope: 0.16994618
+      outSlope: 0.16994618
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.09083472
+    - serializedVersion: 3
+      time: 0.5278738
+      value: 1.4395516
+      inSlope: -1.2329719
+      outSlope: -1.2329719
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.11377766
+    - serializedVersion: 3
+      time: 1
+      value: 2
+      inSlope: 2.3395002
+      outSlope: 2.3395002
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.061497826
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  extensionStepPercentPlusMinus: {x: 0.5, y: -0.02}
   wheelFrictionSmokeActivationMaximum: 5000
   wheelFrictionSmokeActivationThreshold01: 0.5
   wheelFrictionSmokeParticleAmountRemap: {x: 3, y: 20}
+  wheelCollider: {fileID: 1831576854}
+  wheelModelTransform: {fileID: 6544276161636027100}
+  wheelSmokeVisualEffect: {fileID: 0}
 --- !u!1 &1890083707
 GameObject:
   m_ObjectHideFlags: 3
@@ -3261,7 +3679,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.778799, y: 1}
+    m_SensorSize: {x: 1.7767296, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -3277,7 +3695,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1890083707}
-  m_LocalRotation: {x: 0.3639977, y: -0.000000022664214, z: 0.000000008857336, w: 0.9313999}
+  m_LocalRotation: {x: 0.3639977, y: 0.000000022664215, z: -0.000000008857336, w: 0.9313999}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3562,6 +3980,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.89, z: -2.49}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 964824164}
   - {fileID: 3212935939740550256}
   - {fileID: 673579288550375192}
   - {fileID: 409500044}
@@ -3580,7 +3999,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 543450652267489005}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &919132148347960407
 GameObject:
@@ -3593,14 +4012,9 @@ GameObject:
   - component: {fileID: 543450652267489005}
   - component: {fileID: 1474740489}
   - component: {fileID: 919132148347960409}
-  - component: {fileID: 919132148347960408}
-  - component: {fileID: 919132148347960413}
-  - component: {fileID: 919132148347960415}
-  - component: {fileID: 919132148347960411}
-  - component: {fileID: 919132148347960412}
-  - component: {fileID: 919132148347960414}
   - component: {fileID: 1474740488}
   - component: {fileID: 919132148347960410}
+  - component: {fileID: 919132148347960411}
   - component: {fileID: 919132148347960417}
   - component: {fileID: 919132148347960424}
   - component: {fileID: 919132148347960423}
@@ -3610,6 +4024,7 @@ GameObject:
   - component: {fileID: 919132148347960419}
   - component: {fileID: 919132148347960418}
   - component: {fileID: 919132148347960416}
+  - component: {fileID: 919132148347960425}
   m_Layer: 6
   m_Name: Auto
   m_TagString: Untagged
@@ -3617,19 +4032,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &919132148347960408
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148347960407}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1.1945634, z: 1.334732}
-  m_Center: {x: 0, y: 0.94790006, z: -0.4666443}
 --- !u!54 &919132148347960409
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3781,60 +4183,6 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
---- !u!136 &919132148347960412
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148347960407}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.34
-  m_Height: 1.3
-  m_Direction: 0
-  m_Center: {x: 0, y: 0.67, z: 1.66}
---- !u!65 &919132148347960413
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148347960407}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 0.61463356, z: 1.4700495}
-  m_Center: {x: 0, y: 0.65332437, z: 0.94161946}
---- !u!136 &919132148347960414
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148347960407}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.34
-  m_Height: 1.3
-  m_Direction: 0
-  m_Center: {x: 0, y: 0.67, z: -1.69}
---- !u!65 &919132148347960415
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148347960407}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 0.77826345, z: 0.55507183}
-  m_Center: {x: 0, y: 0.7351393, z: -1.4199073}
 --- !u!114 &919132148347960416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3889,7 +4237,6 @@ MonoBehaviour:
   initializedSuccessfully: 0
   maxSteerAngle: 30
   steeringMethod: 0
-  useAlternativeValues: 0
   alternativeMaxSteerAngle: 50
   alternativeSteeringMethod: 2
   UseSteerLeft: 1
@@ -3945,7 +4292,7 @@ MonoBehaviour:
   initializedSuccessfully: 0
   magnetPowerAcceleration: 40
   magnetPowerMaxVelocity: 100
-  minMaxGroundDistance: {x: 0.1, y: 1}
+  extendWheelsDistanceOnWheelsOut: {x: 1.35, y: 2.5}
   magnetPowerAutoBrake: 1
   magnetPowerBrakeFactor: 0.98
   magnetPowerDistanceCurve:
@@ -4032,8 +4379,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  extendedWheelsLowRideDistance: 1.2
-  extendWheelsTime: {x: 0, y: 0.2}
   wheels_defaultMat: {fileID: 0}
   wheels_magnetPowerMat: {fileID: 0}
   wheelMeshes: []
@@ -4069,104 +4414,10 @@ MonoBehaviour:
   initializedSuccessfully: 0
   UseLowRideFrontal: 1
   UseLowRideBack: 1
-  invertLowRideControls: 1
+  invertLowRideControls: 0
   allignStickToView: 0
   simplifyLowRide: 0
-  minMaxGroundDistance: {x: 0.15, y: 1.35}
-  extendedWheelsLowRideDistance: 1.2
-  extendWheelsTime: {x: 0.1, y: 0.5}
   lowRideActivityDecreaseSpeed: 0.012
-  lowRideStepSizePlusMinus: {x: 0.5, y: -0.02}
-  powerCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 7.110156
-      outSlope: 7.110156
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.2998343
-    - serializedVersion: 3
-      time: 0.25780955
-      value: 1.8069125
-      inSlope: 0.16994618
-      outSlope: 0.16994618
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.09083472
-    - serializedVersion: 3
-      time: 0.5278738
-      value: 1.4395516
-      inSlope: -1.2329719
-      outSlope: -1.2329719
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.11377766
-    - serializedVersion: 3
-      time: 1
-      value: 2
-      inSlope: 2.3395002
-      outSlope: 2.3395002
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.061497826
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  lowRideActivityMagnetCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: -1
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: -1
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  lowRideActivityAlignCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: -1
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: -1
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   lowRideSideScale: 0.3
 --- !u!114 &919132148347960421
 MonoBehaviour:
@@ -4377,6 +4628,80 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   trajectoryRenderer: {fileID: 0}
+--- !u!114 &919132148347960425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132148347960407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a950a6cf7c859fb45bdb56cd476c4dda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  EnabledBehavior: 1
+  ExecutionPriority: 0
+  initializedSuccessfully: 0
+  sidewaysStiffnessBySpeed:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 30
+      value: 3
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  downwardForceBySpeed:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 30
+      value: 5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  currentPushdownEffect: 0
+  currentStiffnessEffect: 0
 --- !u!23 &1062266050902803381
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4556,7 +4881,7 @@ Transform:
   - {fileID: 170101282}
   - {fileID: 468473782}
   m_Father: {fileID: 543450652267489005}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3561315949228077569
 GameObject:

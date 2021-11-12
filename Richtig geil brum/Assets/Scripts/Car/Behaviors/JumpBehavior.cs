@@ -55,7 +55,7 @@ public class JumpBehavior : CarBehavior
 
     public void OnJump(InputValue inputValue)
     {
-        if (cC.drivingStateInfo == DrivingState.Grounded && EnabledBehavior)
+        if (cC.drivingStateInfo == DrivingState.Grounded)
         {
             jumpNextFrame = true;
         }
@@ -70,7 +70,6 @@ public class JumpBehavior : CarBehavior
             if (hasMagnetBehavior)
             { 
                 magnetBehavior.MagnetIsActive = false;
-                magnetBehavior.ToggleExtendedGroundDistance(false);
             }
 
             // 2. add up-force

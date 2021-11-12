@@ -4,9 +4,10 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using System;
+using UnityEngine.InputSystem;
 
 [Serializable]
-[RequireComponent(typeof(CarController))] // every carBehavior needs a CarController on the same Gameobject.
+[RequireComponent(typeof(CarController), typeof(PlayerInput))] // every carBehavior needs a CarController, and a PlayerInput on the same Gameobject.
 public abstract class CarBehavior : SerializedMonoBehaviour // abstract class, so it only can be inherited from, and not be instantiated by its own., inherits from SerializedMonobehavior, so everything inherits from it.
 {
     const string B = "Base";

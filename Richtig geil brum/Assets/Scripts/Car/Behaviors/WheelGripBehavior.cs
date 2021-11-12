@@ -46,7 +46,7 @@ public class WheelGripBehavior : CarBehavior
 
         //CHECK IF INITIALISATION WAS SUCCESSFULL
 
-        if (rB == null || Wheels.Contains(null)) // double check if it is still null, but that should never be the case.
+        if (rB == null || Wheels.Contains(null))
         {
             return false;
         }

@@ -16,7 +16,15 @@ public class SteeringBehavior : CarBehavior
     [TitleGroup(S)] public float maxSteerAngle = 30f;
     [TitleGroup(S)] public SteeringMethods steeringMethod = SteeringMethods.FrontSteer;
 
-    [TitleGroup(I)] public bool useAlternativeValues;
+    [TitleGroup(I)] private bool useAlternativeValues = false;
+    [TitleGroup(I)] public bool UseAlternativeValues 
+    { 
+        get => useAlternativeValues; 
+        set { 
+            useAlternativeValues = value; 
+            ResetWheelPositions(value == true?alternativeSteeringMethod:steeringMethod, frontWheelR,frontWheelL,backWheelR,backWheelL);  // decides wheather or not he should use alternativeSteeringMethod or steering Method as an input.
+        } 
+    }
     [TitleGroup(S)] public float alternativeMaxSteerAngle = 50f;
     [TitleGroup(S)] public SteeringMethods alternativeSteeringMethod = SteeringMethods.FourWheelSteer;
 
@@ -60,18 +68,18 @@ public class SteeringBehavior : CarBehavior
     {
         if (inputValue.isPressed)
         {
-            useAlternativeValues = true;
+            UseAlternativeValues = true;
         }
         else
         {
-            useAlternativeValues = false;
+            UseAlternativeValues = false;
         }
     }
 
     //------------------------ BEHAVIOR
     public override void ExecuteBehavior(Func<bool> _shouldExecute)
     {
-        if (useAlternativeValues)
+        if (UseAlternativeValues)
         {
             Steer(steerInputVal,alternativeSteeringMethod,alternativeMaxSteerAngle, frontWheelR, frontWheelL, backWheelR, backWheelL);
         }
@@ -118,8 +126,29 @@ public class SteeringBehavior : CarBehavior
                 }
         }
     }
-}
 
+    /// <summary>
+    /// Resette immer die Raeder die durch die Aktuelle SteeringPosition nicht mehr beeinflusst werden koennen auf rotation winkel 0
+    /// </summary>
+    /// <param name="_currentSteeringMethod"></param>
+
+    public void ResetWheelPositions(SteeringMethods _currentSteeringMethod, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL)
+    {
+        switch (_currentSteeringMethod)
+        {
+            case SteeringMethods.FrontSteer: // hinterraeder koennen nichtmehr beeinflusst werden
+                _backWheelL.wheelCollider.steerAngle = 0f;
+                _backWheelR.wheelCollider.steerAngle = 0f;
+                break;
+            case SteeringMethods.BackSteer: // vorderraeder koennen nichtmehr beeinflusst werden
+                _frontWheelL.wheelCollider.steerAngle = 0f;
+                _frontWheelR.wheelCollider.steerAngle = 0f;
+                break;
+            case SteeringMethods.FourWheelSteer: //alle raeder koennen beeinflusst werden, also mach nix.
+                break;
+        }
+    }
+}
 public enum SteeringMethods
 {
     FrontSteer,
