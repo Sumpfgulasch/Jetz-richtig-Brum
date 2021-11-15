@@ -39,13 +39,13 @@ public class MagnetBehavior : CarBehavior
         get => magnetIsActive; 
         set 
         {
-            magnetIsActive = value; SetMagnetVisualisation(value); 
+            magnetIsActive = value; 
+            SetMagnetVisualisation(value); 
             ToggleExtendedGroundDistance(value,ref wheelsOut,extendWheelsDistanceOnWheelsOut,Wheels); 
         } 
     } 
 
 
-    [TitleGroup(I)] private LowRideActivity lowRideActivity = new LowRideActivity();
     [TitleGroup(S)] public AnimationCurve lowRideActivityMagnetCurve = AnimationCurve.Linear(0f,1f,1f,0f);
     [TitleGroup(S)] public AnimationCurve lowRideActivityAlignCurve = AnimationCurve.Linear(0f, 1f, 1f, 0f);
 
@@ -58,7 +58,7 @@ public class MagnetBehavior : CarBehavior
     [TitleGroup(R)] private Wheel[] Wheels { get { return new Wheel[4] { frontWheelR, frontWheelL, backWheelR, backWheelL }; } }
     [TitleGroup(R)] public Vector3[] magnetForcePositions = new Vector3[4] { new Vector3(0,-0.22f,-1.839f), new Vector3(0f,0f,0f), new Vector3(0f,-0.22f,1.926f), new Vector3(0f,0f,0f) };
     [TitleGroup(R)] private Rigidbody rB;
-    [TitleGroup(R)] public Image magnetUI;
+    [TitleGroup(R)] public Image magnetUI = null;
 
 
     [TitleGroup(I)] private bool hasLowRideBehavior = false;
@@ -74,11 +74,10 @@ public class MagnetBehavior : CarBehavior
     public override bool SetRequirements()
     {
         //Set magnetUI - TODO, create one or take the fallback
-        if (magnetUI = null)
+        if (magnetUI == null)
         {
             Debug.Log("magnet UI is missing");
         }
-
 
         //SetMaterials
         if (wheels_defaultMat == null){ wheels_defaultMat = SceneObjectManager.Instance.WheelDefaultMaterial; }
@@ -236,13 +235,29 @@ public class MagnetBehavior : CarBehavior
     /// <returns></returns>
     private void MagnetPower()
     {
+
         if (hasAutoAlignBehavior) //  fuehre AutoAlign nur aus, wenn es ein Autoalignbehavior gibt.
         {
-            Debug.Log("HasAutoAlignBehavior");
-            float alignStrength = Mathf.Clamp01(lowRideActivityAlignCurve.Evaluate(lowRideActivity.HighestValue));     // wenn lowRide-Activity: kein autoAlign
-            autoAlignBehavior.AutoAlignCar(DrivingState.InAir, alignStrength);
+            if (hasLowRideBehavior)  // wenn lowRide-Activity: kein autoAlign
+            {
+                float alignStrength = Mathf.Clamp01(lowRideActivityAlignCurve.Evaluate(lowRideBehavior.LowRideActivity.HighestValue));    
+                autoAlignBehavior.AutoAlignCar(alignStrength);
+            }
+            else // wenn kein lowRideBehavior, immer voll autoalign
+            {
+                autoAlignBehavior.AutoAlignCar();
+            }
+
         }
-        AddPullForce(rB, lowRideActivity.Values, magnetForcePositions,magnetPowerDistanceCurve,magnetPowerAcceleration,lowRideActivityMagnetCurve,magnetPowerMaxVelocity);
+
+        if (hasLowRideBehavior)  // wenn lowRide-Activity: add pull force mit dem lowRideActivity in mind.
+        {
+            AddPullForce(rB, magnetForcePositions, magnetPowerDistanceCurve, magnetPowerAcceleration, lowRideActivityMagnetCurve, magnetPowerMaxVelocity, lowRideBehavior.LowRideActivity);
+        }
+        else // lowRideActivityValues  = 0f,0f,0f,0f
+        {
+            AddPullForce(rB, magnetForcePositions, magnetPowerDistanceCurve, magnetPowerAcceleration, lowRideActivityMagnetCurve, magnetPowerMaxVelocity, new LowRideActivity());
+        }
     }
     private void ManageMagnetTimeLimit()
     {
@@ -274,7 +289,7 @@ public class MagnetBehavior : CarBehavior
     /// Scheiß funktion. Nochmal schön schreiben. Fügt dem Auto Force nach unten hinzu, abhängig von der Distanz der targetSurface.
     /// </summary>
     /// <param name="_lowRideActivityValues">front, right, back, left. [0,1]</param>
-    private void AddPullForce( Rigidbody _rB, float[] _lowRideActivityValues, Vector3[] _magnetForcePositions, AnimationCurve _magnetPowerDistanceCurve, int _magnetPowerAcceleration, AnimationCurve _lowRideActivityMagnetCurve, int _magnetPowerMaxVelocity)
+    private void AddPullForce( Rigidbody _rB, Vector3[] _magnetForcePositions, AnimationCurve _magnetPowerDistanceCurve, int _magnetPowerAcceleration, AnimationCurve _lowRideActivityMagnetCurve, int _magnetPowerMaxVelocity, LowRideActivity _lowRideActivity)
     {
         if (_magnetForcePositions.Length != 4)
         {
@@ -297,8 +312,8 @@ public class MagnetBehavior : CarBehavior
 
         // 3. Add force
         Vector3 force = downVector * _magnetPowerAcceleration * distanceFactor; // Q: warum wird forcedistance vom Mittelpunkt des autos berechnet, aber die force an den achsen applied?
-        float frontStrength = Mathf.Clamp01(_lowRideActivityMagnetCurve.Evaluate(_lowRideActivityValues[0]));
-        float backStrength = Mathf.Clamp01(_lowRideActivityMagnetCurve.Evaluate(_lowRideActivityValues[2]));
+        float frontStrength = Mathf.Clamp01(_lowRideActivityMagnetCurve.Evaluate(_lowRideActivity[CarDir.F]));
+        float backStrength = Mathf.Clamp01(_lowRideActivityMagnetCurve.Evaluate(_lowRideActivity[CarDir.B]));
         _rB.AddForceAtPosition(force * 0.5f * frontStrength, this.transform.position + _magnetForcePositions[0], ForceMode.Acceleration);          // front wheels
         _rB.AddForceAtPosition(force * 0.5f * backStrength, this.transform.position + _magnetForcePositions[2], ForceMode.Acceleration);          // back wheels
 

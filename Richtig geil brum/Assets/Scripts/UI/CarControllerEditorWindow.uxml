@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="CarControllerEditorWindowStyle.uss" />
+    <ui:VisualElement name="Document" class="DocumentStyle">
+        <ui:VisualElement name="CarList" class="CarListStyle" style="flex-direction: row;">
+            <ui:Button text="Button" display-tooltip-when-elided="true" name="CarN" class="CarButtonStyle" />
+        </ui:VisualElement>
+        <ui:VisualElement name="CarAttributes" class="CarAttributesStyle">
+            <ui:VisualElement name="BehaviorList" class="BehaviorListStyle" style="flex-shrink: 1;">
+                <ui:Label text="Label" display-tooltip-when-elided="true" />
+            </ui:VisualElement>
+            <ui:VisualElement name="BehaviorAttributes" class="BehaviorAttributesStyle">
+                <ui:Label text="Label" display-tooltip-when-elided="true" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

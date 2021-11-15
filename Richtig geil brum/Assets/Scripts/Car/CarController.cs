@@ -17,6 +17,8 @@ public class CarController : SerializedMonoBehaviour
     const string CB = "CarBehavior";
     const string H = "Helper";
 
+    //TEST
+    public bool TestBool = false;
 
     //WOANDERS HIN?
     [GUIColor(1f, 0f, 0f)] [TitleGroup(G)] public float maxSpeed = 20f;        // NOT PROPERLY USED; only for audio
@@ -64,7 +66,7 @@ public class CarController : SerializedMonoBehaviour
     }
 
 
-    [TitleGroup(CB)][OdinSerialize] List<CarBehavior> carBehaviors = new List<CarBehavior>();
+    [TitleGroup(CB)][OdinSerialize] public List<CarBehavior> carBehaviors = new List<CarBehavior>();
 
 
     [TitleGroup(H)] public bool showDebugHandles = true;

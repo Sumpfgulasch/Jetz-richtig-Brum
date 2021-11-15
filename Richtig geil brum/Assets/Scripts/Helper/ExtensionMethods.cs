@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 
 public static class ExtensionMethods
@@ -41,4 +42,9 @@ public static class ExtensionMethods
         _rB.angularVelocity *= _factor;
     }
 
+    public static bool IsGenericList(this object o)
+    {
+        var oType = o.GetType();
+        return (oType.IsGenericType && (oType.GetGenericTypeDefinition() == typeof(List<>)));
+    }
 }

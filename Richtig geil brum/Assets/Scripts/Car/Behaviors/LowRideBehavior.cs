@@ -31,12 +31,16 @@ public class LowRideBehavior : CarBehavior
 
     [TitleGroup(I)] private Vector2 lowRideInputVal;
     [TitleGroup(I)] public Vector2 LowRideInputVal { get => lowRideInputVal; private set => lowRideInputVal = value; }
-    [TitleGroup(I)] private LowRideActivity lowRideActivity = new LowRideActivity();
+    [TitleGroup(I)] private  LowRideActivity lowRideActivity = new LowRideActivity();
+    [TitleGroup(I)] public LowRideActivity LowRideActivity { get => lowRideActivity; private set => lowRideActivity = value; }
 
 
     //------------------------ SETUP
     public override bool SetRequirements()
     {
+        //Init LowRideActivity
+        LowRideActivity = new LowRideActivity();
+
         //SETUP THE WHEELS
         frontWheelR = cC.frontWheelR != null ? cC.frontWheelR : null;
         frontWheelL = cC.frontWheelL != null ? cC.frontWheelL : null;
@@ -62,7 +66,7 @@ public class LowRideBehavior : CarBehavior
     //------------------------ BEHAVIOR
     public override void ExecuteBehavior(Func<bool> _shouldExecute)
     {
-        SetLowRideActivity(LowRideInputVal);
+        LowRideActivity.SetLowRideActivity(LowRideInputVal, lowRideActivityDecreaseSpeed,invertLowRideControls);
         LowRide(LowRideInputVal, frontWheelR, frontWheelL, backWheelR, backWheelL);
     }
 
@@ -135,53 +139,58 @@ public class LowRideBehavior : CarBehavior
         //_backWheelL.UpdateWheelHeight(_lowRideStepSizePlusMinus, strengthWheelBL, _minMaxGroundDistance, _powerCurve);
     }
 
-    /// <summary>
-    /// Set the lowRideActivity-variable, which is used to deactivate the magnetPower temporarily.
-    /// </summary>
-    /// <param name="_lowRideValue"></param>
-    private void SetLowRideActivity(Vector2 _lowRideValue)
-    {
-        // inverted controls
-        if (invertLowRideControls)
-            _lowRideValue.y *= -1f;
 
-        // (SCHEIß CODE) Alle 4 Richtungen der lowRideActivity erhöhen oder verringern 
-
-        // front
-        if (_lowRideValue.y > lowRideActivity[0])
-            lowRideActivity[0] = _lowRideValue.y;                                    // increase
-        else
-            lowRideActivity[0] -= lowRideActivityDecreaseSpeed;                     // decrease
-
-        // right
-        if (_lowRideValue.x > lowRideActivity[1])
-            lowRideActivity[1] = _lowRideValue.x;
-        else
-            lowRideActivity[1] -= lowRideActivityDecreaseSpeed;
-
-        // back
-        if (-_lowRideValue.y > lowRideActivity[2])
-            lowRideActivity[2] = -_lowRideValue.y;
-        else
-            lowRideActivity[2] -= lowRideActivityDecreaseSpeed;
-
-        // left
-        if (-_lowRideValue.x > lowRideActivity[3])
-            lowRideActivity[3] = -_lowRideValue.x;
-        else
-            lowRideActivity[3] -= lowRideActivityDecreaseSpeed;
-    }
 }
 public class LowRideActivity
 {
-    private float[] values = new float[4];
+    private float[] values = new float[4] {0f,0f,0f,0f};
     /// <summary>
     /// Front(0), right(1), back(2), left(3). Set-access via indexer of class-instance.
     /// </summary>
     public float[] Values
     { get { return values; } private set { values = value; } }
 
+    public LowRideActivity() // empty constructor that inits the values.
+    {
+        values = new float[4] { 0f, 0f, 0f, 0f };
+    }
 
+    /// <summary>
+    /// Set the lowRideActivity-variable, which is used to deactivate the magnetPower temporarily.
+    /// </summary>
+    /// <param name="_lowRideValue"></param>
+    public void SetLowRideActivity(Vector2 _lowRideValue, float _lowRideActivityDecreaseSpeed = 0.01f, bool _invertLowRideInput = false)
+    {
+        // inverted controls
+        if (_invertLowRideInput)
+            _lowRideValue.y *= -1f;
+
+        // (SCHEIß CODE) Alle 4 Richtungen der lowRideActivity erhöhen oder verringern 
+
+        // front
+        if (_lowRideValue.y > Values[0])
+            Values[0] = _lowRideValue.y;                                    // increase
+        else
+            Values[0] -= _lowRideActivityDecreaseSpeed;                     // decrease
+
+        // right
+        if (_lowRideValue.x > Values[1])
+            Values[1] = _lowRideValue.x;
+        else
+            Values[1] -= _lowRideActivityDecreaseSpeed;
+
+        // back
+        if (-_lowRideValue.y > Values[2])
+            Values[2] = -_lowRideValue.y;
+        else
+            Values[2] -= _lowRideActivityDecreaseSpeed;
+
+        // left
+        if (-_lowRideValue.x > Values[3])
+            Values[3] = -_lowRideValue.x;
+        else
+            Values[3] -= _lowRideActivityDecreaseSpeed;
+    }
     public bool IsActive
     {
         get
@@ -207,24 +216,50 @@ public class LowRideActivity
             return highestValue;
         }
     }
-    public float this[int i]
+    public float this[CarDir _carDir]
     {
         get
         {
-            return Values[i];
+            switch (_carDir)
+            {
+                case CarDir.F:
+                    return Values[0];
+                case CarDir.R:
+                    return Values[1];
+                case CarDir.B:
+                    return Values[2];
+                case CarDir.L:
+                    return Values[3];
+            }
+
+            return 0f;
         }
         set
         {
-            if (i != 1 && i != 3)                       // side-stick-bewegung erstmal ignorieren
-                Values[i] = Mathf.Clamp01(value);
+            float clampedVal = Mathf.Clamp01(value); // side-stick-bewegung erstmal ignorieren
+            switch (_carDir)
+            {
+                case CarDir.F:
+                    Values[0] = clampedVal;
+                    break;
+                case CarDir.R:
+                    //Values[1] = clampedVal;
+                    break;
+                case CarDir.B:
+                    Values[2] = clampedVal;
+                    break;
+                case CarDir.L:
+                    //Values[3] = clampedVal;
+                    break;
+            }
         }
     }
 }
 
-public enum IsWheel // man koennte dieses Enum benutzen um auf den Indexer zuzugreifen - ich bin mir da noch nicht sicher, aber das koennte es lesbarer machen :)
+public enum CarDir // man koennte dieses Enum benutzen um auf den Indexer zuzugreifen - ich bin mir da noch nicht sicher, aber das koennte es lesbarer machen :)
 { 
-    FL,
-    FR,
-    BL,
-    BR
+    F,
+    R,
+    B,
+    L
 }

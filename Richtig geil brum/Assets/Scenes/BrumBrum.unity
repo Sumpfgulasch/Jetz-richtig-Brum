@@ -974,7 +974,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7767296, y: 1}
+    m_SensorSize: {x: 1.779052, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -990,7 +990,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 391781414}
-  m_LocalRotation: {x: 0.3469958, y: 1e-45, z: -0, w: 0.9378667}
+  m_LocalRotation: {x: 0.3469958, y: 1e-45, z: -1e-45, w: 0.9378667}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1328,7 +1328,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7767296, y: 1}
+    m_SensorSize: {x: 1.779052, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1337,34 +1337,6 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 571555596}
---- !u!83 &547298005
-AudioClip:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: helm
-  m_LoadType: 0
-  m_Channels: 1
-  m_Frequency: 48000
-  m_BitsPerSample: 32
-  m_Length: 0
-  m_IsTrackerFormat: 0
-  m_Ambisonic: 0
-  m_SubsoundIndex: 0
-  m_PreloadAudioData: 1
-  m_LoadInBackground: 0
-  m_Legacy3D: 0
-  m_Resource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_CompressionFormat: 0
-  m_EditorResource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_EditorCompressionFormat: 0
 --- !u!1 &571555595
 GameObject:
   m_ObjectHideFlags: 3
@@ -1783,7 +1755,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7767296, y: 1}
+    m_SensorSize: {x: 1.779052, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1981,7 +1953,7 @@ CapsuleCollider:
   m_Radius: 0.34
   m_Height: 1.3
   m_Direction: 0
-  m_Center: {x: 0, y: 0.67, z: -1.69}
+  m_Center: {x: 0, y: 0.76, z: -1.4}
 --- !u!136 &964824166
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2007,8 +1979,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.77826345, z: 0.55507183}
-  m_Center: {x: 0, y: 0.7351393, z: -1.4199073}
+  m_Size: {x: 1, y: 0.66, z: 0.55507183}
+  m_Center: {x: 0, y: 0.76, z: -1.12}
 --- !u!65 &964824168
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2391,7 +2363,7 @@ WheelCollider:
     spring: 90000
     damper: 500
     targetPosition: 0.5
-  m_SuspensionDistance: 2.36
+  m_SuspensionDistance: 0.7
   m_ForceAppPointDistance: 0
   m_Mass: 100
   m_WheelDampingRate: 35
@@ -2786,7 +2758,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 547298005}
+  m_audioClip: {fileID: 1675516724}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -3002,6 +2974,7 @@ GameObject:
   - component: {fileID: 1325487850}
   - component: {fileID: 1325487851}
   - component: {fileID: 1325487852}
+  - component: {fileID: 1325487853}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3157,6 +3130,27 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 5a39e7d63a1d8694c86906ca0282059d, type: 2}
+--- !u!114 &1325487853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325487846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cedbdedca0ae7c2419278c21513aaf95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
 --- !u!114 &1474740488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3174,14 +3168,15 @@ MonoBehaviour:
     SerializedBytes: 
     ReferencedUnityObjects:
     - {fileID: 919132148347960417}
-    - {fileID: 919132148347960424}
-    - {fileID: 919132148347960423}
-    - {fileID: 919132148347960422}
-    - {fileID: 919132148347960421}
-    - {fileID: 919132148347960420}
-    - {fileID: 919132148347960419}
-    - {fileID: 919132148347960418}
     - {fileID: 919132148347960416}
+    - {fileID: 919132148347960418}
+    - {fileID: 919132148347960421}
+    - {fileID: 919132148347960425}
+    - {fileID: 919132148347960422}
+    - {fileID: 919132148347960423}
+    - {fileID: 919132148347960420}
+    - {fileID: 919132148347960424}
+    - {fileID: 919132148347960419}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -3208,7 +3203,7 @@ MonoBehaviour:
         mscorlib
     - Name: 
       Entry: 12
-      Data: 9
+      Data: 10
     - Name: 
       Entry: 10
       Data: 0
@@ -3237,11 +3232,15 @@ MonoBehaviour:
       Entry: 10
       Data: 8
     - Name: 
+      Entry: 10
+      Data: 9
+    - Name: 
       Entry: 13
       Data: 
     - Name: 
       Entry: 8
       Data: 
+  TestBool: 1
   maxSpeed: 20
   initialSuspensionDistance: 1
   frontWheelRMesh: {fileID: 8171800737858675813}
@@ -3252,6 +3251,17 @@ MonoBehaviour:
   frontWheelL: {fileID: 1831576855}
   backWheelR: {fileID: 1209376499}
   backWheelL: {fileID: 749561765}
+  carBehaviors:
+  - {fileID: 919132148347960417}
+  - {fileID: 919132148347960416}
+  - {fileID: 919132148347960418}
+  - {fileID: 919132148347960421}
+  - {fileID: 919132148347960425}
+  - {fileID: 919132148347960422}
+  - {fileID: 919132148347960423}
+  - {fileID: 919132148347960420}
+  - {fileID: 919132148347960424}
+  - {fileID: 919132148347960419}
   showDebugHandles: 1
 --- !u!114 &1474740489
 MonoBehaviour:
@@ -3433,6 +3443,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1563962272}
   m_CullTransparentMesh: 1
+--- !u!83 &1675516724
+AudioClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: helm
+  m_LoadType: 0
+  m_Channels: 1
+  m_Frequency: 48000
+  m_BitsPerSample: 32
+  m_Length: 0
+  m_IsTrackerFormat: 0
+  m_Ambisonic: 0
+  m_SubsoundIndex: 0
+  m_PreloadAudioData: 1
+  m_LoadInBackground: 0
+  m_Legacy3D: 0
+  m_Resource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_CompressionFormat: 0
+  m_EditorResource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_EditorCompressionFormat: 0
 --- !u!1 &1744645320
 GameObject:
   m_ObjectHideFlags: 0
@@ -3679,7 +3717,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7767296, y: 1}
+    m_SensorSize: {x: 1.779052, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -3695,7 +3733,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1890083707}
-  m_LocalRotation: {x: 0.3639977, y: 0.000000022664215, z: -0.000000008857336, w: 0.9313999}
+  m_LocalRotation: {x: 0.3639977, y: -0.000000022664214, z: 0.000000008857336, w: 0.9313999}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4205,7 +4243,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   EnabledBehavior: 1
-  ExecutionPriority: 0
+  ExecutionPriority: 1
   initializedSuccessfully: 0
   motorForce: 2500
   propulsionMethod: 2
@@ -4263,7 +4301,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   EnabledBehavior: 1
-  ExecutionPriority: 0
+  ExecutionPriority: 2
   initializedSuccessfully: 0
   teleportOnNextFrame: 0
 --- !u!114 &919132148347960419
@@ -4288,7 +4326,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   EnabledBehavior: 1
-  ExecutionPriority: 0
+  ExecutionPriority: 9
   initializedSuccessfully: 0
   magnetPowerAcceleration: 40
   magnetPowerMaxVelocity: 100
@@ -4387,7 +4425,7 @@ MonoBehaviour:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: -0.22, z: 1.926}
   - {x: 0, y: 0, z: 0}
-  magnetUI: {fileID: 0}
+  magnetUI: {fileID: 1563962274}
 --- !u!114 &919132148347960420
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4410,7 +4448,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   EnabledBehavior: 1
-  ExecutionPriority: 0
+  ExecutionPriority: 7
   initializedSuccessfully: 0
   UseLowRideFrontal: 1
   UseLowRideBack: 1
@@ -4441,7 +4479,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   EnabledBehavior: 1
-  ExecutionPriority: 0
+  ExecutionPriority: 3
   initializedSuccessfully: 0
   jumpForce: 10.3
 --- !u!114 &919132148347960422
@@ -4466,7 +4504,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   EnabledBehavior: 1
-  ExecutionPriority: 0
+  ExecutionPriority: 5
   initializedSuccessfully: 0
   maxAngularVelocity: 4
   inAirControlForce: 7
@@ -4494,7 +4532,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   EnabledBehavior: 1
-  ExecutionPriority: 0
+  ExecutionPriority: 6
   initializedSuccessfully: 0
   inAirAngularBrakeFactor: 0.99
 --- !u!114 &919132148347960424
@@ -4522,7 +4560,7 @@ MonoBehaviour:
       Entry: 3
       Data: 1
   EnabledBehavior: 1
-  ExecutionPriority: 0
+  ExecutionPriority: 8
   initializedSuccessfully: 0
   stopAutoaligningAfterInAirControl: 0
   autoalignCarInAir: 0
@@ -4650,7 +4688,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   EnabledBehavior: 1
-  ExecutionPriority: 0
+  ExecutionPriority: 4
   initializedSuccessfully: 0
   sidewaysStiffnessBySpeed:
     serializedVersion: 2

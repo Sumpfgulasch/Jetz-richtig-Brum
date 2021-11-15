@@ -104,13 +104,13 @@ public class AutoAlignBehavior : CarBehavior
     {
         if (autoalignCarInAir)
         {
-            AutoAlignCar(cC.drivingStateInfo);
+            AutoAlignCar();
         }
     }
 
-    public void AutoAlignCar(DrivingState _drivingStateInfo, float strength = 1f)
+    public void AutoAlignCar(float strength = 1f)
     {
-        if (_drivingStateInfo == DrivingState.InAir)    //wenn das auto in der luft ist.
+        if (cC.drivingStateInfo == DrivingState.InAir)    //wenn das auto in der luft ist.
         {
             Vector3 targetNormal = Vector3.up.normalized;
             RaycastHit hit;

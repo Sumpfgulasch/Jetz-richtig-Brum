@@ -21,8 +21,6 @@ public class Wheel : SerializedMonoBehaviour
     
     [TitleGroup(IN)] [SuffixLabel("%", true)] private float targetExtensionPercent = 0f;
     [TitleGroup(IN)] [SuffixLabel("%", true)] [OdinSerialize][ReadOnly] public float TargetExtensionPercent { get => Mathf.Clamp01(targetExtensionPercent); set => targetExtensionPercent = Mathf.Clamp01(value); } // always clamp01 on get and set
-   
-    
     
     [TitleGroup(EX)] [SuffixLabel("%", true)] private float currentExtensionPercent = 0f;
     [TitleGroup(EX)] [SuffixLabel("%", true)] [OdinSerialize] [ReadOnly] public float CurrentExtensionPercent { get => Mathf.Clamp01(currentExtensionPercent); private set => currentExtensionPercent = Mathf.Clamp01(value); } // always clamp01 on get and set

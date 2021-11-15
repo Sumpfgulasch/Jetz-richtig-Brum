@@ -1,0 +1,33 @@
+.DocumentStyle {
+    flex-grow: 1;
+    background-color: rgb(96, 96, 96);
+    flex-direction: column;
+}
+
+.CarListStyle {
+    flex-grow: 0;
+    color: rgb(0, 0, 0);
+    background-color: rgb(180, 180, 180);
+    width: auto;
+    min-width: auto;
+    max-width: none;
+    min-height: 20px;
+}
+
+.CarButtonStyle {
+}
+
+.CarAttributesStyle {
+    flex-grow: 1;
+    background-color: rgb(219, 168, 168);
+}
+
+.BehaviorListStyle {
+    flex-grow: 1;
+    background-color: rgb(183, 158, 158);
+}
+
+.BehaviorAttributesStyle {
+    flex-grow: 1;
+    background-color: rgb(159, 87, 87);
+}
