@@ -240,7 +240,6 @@ public class MagnetBehavior : CarBehavior
         {
             if (hasLowRideBehavior)  // wenn lowRide-Activity: kein autoAlign
             {
-                Debug.Log("HIGHEST VAL: " + lowRideBehavior.LowRideActivity.HighestValue);
                 float alignStrength = Mathf.Clamp01(lowRideActivityAlignCurve.Evaluate(lowRideBehavior.LowRideActivity.HighestValue));    
                 autoAlignBehavior.AutoAlignCar(alignStrength); // TODO - darf hier nicht aufgerufen werden.
             }
@@ -290,7 +289,7 @@ public class MagnetBehavior : CarBehavior
     /// Scheiß funktion. Nochmal schön schreiben. Fügt dem Auto Force nach unten hinzu, abhängig von der Distanz der targetSurface.
     /// </summary>
     /// <param name="_lowRideActivityValues">front, right, back, left. [0,1]</param>
-    private void AddPullForce( Rigidbody _rB, Vector3[] _magnetForcePositions, AnimationCurve _magnetPowerDistanceCurve, int _magnetPowerAcceleration, AnimationCurve _lowRideActivityMagnetCurve, int _magnetPowerMaxVelocity, LowRideActivity _lowRideActivity)
+    private void AddPullForce( Rigidbody _rB, Vector3[] _magnetForcePositions, AnimationCurve _magnetPowerDistanceCurve, float _magnetPowerAcceleration, AnimationCurve _lowRideActivityMagnetCurve, float _magnetPowerMaxVelocity, LowRideActivity _lowRideActivity)
     {
         if (_magnetForcePositions.Length != 2)
         {
@@ -315,12 +314,10 @@ public class MagnetBehavior : CarBehavior
         Vector3 force = downVector * _magnetPowerAcceleration * distanceFactor; // Q: warum wird forcedistance vom Mittelpunkt des autos berechnet, aber die force an den achsen applied?
         float frontStrength = Mathf.Clamp01(_lowRideActivityMagnetCurve.Evaluate(_lowRideActivity[CarDir.F]));
         float backStrength = Mathf.Clamp01(_lowRideActivityMagnetCurve.Evaluate(_lowRideActivity[CarDir.B]));
-        _rB.AddForceAtPosition(force * 0.5f * frontStrength, this.transform.TransformPoint(_magnetForcePositions[1]), ForceMode.Acceleration);          // front wheels
-        _rB.AddForceAtPosition(force * 0.5f * backStrength, this.transform.TransformPoint(_magnetForcePositions[0]), ForceMode.Acceleration);          // back wheels
-        Debug.Log("FrontStrength: " + frontStrength);
-        Debug.DrawRay(this.transform.TransformPoint(_magnetForcePositions[1]), -this.transform.up * frontStrength, Color.red);
-        Debug.Log("BackStrength: " + backStrength);
-        Debug.DrawRay(this.transform.TransformPoint(_magnetForcePositions[0]), -this.transform.up * backStrength, Color.red);
+        _rB.AddForceAtPosition(force * 0.5f * frontStrength, this.transform.TransformPoint(_magnetForcePositions[0]), ForceMode.Acceleration);          // front wheels
+        _rB.AddForceAtPosition(force * 0.5f * backStrength, this.transform.TransformPoint(_magnetForcePositions[1]), ForceMode.Acceleration);          // back wheels
+        //Debug.DrawRay(this.transform.TransformPoint(_magnetForcePositions[1]), -this.transform.up * frontStrength, Color.red);
+        //Debug.DrawRay(this.transform.TransformPoint(_magnetForcePositions[0]), -this.transform.up * backStrength, Color.red);
 
         // 4. Max speed
         _rB.velocity = _rB.velocity.normalized * Mathf.Clamp(_rB.velocity.magnitude, 0, _magnetPowerMaxVelocity);
