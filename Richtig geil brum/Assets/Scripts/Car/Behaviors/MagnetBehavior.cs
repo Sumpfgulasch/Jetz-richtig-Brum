@@ -56,7 +56,7 @@ public class MagnetBehavior : CarBehavior
     [TitleGroup(R)] public MeshRenderer[] wheelMeshes;
     [TitleGroup(R)] private Wheel frontWheelR, frontWheelL, backWheelR, backWheelL;
     [TitleGroup(R)] private Wheel[] Wheels { get { return new Wheel[4] { frontWheelR, frontWheelL, backWheelR, backWheelL }; } }
-    [TitleGroup(R)] public Vector3[] magnetForcePositions = new Vector3[4] { new Vector3(0,-0.22f,-1.839f), new Vector3(0f,0f,0f), new Vector3(0f,-0.22f,1.926f), new Vector3(0f,0f,0f) };
+    [TitleGroup(R)] public Vector3[] magnetForcePositions = new Vector3[2] { new Vector3(0,-0.22f,-1.839f), new Vector3(0f,-0.22f,1.926f)};
     [TitleGroup(R)] private Rigidbody rB;
     [TitleGroup(R)] public Image magnetUI = null;
 
@@ -240,8 +240,9 @@ public class MagnetBehavior : CarBehavior
         {
             if (hasLowRideBehavior)  // wenn lowRide-Activity: kein autoAlign
             {
+                Debug.Log("HIGHEST VAL: " + lowRideBehavior.LowRideActivity.HighestValue);
                 float alignStrength = Mathf.Clamp01(lowRideActivityAlignCurve.Evaluate(lowRideBehavior.LowRideActivity.HighestValue));    
-                autoAlignBehavior.AutoAlignCar(alignStrength);
+                autoAlignBehavior.AutoAlignCar(alignStrength); // TODO - darf hier nicht aufgerufen werden.
             }
             else // wenn kein lowRideBehavior, immer voll autoalign
             {
@@ -291,9 +292,9 @@ public class MagnetBehavior : CarBehavior
     /// <param name="_lowRideActivityValues">front, right, back, left. [0,1]</param>
     private void AddPullForce( Rigidbody _rB, Vector3[] _magnetForcePositions, AnimationCurve _magnetPowerDistanceCurve, int _magnetPowerAcceleration, AnimationCurve _lowRideActivityMagnetCurve, int _magnetPowerMaxVelocity, LowRideActivity _lowRideActivity)
     {
-        if (_magnetForcePositions.Length != 4)
+        if (_magnetForcePositions.Length != 2)
         {
-            Debug.Log("MagnetForcePositions Array doesnt contain 4 Positions");
+            Debug.Log("MagnetForcePositions Array doesnt contain 2 Positions");
             return;
         }
 
@@ -314,8 +315,12 @@ public class MagnetBehavior : CarBehavior
         Vector3 force = downVector * _magnetPowerAcceleration * distanceFactor; // Q: warum wird forcedistance vom Mittelpunkt des autos berechnet, aber die force an den achsen applied?
         float frontStrength = Mathf.Clamp01(_lowRideActivityMagnetCurve.Evaluate(_lowRideActivity[CarDir.F]));
         float backStrength = Mathf.Clamp01(_lowRideActivityMagnetCurve.Evaluate(_lowRideActivity[CarDir.B]));
-        _rB.AddForceAtPosition(force * 0.5f * frontStrength, this.transform.position + _magnetForcePositions[0], ForceMode.Acceleration);          // front wheels
-        _rB.AddForceAtPosition(force * 0.5f * backStrength, this.transform.position + _magnetForcePositions[2], ForceMode.Acceleration);          // back wheels
+        _rB.AddForceAtPosition(force * 0.5f * frontStrength, this.transform.TransformPoint(_magnetForcePositions[1]), ForceMode.Acceleration);          // front wheels
+        _rB.AddForceAtPosition(force * 0.5f * backStrength, this.transform.TransformPoint(_magnetForcePositions[0]), ForceMode.Acceleration);          // back wheels
+        Debug.Log("FrontStrength: " + frontStrength);
+        Debug.DrawRay(this.transform.TransformPoint(_magnetForcePositions[1]), -this.transform.up * frontStrength, Color.red);
+        Debug.Log("BackStrength: " + backStrength);
+        Debug.DrawRay(this.transform.TransformPoint(_magnetForcePositions[0]), -this.transform.up * backStrength, Color.red);
 
         // 4. Max speed
         _rB.velocity = _rB.velocity.normalized * Mathf.Clamp(_rB.velocity.magnitude, 0, _magnetPowerMaxVelocity);

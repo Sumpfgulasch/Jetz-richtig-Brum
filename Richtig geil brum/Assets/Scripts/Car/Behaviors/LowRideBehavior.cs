@@ -143,16 +143,16 @@ public class LowRideBehavior : CarBehavior
 }
 public class LowRideActivity
 {
-    private float[] values = new float[4] {0f,0f,0f,0f};
+    private float[] values = new float[2] {0f,0f};
     /// <summary>
-    /// Front(0), right(1), back(2), left(3). Set-access via indexer of class-instance.
+    /// Front(0), back(1) Set-access via indexer of class-instance.
     /// </summary>
     public float[] Values
     { get { return values; } private set { values = value; } }
 
     public LowRideActivity() // empty constructor that inits the values.
     {
-        values = new float[4] { 0f, 0f, 0f, 0f };
+        values = new float[2] { 0f, 0f};
     }
 
     /// <summary>
@@ -169,28 +169,17 @@ public class LowRideActivity
 
         // front
         if (_lowRideValue.y > Values[0])
-            Values[0] = _lowRideValue.y;                                    // increase
+            Values[0] = _lowRideValue.y;                                    // set
         else
             Values[0] -= _lowRideActivityDecreaseSpeed;                     // decrease
 
-        // right
-        if (_lowRideValue.x > Values[1])
-            Values[1] = _lowRideValue.x;
-        else
-            Values[1] -= _lowRideActivityDecreaseSpeed;
-
         // back
-        if (-_lowRideValue.y > Values[2])
-            Values[2] = -_lowRideValue.y;
+        if (-_lowRideValue.y > Values[1])
+            Values[1] = -_lowRideValue.y;                                   // set
         else
-            Values[2] -= _lowRideActivityDecreaseSpeed;
-
-        // left
-        if (-_lowRideValue.x > Values[3])
-            Values[3] = -_lowRideValue.x;
-        else
-            Values[3] -= _lowRideActivityDecreaseSpeed;
+            Values[1] -= _lowRideActivityDecreaseSpeed;                     // decrease
     }
+
     public bool IsActive
     {
         get
@@ -224,12 +213,8 @@ public class LowRideActivity
             {
                 case CarDir.F:
                     return Values[0];
-                case CarDir.R:
-                    return Values[1];
                 case CarDir.B:
-                    return Values[2];
-                case CarDir.L:
-                    return Values[3];
+                    return Values[1];
             }
 
             return 0f;
@@ -242,14 +227,8 @@ public class LowRideActivity
                 case CarDir.F:
                     Values[0] = clampedVal;
                     break;
-                case CarDir.R:
-                    //Values[1] = clampedVal;
-                    break;
                 case CarDir.B:
-                    Values[2] = clampedVal;
-                    break;
-                case CarDir.L:
-                    //Values[3] = clampedVal;
+                    Values[1] = clampedVal;
                     break;
             }
         }
@@ -259,7 +238,5 @@ public class LowRideActivity
 public enum CarDir // man koennte dieses Enum benutzen um auf den Indexer zuzugreifen - ich bin mir da noch nicht sicher, aber das koennte es lesbarer machen :)
 { 
     F,
-    R,
     B,
-    L
 }

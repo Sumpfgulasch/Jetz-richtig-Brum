@@ -10,10 +10,19 @@ using System.Linq;
 public class CarControllerEditor : OdinEditor
 {
     CarController cC;
+    MagnetBehavior mB;
     float wireBoxScale = 0.1f;
     new void OnEnable() 
     {        
         cC = (CarController) target;
+
+        if (cC != null)
+        { 
+            if(cC.HasBehavior<MagnetBehavior>())
+            {
+                mB = cC.GetBehavior<MagnetBehavior>();
+            }
+        }
     }
     void OnSceneGUI() 
     {
@@ -70,6 +79,13 @@ public class CarControllerEditor : OdinEditor
                 Handles.color = Color.red;
                 Handles.DrawWireDisc(cC.transform.position,cC.transform.right,2f,5f);
                 Handles.Label(cC.transform.position, cC.Wheels.Count(x => x == null).ToString(), textStyle);
+            }
+
+            for (int i = 0; i < mB.magnetForcePositions.Length; i++)
+            {
+                Handles.color = Color.magenta;
+                Handles.Label(cC.transform.TransformPoint(mB.magnetForcePositions[i]), i.ToString()); 
+                Handles.DrawWireCube(cC.transform.TransformPoint(mB.magnetForcePositions[i]), Vector3.one * 0.3f);
             }
 
         }

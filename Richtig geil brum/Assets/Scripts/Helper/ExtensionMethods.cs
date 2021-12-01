@@ -42,6 +42,11 @@ public static class ExtensionMethods
         _rB.angularVelocity *= _factor;
     }
 
+    //public static Vector3 WorldFromLocal(Transform _transform, Vector3 _localPosition)
+    //{
+    //    return _transform.position + (_transform.rotation * _localPosition);
+    //}
+
     public static bool IsGenericList(this object o)
     {
         var oType = o.GetType();
