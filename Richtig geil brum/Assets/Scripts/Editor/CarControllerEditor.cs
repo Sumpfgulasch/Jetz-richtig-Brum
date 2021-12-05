@@ -86,6 +86,8 @@ public class CarControllerEditor : OdinEditor
                 Handles.color = Color.magenta;
                 Handles.Label(cC.transform.TransformPoint(mB.magnetForcePositions[i]), i.ToString()); 
                 Handles.DrawWireCube(cC.transform.TransformPoint(mB.magnetForcePositions[i]), Vector3.one * 0.3f);
+                Handles.color = Color.red;
+                Handles.DrawWireCube(cC.transform.TransformPoint(mB.magnetForcePositions[i]), Vector3.one * 0.01f);
             }
 
         }

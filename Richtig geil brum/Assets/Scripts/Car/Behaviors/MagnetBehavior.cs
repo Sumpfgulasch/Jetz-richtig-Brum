@@ -21,7 +21,7 @@ public class MagnetBehavior : CarBehavior
     [TitleGroup(S)] public int magnetPowerAcceleration = 40;
     [TitleGroup(S)] public int magnetPowerMaxVelocity = 100;
 
-    [TitleGroup(S)] [MinMaxSlider(0f, 2.5f, true)] public Vector2 extendWheelsDistanceOnWheelsOut = new Vector2(1.35f, 2.2f);// The minimum/maximum length that the wheels can extend - minimum = x component || maximum = y component
+    [TitleGroup(S)] [MinMaxSlider(0f, 2.55f, true)] public Vector2 extendWheelsDistanceOnWheelsOut = new Vector2(1.35f, 2.55f);// The minimum/maximum length that the wheels can extend - minimum = x component || maximum = y component
 
     [TitleGroup(S)] [Tooltip("Brake when magnetPower is active and the player doesn't accalerate")] public bool magnetPowerAutoBrake = true;
     [TitleGroup(S)] [Range(0, 1f), ShowIf("magnetPowerAutoBrake")] public float magnetPowerBrakeFactor = 0.98f;

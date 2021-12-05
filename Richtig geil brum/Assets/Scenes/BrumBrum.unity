@@ -642,6 +642,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bpm_: 120
   pause_: 0
+--- !u!83 &247583936
+AudioClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: helm
+  m_LoadType: 0
+  m_Channels: 1
+  m_Frequency: 48000
+  m_BitsPerSample: 32
+  m_Length: 0
+  m_IsTrackerFormat: 0
+  m_Ambisonic: 0
+  m_SubsoundIndex: 0
+  m_PreloadAudioData: 1
+  m_LoadInBackground: 0
+  m_Legacy3D: 0
+  m_Resource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_CompressionFormat: 0
+  m_EditorResource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_EditorCompressionFormat: 0
 --- !u!1 &271817094
 GameObject:
   m_ObjectHideFlags: 3
@@ -1328,7 +1356,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7777778, y: 1}
+    m_SensorSize: {x: 1.7786016, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1779,34 +1807,6 @@ Transform:
   m_Father: {fileID: 1114307849}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!83 &938832689
-AudioClip:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: helm
-  m_LoadType: 0
-  m_Channels: 1
-  m_Frequency: 48000
-  m_BitsPerSample: 32
-  m_Length: 0
-  m_IsTrackerFormat: 0
-  m_Ambisonic: 0
-  m_SubsoundIndex: 0
-  m_PreloadAudioData: 1
-  m_LoadInBackground: 0
-  m_Legacy3D: 0
-  m_Resource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_CompressionFormat: 0
-  m_EditorResource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_EditorCompressionFormat: 0
 --- !u!1 &955884988
 GameObject:
   m_ObjectHideFlags: 3
@@ -2786,7 +2786,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 938832689}
+  m_audioClip: {fileID: 247583936}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -3717,7 +3717,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7777778, y: 1}
+    m_SensorSize: {x: 1.7786016, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -3733,7 +3733,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1890083707}
-  m_LocalRotation: {x: 0.3639977, y: 0.000000022664215, z: -0.000000008857336, w: 0.9313999}
+  m_LocalRotation: {x: 0.3639977, y: -0.000000022664214, z: 0.000000008857336, w: 0.9313999}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4330,7 +4330,7 @@ MonoBehaviour:
   initializedSuccessfully: 0
   magnetPowerAcceleration: 40
   magnetPowerMaxVelocity: 100
-  extendWheelsDistanceOnWheelsOut: {x: 1.35, y: 2.5}
+  extendWheelsDistanceOnWheelsOut: {x: 1.35, y: 2.55}
   magnetPowerAutoBrake: 1
   magnetPowerBrakeFactor: 0.98
   magnetPowerDistanceCurve:
@@ -4346,8 +4346,8 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 3.7091322
-      value: 1.0012636
+      time: 4.0089064
+      value: 0.99978244
       inSlope: -0.0037491804
       outSlope: -0.0037491804
       tangentMode: 0
@@ -4367,7 +4367,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   limitMagnetTime: 1
-  magnetMaxTime: 8
+  magnetMaxTime: 15
   magnetRefillFactor: 4
   lowRideActivityMagnetCurve:
     serializedVersion: 2
@@ -4400,17 +4400,17 @@ MonoBehaviour:
       time: 0
       value: 1
       inSlope: 0
-      outSlope: -1
-      tangentMode: 0
+      outSlope: -0.5
+      tangentMode: 69
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
       time: 1
-      value: 0
-      inSlope: -1
-      outSlope: 0
-      tangentMode: 0
+      value: 0.5
+      inSlope: -0.5
+      outSlope: -1
+      tangentMode: 69
       weightedMode: 0
       inWeight: 0
       outWeight: 0
@@ -4421,8 +4421,8 @@ MonoBehaviour:
   wheels_magnetPowerMat: {fileID: 0}
   wheelMeshes: []
   magnetForcePositions:
-  - {x: 0, y: -0.22, z: 1.926}
-  - {x: 0, y: -0.22, z: -1.839}
+  - {x: 0, y: 0.22, z: 1.839}
+  - {x: 0, y: 0.22, z: -1.926}
   magnetUI: {fileID: 1563962274}
 --- !u!114 &919132148347960420
 MonoBehaviour:
@@ -4568,7 +4568,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
+      time: -1
       value: 1
       inSlope: 0
       outSlope: 0
@@ -4577,22 +4577,22 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.55748487
+      time: -0.0007812977
       value: 0.9991393
-      inSlope: -0.051430546
-      outSlope: -0.051430546
+      inSlope: -0.008841622
+      outSlope: -0.008841622
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.22080266
+      outWeight: 0.12059653
     - serializedVersion: 3
       time: 1
       value: 0.0014648438
-      inSlope: -5.893573
-      outSlope: -5.893573
+      inSlope: -2.724469
+      outSlope: -2.724469
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.03578891
+      inWeight: 0.027881773
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -4603,29 +4603,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: 0.0005901337
-      outSlope: 0.0005901337
-      tangentMode: 0
-      weightedMode: 0
+      inSlope: -0.0023575085
+      outSlope: 0.00004519415
+      tangentMode: 1
+      weightedMode: 3
       inWeight: 0
-      outWeight: 0.22058822
-    - serializedVersion: 3
-      time: 0.83663666
-      value: 0.99777514
-      inSlope: -0.00946881
-      outSlope: -0.00946881
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.28007174
+      outWeight: 1
     - serializedVersion: 3
       time: 1
-      value: 0.98
-      inSlope: -0.21790835
-      outSlope: -0.21790835
+      value: 0.98678
+      inSlope: -0.76705074
+      outSlope: -0.76705074
       tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.19884494
+      weightedMode: 3
+      inWeight: 0.016434252
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
