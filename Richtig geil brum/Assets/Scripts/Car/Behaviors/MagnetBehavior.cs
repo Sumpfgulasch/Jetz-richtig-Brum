@@ -47,7 +47,7 @@ public class MagnetBehavior : CarBehavior
 
 
     [TitleGroup(S)] public AnimationCurve lowRideActivityMagnetCurve = AnimationCurve.Linear(0f,1f,1f,0f);
-    [TitleGroup(S)] public AnimationCurve lowRideActivityAlignCurve = AnimationCurve.Linear(0f, 1f, 1f, 0f);
+    [TitleGroup(S)] public AnimationCurve lowRideActivityAlignCurve = AnimationCurve.Linear(0f, 1f, 1f, 0.5f);
 
 
 
@@ -123,6 +123,7 @@ public class MagnetBehavior : CarBehavior
         if (rB == null)
         {
             rB = cC.gameObject.AddComponent<Rigidbody>();
+            Debug.LogWarning("Ich habe einen Rigidbody hinzugefuegt, achtung, das darf auf keinen fall passieren. ");
         }
 
         //CHECK IF INITIALISATION WAS SUCCESSFULL
@@ -293,7 +294,7 @@ public class MagnetBehavior : CarBehavior
     {
         if (_magnetForcePositions.Length != 2)
         {
-            Debug.Log("MagnetForcePositions Array doesnt contain 2 Positions");
+            Debug.LogWarning("MagnetForcePositions Array doesnt contain 2 Positions");
             return;
         }
 
@@ -316,9 +317,10 @@ public class MagnetBehavior : CarBehavior
         float backStrength = Mathf.Clamp01(_lowRideActivityMagnetCurve.Evaluate(_lowRideActivity[CarDir.B]));
         _rB.AddForceAtPosition(force * 0.5f * frontStrength, this.transform.TransformPoint(_magnetForcePositions[0]), ForceMode.Acceleration);          // front wheels
         _rB.AddForceAtPosition(force * 0.5f * backStrength, this.transform.TransformPoint(_magnetForcePositions[1]), ForceMode.Acceleration);          // back wheels
-        //Debug.DrawRay(this.transform.TransformPoint(_magnetForcePositions[1]), -this.transform.up * frontStrength, Color.red);
-        //Debug.DrawRay(this.transform.TransformPoint(_magnetForcePositions[0]), -this.transform.up * backStrength, Color.red);
 
+        Debug.DrawRay(this.transform.TransformPoint(_magnetForcePositions[1]), -this.transform.up * frontStrength, Color.red);
+        Debug.DrawRay(this.transform.TransformPoint(_magnetForcePositions[0]), -this.transform.up * backStrength, Color.red);
+        
         // 4. Max speed
         _rB.velocity = _rB.velocity.normalized * Mathf.Clamp(_rB.velocity.magnitude, 0, _magnetPowerMaxVelocity);
     }

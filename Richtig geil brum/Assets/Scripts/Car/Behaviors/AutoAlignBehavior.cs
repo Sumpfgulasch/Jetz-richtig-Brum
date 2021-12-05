@@ -45,7 +45,7 @@ public class AutoAlignBehavior : CarBehavior
     [TitleGroup(S)] public float maxAngularVelocity = 4f;
     [TitleGroup(S)] public int autoAlignTorqueForce = 40;
     [TitleGroup(S)] [Tooltip("Used to control the amount of torque force. x = 1 heißt dass Auto 100% aligned, x = 0 heißt dass Auto 90° gedreht, x = -1 dass 180° gedreht.")] 
-    public AnimationCurve autoAlignAngleCurve = AnimationCurve.Linear(0f,1f,1f,0f);
+    public AnimationCurve autoAlignAngleCurve = AnimationCurve.Linear(-1f,1f,1f,0f);
     [TitleGroup(S)] [Tooltip("Used to reduce the angular velocity when the car is aligned")] 
     public AnimationCurve autoAlignBrakeCurve = AnimationCurve.EaseInOut(0f,1f,1f,0.98f);
     [TitleGroup(S)] public AnimationCurve autoAlignDistanceCurve = AnimationCurve.EaseInOut(0f,1f,13f,0f);
@@ -104,93 +104,93 @@ public class AutoAlignBehavior : CarBehavior
     {
         if (autoalignCarInAir)
         {
-            AutoAlignCar();
+            if(cC.drivingStateInfo == DrivingState.InAir)
+            {
+                AutoAlignCar();
+            }
         }
     }
 
     public void AutoAlignCar(float strength = 1f)
     {
-        if (cC.drivingStateInfo == DrivingState.InAir)    //wenn das auto in der luft ist.
+        Vector3 targetNormal = Vector3.up.normalized;
+        RaycastHit hit;
+
+        //Bool to decide wheater or not the lowrideinput should be considerd
+        bool lowRideNotNullHasInput = false; // Wichtig, kann nur true sein wenn es ein lowRidebehavior gibt und die bedingungen erfuellt sind.
+        if (hasLowRideBehavior)
         {
-            Vector3 targetNormal = Vector3.up.normalized;
-            RaycastHit hit;
-
-            //Bool to decide wheater or not the lowrideinput should be considerd
-            bool lowRideNotNullHasInput = false; // Wichtig, kann nur true sein wenn es ein lowRidebehavior gibt und die bedingungen erfuellt sind.
-            if (hasLowRideBehavior)
-            {
-                lowRideNotNullHasInput = lowRideBehavior.LowRideInputVal != Vector2.zero ? true : false; // wenn ein lowrideInputvalue groeser 0, dann true, ansonsten false
-            }
-            bool UseForwardDirection = cC.drivingStateInfo == DrivingState.InAir || lowRideNotNullHasInput ? true : false;
+            lowRideNotNullHasInput = lowRideBehavior.LowRideInputVal != Vector2.zero ? true : false; // wenn ein lowrideInputvalue groeser 0, dann true, ansonsten false
+        }
+        bool UseForwardDirection = cC.drivingStateInfo == DrivingState.InAir || lowRideNotNullHasInput ? true : false;
 
 
-            // Decide to which surface the car should align
-            switch (AutoAlignSurface)
-            {
-                case AutoAlignSurface.LowerSurface:
+        // Decide to which surface the car should align
+        switch (AutoAlignSurface)
+        {
+            case AutoAlignSurface.LowerSurface:
+                {
+
+                    if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
                     {
+                        // get the normal of the hit
+                        targetNormal = hit.normal;
+                        targetSurfaceDistance = (hit.point - transform.position).magnitude;
+                    }
+                    break;
+                }
+            case AutoAlignSurface.ForwardSurface:
+                {
+                    // Ggf. noetig: Hit unter Auto
+                    if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
+                    {
+                        targetNormal = hit.normal;
+                        targetSurfaceDistance = (hit.point - transform.position).magnitude;
+                    }
 
-                        if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
+                    if (UseForwardDirection)
+                    {
+                        if (Physics.Raycast(this.transform.position, this.transform.forward, out hit))
                         {
                             // get the normal of the hit
                             targetNormal = hit.normal;
                             targetSurfaceDistance = (hit.point - transform.position).magnitude;
                         }
-                        break;
                     }
-                case AutoAlignSurface.ForwardSurface:
-                    {
-                        // Ggf. noetig: Hit unter Auto
-                        if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
-                        {
-                            targetNormal = hit.normal;
-                            targetSurfaceDistance = (hit.point - transform.position).magnitude;
-                        }
 
+                    break;
+                }
+            case AutoAlignSurface.Trajectory:
+                {
+                    // Ggf. nötig: Hit unter Auto
+                    if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
+                    {
+                        targetNormal = hit.normal;
+                        targetSurfaceDistance = (hit.point - transform.position).magnitude;
+                    }
+
+                    if (trajectoryRenderer.trajectory.HasHit)
+                    {
                         if (UseForwardDirection)
                         {
-                            if (Physics.Raycast(this.transform.position, this.transform.forward, out hit))
+                            var trajectoryNormal = trajectoryRenderer.trajectory.HitNormal;
+                            var trajectorySurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
+
+                            // nur wenn trajectory-fläche näher ist als downward-surface
+                            if (trajectorySurfaceDistance < targetSurfaceDistance)
                             {
-                                // get the normal of the hit
-                                targetNormal = hit.normal;
-                                targetSurfaceDistance = (hit.point - transform.position).magnitude;
+                                targetNormal = trajectoryRenderer.trajectory.HitNormal;
+                                targetSurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
                             }
-                        }
 
-                        break;
+                        }
                     }
-                case AutoAlignSurface.Trajectory:
-                    {
-                        // Ggf. nötig: Hit unter Auto
-                        if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
-                        {
-                            targetNormal = hit.normal;
-                            targetSurfaceDistance = (hit.point - transform.position).magnitude;
-                        }
-
-                        if (trajectoryRenderer.trajectory.HasHit)
-                        {
-                            if (UseForwardDirection)
-                            {
-                                var trajectoryNormal = trajectoryRenderer.trajectory.HitNormal;
-                                var trajectorySurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
-
-                                // nur wenn trajectory-fläche näher ist als downward-surface
-                                if (trajectorySurfaceDistance < targetSurfaceDistance)
-                                {
-                                    targetNormal = trajectoryRenderer.trajectory.HitNormal;
-                                    targetSurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
-                                }
-
-                            }
-                        }
-                        break;
-                    }
-            }
-
-            // Rotation Calculation: Add Torque (angular velocity) and brake (angular velocity) if needed.
-            AddTorqueAndBrake(targetNormal, autoAlignTorqueForce, maxAngularVelocity, targetSurfaceDistance, autoAlignDistanceCurve, autoAlignAngleCurve, autoAlignBrakeCurve, strength);
+                    break;
+                }
         }
+
+        // Rotation Calculation: Add Torque (angular velocity) and brake (angular velocity) if needed.
+        AddTorqueAndBrake(targetNormal, autoAlignTorqueForce, maxAngularVelocity, targetSurfaceDistance, autoAlignDistanceCurve, autoAlignAngleCurve, autoAlignBrakeCurve, strength);
     }
     /// <summary>
     /// Add a torque and brake if target rotation is achieved. Takes into consideration: distance to the targetSurface, angle difference to the targetSurfaceNormal
