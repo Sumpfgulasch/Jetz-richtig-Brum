@@ -374,7 +374,7 @@ public class MagnetBehavior : CarBehavior
     {
         wheelsOut = value;
         wheels.ForEach(wheel => wheel.TargetExtensionDistanceMinMax = wheelsOut
-            ? cC.extendWheelsDistanceOnWheelsOut
+            ? cC.minMaxExtendWheelsDistancesOut
             : cC.minMaxExtendWheelsDistancesIn);
     }
 }

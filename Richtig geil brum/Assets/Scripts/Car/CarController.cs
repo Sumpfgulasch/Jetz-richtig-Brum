@@ -25,25 +25,20 @@ public class CarController : SerializedMonoBehaviour
     //SOLLTEN HIER BLEIBEN
     [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f, 0f, 0f);
 
+    [TitleGroup(G)] [MinMaxSlider(0f, 4f, true)] public Vector2 minMaxExtendWheelsDistancesIn;
+    [TitleGroup(G)] [MinMaxSlider(0f, 4f, true)] public Vector2 minMaxExtendWheelsDistancesOut;
+    [TitleGroup(R)] public MeshRenderer frontWheelRMesh, frontWheelLMesh, backWheelRMesh, backWheelLMesh;
+
+
     [TitleGroup(G)] [OdinSerialize] public Vector3 CenterOfMassOffset
     {
-        get { return centerOfMassOffset; }
+        get => centerOfMassOffset;
         set
         {
             centerOfMassOffset = value;
             SetCenterOfMass(rB, true);
         }
     }
-
-    [TitleGroup(G)] [MinMaxSlider(0f, 2.55f, true)]
-    public Vector2 minMaxExtendWheelsDistancesIn;
-
-    [TitleGroup(G)] [MinMaxSlider(0f, 2.55f, true)]
-    public Vector2 extendWheelsDistanceOnWheelsOut;
-
-
-    [TitleGroup(R)] public MeshRenderer frontWheelRMesh, frontWheelLMesh, backWheelRMesh, backWheelLMesh;
-
     [TitleGroup(R)] public MeshRenderer[] WheelMeshes
     {
         get
@@ -55,6 +50,7 @@ public class CarController : SerializedMonoBehaviour
                 backWheelRMesh,
                 backWheelLMesh
             };
+            Debug.Log("");
         }
     }
 
@@ -200,7 +196,7 @@ public class CarController : SerializedMonoBehaviour
         _rb.centerOfMass = centerOfMassOffset;
     }
 
-    private void InitSuspensionDistance() => Wheels.ForEach(wheel => wheel.wheelCollider.suspensionDistance = minMaxExtendWheelsDistancesIn.x);
+    private void InitSuspensionDistance() => Wheels.ForEach(wheel => wheel.TargetExtensionDistanceMinMax = minMaxExtendWheelsDistancesIn);
 
     [TitleGroup(R)]
     [HideIf("wheelsAreSet")]

@@ -48,15 +48,12 @@ public class LowRideBehavior : CarBehavior
         backWheelL = cC.backWheelL != null ? cC.backWheelL : null;
 
         //CHECK IF INITIALISATION WAS SUCCESSFULL
-        if (Wheels.Contains(null))
-        {
-            Debug.LogWarning(this.transform.name + ": LowRide Behavior cant be executed Properly.");
-            return false;
-        }
-        else
-        {
+        if (!Wheels.Contains(null))
             return true;
-        }
+
+        Debug.LogWarning(this.transform.name + ": LowRide Behavior cant be executed Properly.");
+        return false;
+
     }
     //------------------------ INPUT HANDLING
 
@@ -72,24 +69,27 @@ public class LowRideBehavior : CarBehavior
 
     public void OnLowRideFront(InputValue inputValue)
     {
-        if (EnabledBehavior)
-        {
-            LowRideInputVal = Vector2.up;
-            StartCoroutine(WaitAndResetInputValue());
-        }
+        if (!EnabledBehavior)
+            return;
+
+        LowRideInputVal = Vector2.up;
+        StopCoroutine(ResetInputValue(0.2f));
+        StartCoroutine(ResetInputValue(0.2f));
     }
 
     public void OnLowRideBack(InputValue inputValue)
     {
-        if (EnabledBehavior)
-        {
-            LowRideInputVal = Vector2.down;
-        }
+        if (!EnabledBehavior)
+            return;
+
+        LowRideInputVal = Vector2.down;
+        StopCoroutine(ResetInputValue(0.2f));
+        StartCoroutine(ResetInputValue(0.2f));
     }
 
-    private IEnumerator WaitAndResetInputValue()
+    private IEnumerator ResetInputValue(float delay)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(delay);
         lowRideInputVal = Vector2.zero;
     }
 
