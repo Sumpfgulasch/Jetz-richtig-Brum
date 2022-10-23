@@ -14,19 +14,15 @@ public class Wheel : SerializedMonoBehaviour
     const string H = "Helper";
     const string D = "Default";
     const string IN = "Input";
-    [TitleGroup(D)] [SuffixLabel("Unity Units", true)] public Vector2 DefaultExtensionMinMaxDistance { get=> new Vector2(DefaultExtensionMinDistance, DefaultExtensionMaxDistance);} // the default value, only has a getter.
-    [TitleGroup(D)] [SuffixLabel("Unity Units", true)] public const float DefaultExtensionMinDistance = 0.15f; // the default value, only has a getter.
-    [TitleGroup(D)] [SuffixLabel("Unity Units", true)] public const float DefaultExtensionMaxDistance = 1.35f; // the default value, only has a getter.
 
-    
     [TitleGroup(IN)] [SuffixLabel("%", true)] private float targetExtensionPercent = 0f;
     [TitleGroup(IN)] [SuffixLabel("%", true)] [OdinSerialize][ReadOnly] public float TargetExtensionPercent { get => Mathf.Clamp01(targetExtensionPercent); set => targetExtensionPercent = Mathf.Clamp01(value); } // always clamp01 on get and set
-    
+
     [TitleGroup(EX)] [SuffixLabel("%", true)] private float currentExtensionPercent = 0f;
     [TitleGroup(EX)] [SuffixLabel("%", true)] [OdinSerialize] [ReadOnly] public float CurrentExtensionPercent { get => Mathf.Clamp01(currentExtensionPercent); private set => currentExtensionPercent = Mathf.Clamp01(value); } // always clamp01 on get and set
 
-   
-    
+
+
     [TitleGroup(IN)] [SuffixLabel("Unity Units", true)] private Vector2 targetExtensionDistanceMinMax = new Vector2(0.15f, 1.35f);
     [TitleGroup(IN)] [SuffixLabel("Unity Units",true)] [OdinSerialize] [ReadOnly] public Vector2 TargetExtensionDistanceMinMax { get => targetExtensionDistanceMinMax; set => targetExtensionDistanceMinMax = value; } // always clamp01 on get and set
 
@@ -98,7 +94,7 @@ public class Wheel : SerializedMonoBehaviour
 
     }
 
-    void Update() 
+    void Update()
     {
         //update the wheel Height. and assign the currentExtensionPercent (for Other Scripts and or Debug)
         CurrentExtensionPercent = UpdateWheelHeight(extensionStepPercentPlusMinus, TargetExtensionPercent, extensionStrengthStepMultiplier, currentExtensionDistanceMinMax);
@@ -184,7 +180,7 @@ public class Wheel : SerializedMonoBehaviour
     /// <param name="_targetExtensionPercent"></param>
     /// <param name="_extensionStrengthStepMultiplier"></param>
     /// <param name="_minMaxExtensionDistance"></param>
-    private float UpdateWheelHeight(Vector2 _extensionStepPercentPlusMinus, float _targetExtensionPercent, AnimationCurve _extensionStrengthStepMultiplier, Vector2 _minMaxExtensionDistance) 
+    private float UpdateWheelHeight(Vector2 _extensionStepPercentPlusMinus, float _targetExtensionPercent, AnimationCurve _extensionStrengthStepMultiplier, Vector2 _minMaxExtensionDistance)
     {
         //1. Get the current Extension % |||| prozent der aktuellen position von startposition bis maximalposition : normalisiere durch - _minMaxGroundDistance.x, dann bekomme das verhaeltnis.
         float currentExtensionPercent = (wheelCollider.suspensionDistance - currentExtensionDistanceMinMax.x) / (currentExtensionDistanceMinMax.y - currentExtensionDistanceMinMax.x);
@@ -202,7 +198,7 @@ public class Wheel : SerializedMonoBehaviour
                 _extensionStrengthStepMultiplier.Evaluate(currentExtensionPercent) * _extensionStepPercentPlusMinus.y,
                 _extensionStrengthStepMultiplier.Evaluate(currentExtensionPercent) * _extensionStepPercentPlusMinus.x);
 
-        //4. Calculate the stepPercent into Units through the minMaxGroundDistances 
+        //4. Calculate the stepPercent into Units through the minMaxGroundDistances
         float newExtensionPercent = currentExtensionPercent + viableStep; // calculate the new ExtensionPercent
 
         //5. assign the new SuspensionDistance
