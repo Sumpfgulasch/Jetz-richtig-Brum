@@ -1,12 +1,10 @@
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
-using System;
+using Sirenix.Utilities;
 
 
 [RequireComponent(typeof(Rigidbody), typeof(PlayerInput))]
@@ -21,31 +19,73 @@ public class CarController : SerializedMonoBehaviour
     public bool TestBool = false;
 
     //WOANDERS HIN?
-    [GUIColor(1f, 0f, 0f)] [TitleGroup(G)] public float maxSpeed = 20f;        // NOT PROPERLY USED; only for audio
+    [GUIColor(1f, 0f, 0f)] [TitleGroup(G)] public float maxSpeed = 20f; // NOT PROPERLY USED; only for audio
 
 
     //SOLLTEN HIER BLEIBEN
-
-    [TitleGroup(G)] public float initialSuspensionDistance = 1f;
     [TitleGroup(G)] private Vector3 centerOfMassOffset = new Vector3(0f, 0f, 0f);
-    [TitleGroup(G)] [OdinSerialize] public Vector3 CenterOfMassOffset { get { return centerOfMassOffset; } set { centerOfMassOffset = value; SetCenterOfMass(rB, true); } }
 
+    [TitleGroup(G)] [OdinSerialize] public Vector3 CenterOfMassOffset
+    {
+        get { return centerOfMassOffset; }
+        set
+        {
+            centerOfMassOffset = value;
+            SetCenterOfMass(rB, true);
+        }
+    }
+
+    [TitleGroup(G)] [MinMaxSlider(0f, 2.55f, true)]
+    public Vector2 minMaxExtendWheelsDistancesIn;
+
+    [TitleGroup(G)] [MinMaxSlider(0f, 2.55f, true)]
+    public Vector2 extendWheelsDistanceOnWheelsOut;
 
 
     [TitleGroup(R)] public MeshRenderer frontWheelRMesh, frontWheelLMesh, backWheelRMesh, backWheelLMesh;
-    [TitleGroup(R)] public MeshRenderer[] WheelMeshes { get { return new MeshRenderer[4] { frontWheelRMesh, frontWheelLMesh, backWheelRMesh, backWheelLMesh }; } }
+
+    [TitleGroup(R)] public MeshRenderer[] WheelMeshes
+    {
+        get
+        {
+            return new MeshRenderer[4]
+            {
+                frontWheelRMesh,
+                frontWheelLMesh,
+                backWheelRMesh,
+                backWheelLMesh
+            };
+        }
+    }
 
     [TitleGroup(R)] public Wheel frontWheelR, frontWheelL, backWheelR, backWheelL;
-    [TitleGroup(R)] public Wheel[] Wheels { get { return new Wheel[4] { frontWheelR, frontWheelL, backWheelR, backWheelL }; } }
     [TitleGroup(R)] public GameObject frontWheelRRest, frontWheelLRest, backWheelRRest, backWheelLRest;
-    [TitleGroup(R)] public GameObject[] WheelRest { get { return new GameObject[4] { frontWheelRRest, frontWheelLRest, backWheelRRest, backWheelLRest }; } }
+[TitleGroup(R)] public Wheel[] Wheels
+    {
+        get
+        {
+            return new[]
+            {
+                frontWheelR,
+                frontWheelL,
+                backWheelR,
+                backWheelL
+            };
+        }
+    }
+[TitleGroup(R)] public GameObject[] WheelRest { get { return new GameObject[4] { frontWheelRRest, frontWheelLRest, backWheelRRest, backWheelLRest }; } }
 
     [TitleGroup(R)] private Rigidbody rB;
-    [TitleGroup(R)] public Rigidbody RB { get { return rB; } }
+
+    [TitleGroup(R)] public Rigidbody RB
+    {
+        get { return rB; }
+    }
 
     [TitleGroup(R), ShowInInspector] private float inAirTime = 0f;
 
-    [TitleGroup(R)] [ShowInInspector] public DrivingState drivingStateInfo {
+    [TitleGroup(R)] [ShowInInspector] public DrivingState drivingStateInfo
+    {
         get
         {
             if (Wheels != null) // wenn es das array gibt.
@@ -60,15 +100,17 @@ public class CarController : SerializedMonoBehaviour
                             return DrivingState.Grounded; // gib grounded zurueck
                         }
                     }
+
                     return DrivingState.InAir; // ansonsten gib InAir zurueck
                 }
             }
+
             return DrivingState.Grounded; // wenn es nix gibt dann gib grounded zurueck
         }
     }
 
 
-    [TitleGroup(CB)][OdinSerialize] public List<CarBehavior> carBehaviors = new List<CarBehavior>();
+    [TitleGroup(CB)] [OdinSerialize] public List<CarBehavior> carBehaviors = new List<CarBehavior>();
 
 
     [TitleGroup(H)] public bool showDebugHandles = true;
@@ -97,12 +139,11 @@ public class CarController : SerializedMonoBehaviour
         AssignCarBehaviors();
         OrderCarBehaviors();
         AssignExecutionPriorityBySortation();
-
     }
 
-    void Start() 
+    void Start()
     {
-        InitSuspensionDistance();   
+        InitSuspensionDistance();
         SetCenterOfMass(rB);
     }
 
@@ -114,27 +155,28 @@ public class CarController : SerializedMonoBehaviour
         {
             if (cB.initializedSuccessfully && cB.EnabledBehavior) // wenn es erfolgreich initialisiert wurde
             {
-                cB.ExecuteBehavior(()=>true); // fuehre die Executemethode aus. // lambdaexpression that always returns true. here we could implement a SWITCH that checks what type the carBehavior is, and apply a Rule, for different behaviors.
+                cB.ExecuteBehavior(() =>
+                    true); // fuehre die Executemethode aus. // lambdaexpression that always returns true. here we could implement a SWITCH that checks what type the carBehavior is, and apply a Rule, for different behaviors.
             }
         }
     }
 
     // ----------------------------------------- Setup -----------------------------------------
 
-    [TitleGroup(CB)][Button]
+    [TitleGroup(CB)] [Button]
     public void AssignCarBehaviors()
     {
-        carBehaviors = this.gameObject.GetComponents<CarBehavior>().ToList();// find all CarBehaviors on this Object
+        carBehaviors = this.gameObject.GetComponents<CarBehavior>().ToList(); // find all CarBehaviors on this Object
     }
 
-    [TitleGroup(CB)][Button]
+    [TitleGroup(CB)] [Button]
     public void OrderCarBehaviors()
     {
         carBehaviors = carBehaviors.OrderByDescending(x => x.ExecutionPriority).ToList(); // sorts the carbehaviors by priority (hopefully :D)
-        carBehaviors = carBehaviors.Reverse<CarBehavior>().ToList();//carBehaviors.Reverse().ToList(); // make accending.
+        carBehaviors = carBehaviors.Reverse<CarBehavior>().ToList(); //carBehaviors.Reverse().ToList(); // make accending.
     }
 
-    [TitleGroup(CB)][Button]
+    [TitleGroup(CB)] [Button]
     public void AssignExecutionPriorityBySortation()
     {
         for (int i = 0; i < carBehaviors.Count; i++)
@@ -145,35 +187,24 @@ public class CarController : SerializedMonoBehaviour
 
     private void SetCenterOfMass(Rigidbody _rb, bool _setWhileEditor = false)
     {
-        if(_rb == null )
+        if (_rb == null)
         {
             if (_setWhileEditor == false) // quick hack to use this command in serialisation, without losing the ability to get the logwarning if it fails on runtime.
-            { 
+            {
                 Debug.LogWarning("Rigidbody ist null - es gibt keinen auf diesem Auto");
             }
+
             return;
         }
+
         _rb.centerOfMass = centerOfMassOffset;
     }
 
-    public void InitSuspensionDistance()
-    {
-        if(Wheels != null)
-        {
-            foreach(Wheel wheel in Wheels)
-            {
-                if(wheel != null)
-                {
-                    wheel.wheelCollider.suspensionDistance = initialSuspensionDistance; // Set initial Value, 
-                }
-            }
-        }
-    }
+    private void InitSuspensionDistance() => Wheels.ForEach(wheel => wheel.wheelCollider.suspensionDistance = minMaxExtendWheelsDistancesIn.x);
 
-    private bool wheelsAreSet{get{if(Wheels.Contains(null)){return false;}else{return true;}}}
     [TitleGroup(R)]
     [HideIf("wheelsAreSet")]
-    [Button("1.Find Wheels"), GUIColor(0f, 1f, 0f)] 
+    [Button("1.Find Wheels"), GUIColor(0f, 1f, 0f)]
     public void FindWheels()
     {
         GameObject wheelFR = GameObject.FindGameObjectWithTag("WheelFR");
@@ -182,17 +213,63 @@ public class CarController : SerializedMonoBehaviour
         GameObject wheelBL = GameObject.FindGameObjectWithTag("WheelBL");
 
 
-        if(wheelFR != null){Wheel w = wheelFR.GetComponent<Wheel>(); if(w != null){frontWheelR = w;}}
-        if(wheelFL != null){Wheel w = wheelFL.GetComponent<Wheel>(); if(w != null){frontWheelL = w;}}
-        if(wheelBR != null){Wheel w = wheelBR.GetComponent<Wheel>(); if(w != null){backWheelR = w;}}
-        if(wheelBL != null){Wheel w = wheelBL.GetComponent<Wheel>(); if(w != null){backWheelL = w;}}
+        if (wheelFR != null)
+        {
+            Wheel w = wheelFR.GetComponent<Wheel>();
+            if (w != null)
+            {
+                frontWheelR = w;
+            }
+        }
+
+        if (wheelFL != null)
+        {
+            Wheel w = wheelFL.GetComponent<Wheel>();
+            if (w != null)
+            {
+                frontWheelL = w;
+            }
+        }
+
+        if (wheelBR != null)
+        {
+            Wheel w = wheelBR.GetComponent<Wheel>();
+            if (w != null)
+            {
+                backWheelR = w;
+            }
+        }
+
+        if (wheelBL != null)
+        {
+            Wheel w = wheelBL.GetComponent<Wheel>();
+            if (w != null)
+            {
+                backWheelL = w;
+            }
+        }
 
         if (Wheels.Contains(null))
         {
             Debug.Log("couldnt find all wheels, check if the wheels are tagged correctly ('WheelFR') etc.");
         }
     }
-    private bool wheelMeshesAreSet { get { if (WheelMeshes.Contains(null)) { return false; } else { return true; } } }
+
+    private bool wheelMeshesAreSet
+    {
+        get
+        {
+            if (WheelMeshes.Contains(null))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+    }
+
     [TitleGroup(R)]
     [HideIf("wheelMeshesAreSet")]
     [Button("2.Find WheelMeshes"), GUIColor(0f, 1f, 0f)]
@@ -200,10 +277,41 @@ public class CarController : SerializedMonoBehaviour
     {
         Wheel[] w = Wheels;
 
-        if (w[0] != null) { MeshRenderer mR = w[0].wheelModelTransform.gameObject.GetComponent<MeshRenderer>(); if (mR != null) { frontWheelRMesh = mR; } }
-        if (w[1] != null) { MeshRenderer mR = w[1].wheelModelTransform.gameObject.GetComponent<MeshRenderer>(); if (mR != null) { frontWheelLMesh = mR; } }
-        if (w[2] != null) { MeshRenderer mR = w[2].wheelModelTransform.gameObject.GetComponent<MeshRenderer>(); if (mR != null) { backWheelRMesh = mR; } }
-        if (w[0] != null) { MeshRenderer mR = w[3].wheelModelTransform.gameObject.GetComponent<MeshRenderer>(); if (mR != null) { backWheelLMesh = mR; } }
+        if (w[0] != null)
+        {
+            MeshRenderer mR = w[0].wheelModelTransform.gameObject.GetComponent<MeshRenderer>();
+            if (mR != null)
+            {
+                frontWheelRMesh = mR;
+            }
+        }
+
+        if (w[1] != null)
+        {
+            MeshRenderer mR = w[1].wheelModelTransform.gameObject.GetComponent<MeshRenderer>();
+            if (mR != null)
+            {
+                frontWheelLMesh = mR;
+            }
+        }
+
+        if (w[2] != null)
+        {
+            MeshRenderer mR = w[2].wheelModelTransform.gameObject.GetComponent<MeshRenderer>();
+            if (mR != null)
+            {
+                backWheelRMesh = mR;
+            }
+        }
+
+        if (w[0] != null)
+        {
+            MeshRenderer mR = w[3].wheelModelTransform.gameObject.GetComponent<MeshRenderer>();
+            if (mR != null)
+            {
+                backWheelLMesh = mR;
+            }
+        }
 
         if (WheelMeshes.Contains(null))
         {
@@ -213,7 +321,7 @@ public class CarController : SerializedMonoBehaviour
     // ----------------------------------------- Methods -----------------------------------------
 
 
-    public bool HasBehavior<T>() where T : CarBehavior// get behavior of the CarBehavior Type from carcontroller - bsp: "cC.HasBehavior<LowRideBehavior>()"
+    public bool HasBehavior<T>() where T : CarBehavior // get behavior of the CarBehavior Type from carcontroller - bsp: "cC.HasBehavior<LowRideBehavior>()"
     {
         if (this.gameObject.GetComponent<T>() != null)
         {
@@ -224,9 +332,9 @@ public class CarController : SerializedMonoBehaviour
             return false;
         }
     }
-    public T GetBehavior<T>() where T : CarBehavior// get behavior of the CarBehavior Type from carcontroller - bsp: "cC.GetBehavior<LowRideBehavior>()"
-    {
 
+    public T GetBehavior<T>() where T : CarBehavior // get behavior of the CarBehavior Type from carcontroller - bsp: "cC.GetBehavior<LowRideBehavior>()"
+    {
         T anyT = this.gameObject.GetComponent<T>();
         if (anyT != null)
         {
@@ -238,10 +346,10 @@ public class CarController : SerializedMonoBehaviour
         }
     }
 
-    private void SetAirTime(ref float _inAirTime) 
+    private void SetAirTime(ref float _inAirTime)
     {
         //check if is on ground for autoalignCarInAir and controllinputinterference
-        if(drivingStateInfo == DrivingState.InAir)
+        if (drivingStateInfo == DrivingState.InAir)
         {
             _inAirTime += Time.deltaTime;
         }
@@ -253,10 +361,10 @@ public class CarController : SerializedMonoBehaviour
 }
 
 
-
 // -------------------------------------------- HELPER STUFF ------------------------------------------------
 
-public enum DrivingState{
+public enum DrivingState
+{
     Grounded,
     InAir,
     TwoWheelsGrounded
