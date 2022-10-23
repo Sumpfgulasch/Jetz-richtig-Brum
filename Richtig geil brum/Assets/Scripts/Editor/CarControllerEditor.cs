@@ -13,8 +13,11 @@ public class CarControllerEditor : OdinEditor
     MagnetBehavior mB;
     ConnectWheelsToGroundBehavior cWG;
     float wireBoxScale = 0.1f;
+
+
+
     new void OnEnable() 
-    {        
+    {
         cC = (CarController) target;
 
         if (cC != null)
@@ -28,8 +31,16 @@ public class CarControllerEditor : OdinEditor
                 cWG = cC.GetBehavior<ConnectWheelsToGroundBehavior>();
             }
         }
+
+        SceneView.duringSceneGui += CustomOnSceneGUI;
     }
-    void OnSceneGUI() 
+
+    new void OnDisable()
+    {
+        SceneView.duringSceneGui -= CustomOnSceneGUI;
+    }
+
+    private void CustomOnSceneGUI(SceneView view)
     {
         if(cC.showDebugHandles)
         {
@@ -97,24 +108,23 @@ public class CarControllerEditor : OdinEditor
                     Handles.DrawWireCube(cC.transform.TransformPoint(mB.magnetForcePositions[i]), Vector3.one * 0.01f);
                 }
             }
-            if (cWG != null)
-            {
-                Handles.color = Color.red;
-                float thickness = 8f;
-                //frontWheelL
-                Handles.Label(cC.frontWheelLRest.transform.position, cWG.frontWheelLDistance.ToString());
-                Handles.DrawLine(cC.frontWheelLRest.transform.position, cC.frontWheelLRest.transform.position + (cC.frontWheelLRest.transform.up * cWG.frontWheelLDistance), thickness);
-                //frontWheelR
-                Handles.Label(cC.frontWheelRRest.transform.position, cWG.frontWheelRDistance.ToString());
-                Handles.DrawLine(cC.frontWheelRRest.transform.position, cC.frontWheelRRest.transform.position + (cC.frontWheelRRest.transform.up * cWG.frontWheelRDistance), thickness);
-                //backWheelL
-                Handles.Label(cC.backWheelLRest.transform.position, cWG.backWheelLDistance.ToString());
-                Handles.DrawLine(cC.backWheelLRest.transform.position, cC.backWheelLRest.transform.position + (cC.backWheelLRest.transform.up * cWG.backWheelLDistance), thickness);
-                //backWheelR
-                Handles.Label(cC.backWheelRRest.transform.position, cWG.backWheelRDistance.ToString());
-                Handles.DrawLine(cC.backWheelRRest.transform.position, cC.backWheelRRest.transform.position + (cC.backWheelRRest.transform.up * cWG.backWheelRDistance), thickness);
-            }
-
+            //if (cWG != null)
+            //{
+            //    Handles.color = Color.red;
+            //    float thickness = 8f;
+            //    //frontWheelL
+            //    Handles.Label(cC.frontWheelLRest.transform.position, cWG.frontWheelLDistance.ToString());
+            //    Handles.DrawLine(cC.frontWheelLRest.transform.position, cC.frontWheelLRest.transform.position + (cC.frontWheelLRest.transform.up * cWG.frontWheelLDistance), thickness);
+            //    //frontWheelR
+            //    Handles.Label(cC.frontWheelRRest.transform.position, cWG.frontWheelRDistance.ToString());
+            //    Handles.DrawLine(cC.frontWheelRRest.transform.position, cC.frontWheelRRest.transform.position + (cC.frontWheelRRest.transform.up * cWG.frontWheelRDistance), thickness);
+            //    //backWheelL
+            //    Handles.Label(cC.backWheelLRest.transform.position, cWG.backWheelLDistance.ToString());
+            //    Handles.DrawLine(cC.backWheelLRest.transform.position, cC.backWheelLRest.transform.position + (cC.backWheelLRest.transform.up * cWG.backWheelLDistance), thickness);
+            //    //backWheelR
+            //    Handles.Label(cC.backWheelRRest.transform.position, cWG.backWheelRDistance.ToString());
+            //    Handles.DrawLine(cC.backWheelRRest.transform.position, cC.backWheelRRest.transform.position + (cC.backWheelRRest.transform.up * cWG.backWheelRDistance), thickness);
+            //}
         }
     }
 }
