@@ -11,11 +11,15 @@ public class AutoAlignBehavior : CarBehavior
     const string R = "References";
     const string S = "Settings";
     const string I = "Input";
+    const string D = "Debug";
 
+    [TitleGroup(S)] [Range(0, 1f)] public float maxConnectionDistance = 0.85f;
+
+    [TitleGroup(S)] [Range(0, 100000f)] public float forceMultiplier = 15000f;
 
     [TitleGroup(S)] public bool stopAutoaligningAfterInAirControl = false;
     [TitleGroup(S)] public bool autoalignCarInAir = false;
-    [TitleGroup(S)] private AutoAlignSurface autoAlignSurface = AutoAlignSurface.Trajectory;
+    [TitleGroup(S)] private AutoAlignSurface autoAlignSurface = AutoAlignSurface.TrajectoryAndDownwardSurface;
     [TitleGroup(S)] [OdinSerialize] public AutoAlignSurface AutoAlignSurface
     {
         get
@@ -28,13 +32,13 @@ public class AutoAlignBehavior : CarBehavior
 
             if (trajectoryRenderer != null) // wenn ein trajectoryrenderer assinged ist
             {
-                if (value != AutoAlignSurface.Trajectory) // wenn der AutoalignSurface bool umgeschaltet wird und nicht auf Trajectory steht
+                if (value != AutoAlignSurface.TrajectoryAndDownwardSurface) // wenn der AutoalignSurface bool umgeschaltet wird und nicht auf Trajectory steht
                 {
                     trajectoryRenderer.ShowTrajectory = false; // schalte im trajectory das updaten aus
                     trajectoryRenderer.ClearTrajectory(); // loesche den bestehenden Trajectory im linerendeerer
                 }
 
-                else if (value == AutoAlignSurface.Trajectory) // wenn der AutoalignSurface bool umgeschaltet wird und auf Trajectory steht
+                else if (value == AutoAlignSurface.TrajectoryAndDownwardSurface) // wenn der AutoalignSurface bool umgeschaltet wird und auf Trajectory steht
                 {
                     trajectoryRenderer.ShowTrajectory = true; // schalte im trajectory das updaten an
                 }
@@ -57,6 +61,8 @@ public class AutoAlignBehavior : CarBehavior
     [TitleGroup(I)] private bool hasLowRideBehavior = false;
     [TitleGroup(R)] private LowRideBehavior lowRideBehavior;
 
+    [TitleGroup(D)] [ShowInInspector] public float frontWheelLDistance, frontWheelRDistance, backWheelLDistance, backWheelRDistance;
+    [TitleGroup(D)] [ShowInInspector] private float anticlimbingMutliplier;
 
     //------------------------ SETUP
     public override bool SetRequirements()
@@ -68,18 +74,12 @@ public class AutoAlignBehavior : CarBehavior
             trajectoryRenderer = cC.gameObject.AddComponent<TrajectoryRenderer>();
         }
 
-        if(cC.HasBehavior<LowRideBehavior>())
+        if (cC.HasBehavior<LowRideBehavior>())
         {
             hasLowRideBehavior = true;
             lowRideBehavior = cC.GetBehavior<LowRideBehavior>();
         }
 
-        // SET THE RIGIDBODY.
-        rB = cC.gameObject.GetComponent<Rigidbody>();
-        if (rB == null)
-        {
-            rB = cC.gameObject.AddComponent<Rigidbody>();
-        }
 
         //CHECK IF INITIALISATION WAS SUCCESSFULL
         if (hasLowRideBehavior == true && lowRideBehavior == null) // dann ist irgendwas beim setup schief gegangen
@@ -87,7 +87,7 @@ public class AutoAlignBehavior : CarBehavior
             return false;
         }
 
-        if (rB == null || trajectoryRenderer == null) //wenn einer der wichtigen Referenzen null ist
+        if (trajectoryRenderer == null) //wenn einer der wichtigen Referenzen null ist
         {
             return false;
         }
@@ -102,13 +102,7 @@ public class AutoAlignBehavior : CarBehavior
 
     public override void ExecuteBehavior(Func<bool> _shouldExecute)
     {
-        if (autoalignCarInAir)
-        {
-            if(cC.drivingStateInfo == DrivingState.InAir)
-            {
-                AutoAlignCar();
-            }
-        }
+        AutoAlignCar();
     }
 
     public void AutoAlignCar(float strength = 1f)
@@ -160,8 +154,13 @@ public class AutoAlignBehavior : CarBehavior
 
                     break;
                 }
-            case AutoAlignSurface.Trajectory:
+            case AutoAlignSurface.TrajectoryAndDownwardSurface:
                 {
+                    if (!autoalignCarInAir || cC.drivingStateInfo != DrivingState.InAir)
+                    {
+                        break;
+                    }
+
                     // Ggf. nötig: Hit unter Auto
                     if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
                     {
@@ -182,15 +181,63 @@ public class AutoAlignBehavior : CarBehavior
                                 targetNormal = trajectoryRenderer.trajectory.HitNormal;
                                 targetSurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
                             }
-
                         }
                     }
+                    // Rotation Calculation: Add Torque (angular velocity) and brake (angular velocity) if needed.
+                    AddTorqueAndBrake(targetNormal, autoAlignTorqueForce, maxAngularVelocity, targetSurfaceDistance, autoAlignDistanceCurve, autoAlignAngleCurve, autoAlignBrakeCurve, strength);
+
+                    break;
+                }
+            case AutoAlignSurface.WheelsDownward:
+                {
+                    // Get the WheelCollider Distance to the ground
+                    if (Physics.Raycast(cC.frontWheelL.transform.position, cC.frontWheelL.transform.up, out hit))
+                    {
+                        frontWheelLDistance = (hit.point - cC.frontWheelLRest.transform.position).magnitude;
+                    }
+                    else
+                    {
+                        frontWheelLDistance = 0f;
+                    }
+                    if (Physics.Raycast(cC.frontWheelR.transform.position, cC.frontWheelR.transform.up, out hit))
+                    {
+                        frontWheelRDistance = (hit.point - cC.frontWheelRRest.transform.position).magnitude;
+                    }
+                    else
+                    {
+                        frontWheelRDistance = 0f;
+                    }
+                    if (Physics.Raycast(cC.backWheelL.transform.position, cC.backWheelL.transform.up, out hit))
+                    {
+                        backWheelLDistance = (hit.point - cC.backWheelLRest.transform.position).magnitude;
+                    }
+                    else
+                    {
+                        backWheelLDistance = 0f;
+                    }
+                    if (Physics.Raycast(cC.backWheelR.transform.position, cC.backWheelR.transform.up, out hit))
+                    {
+                        backWheelRDistance = (hit.point - cC.backWheelR.transform.position).magnitude;
+                    }
+                    else
+                    {
+                        backWheelRDistance = 0f;
+                    }
+
+                    //Set Rigidbodyforces
+                    anticlimbingMutliplier = 1f - Mathf.Abs(Vector3.Dot(Vector3.up, cC.transform.forward));
+
+                    if (frontWheelLDistance <= maxConnectionDistance)
+                        cC.RB.AddForceAtPosition(cC.frontWheelL.transform.up * forceMultiplier * anticlimbingMutliplier, cC.frontWheelLRest.transform.position);
+                    if (frontWheelRDistance <= maxConnectionDistance)
+                        cC.RB.AddForceAtPosition(cC.frontWheelR.transform.up * forceMultiplier * anticlimbingMutliplier, cC.frontWheelRRest.transform.position);
+                    if (backWheelLDistance <= maxConnectionDistance)
+                        cC.RB.AddForceAtPosition(cC.backWheelL.transform.up * forceMultiplier * anticlimbingMutliplier, cC.backWheelLRest.transform.position);
+                    if (backWheelRDistance <= maxConnectionDistance)
+                        cC.RB.AddForceAtPosition(cC.backWheelR.transform.up * forceMultiplier * anticlimbingMutliplier, cC.backWheelRRest.transform.position);
                     break;
                 }
         }
-
-        // Rotation Calculation: Add Torque (angular velocity) and brake (angular velocity) if needed.
-        AddTorqueAndBrake(targetNormal, autoAlignTorqueForce, maxAngularVelocity, targetSurfaceDistance, autoAlignDistanceCurve, autoAlignAngleCurve, autoAlignBrakeCurve, strength);
     }
     /// <summary>
     /// Add a torque and brake if target rotation is achieved. Takes into consideration: distance to the targetSurface, angle difference to the targetSurfaceNormal
@@ -219,6 +266,7 @@ public class AutoAlignBehavior : CarBehavior
 public enum AutoAlignSurface
 {
     LowerSurface,
-    Trajectory,
-    ForwardSurface
+    TrajectoryAndDownwardSurface,
+    ForwardSurface,
+    WheelsDownward
 }
