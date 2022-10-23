@@ -44,9 +44,9 @@ public class AutoAlignBehavior : CarBehavior
 
     [TitleGroup(S)] public float maxAngularVelocity = 4f;
     [TitleGroup(S)] public int autoAlignTorqueForce = 40;
-    [TitleGroup(S)] [Tooltip("Used to control the amount of torque force. x = 1 heiﬂt dass Auto 100% aligned, x = 0 heiﬂt dass Auto 90∞ gedreht, x = -1 dass 180∞ gedreht.")] 
+    [TitleGroup(S)] [Tooltip("Used to control the amount of torque force. x = 1 hei√üt dass Auto 100% aligned, x = 0 hei√üt dass Auto 90¬∞ gedreht, x = -1 dass 180¬∞ gedreht.")]
     public AnimationCurve autoAlignAngleCurve = AnimationCurve.Linear(-1f,1f,1f,0f);
-    [TitleGroup(S)] [Tooltip("Used to reduce the angular velocity when the car is aligned")] 
+    [TitleGroup(S)] [Tooltip("Used to reduce the angular velocity when the car is aligned")]
     public AnimationCurve autoAlignBrakeCurve = AnimationCurve.EaseInOut(0f,1f,1f,0.98f);
     [TitleGroup(S)] public AnimationCurve autoAlignDistanceCurve = AnimationCurve.EaseInOut(0f,1f,13f,0f);
     [TitleGroup(S)] private float targetSurfaceDistance;
@@ -120,9 +120,9 @@ public class AutoAlignBehavior : CarBehavior
         bool lowRideNotNullHasInput = false; // Wichtig, kann nur true sein wenn es ein lowRidebehavior gibt und die bedingungen erfuellt sind.
         if (hasLowRideBehavior)
         {
-            lowRideNotNullHasInput = lowRideBehavior.LowRideInputVal != Vector2.zero ? true : false; // wenn ein lowrideInputvalue groeser 0, dann true, ansonsten false
+            lowRideNotNullHasInput = lowRideBehavior.LowRideInputVal != Vector2.zero; // wenn ein lowrideInputvalue groeser 0, dann true, ansonsten false
         }
-        bool UseForwardDirection = cC.drivingStateInfo == DrivingState.InAir || lowRideNotNullHasInput ? true : false;
+        bool UseForwardDirection = cC.drivingStateInfo == DrivingState.InAir || lowRideNotNullHasInput;
 
 
         // Decide to which surface the car should align
@@ -162,7 +162,7 @@ public class AutoAlignBehavior : CarBehavior
                 }
             case AutoAlignSurface.Trajectory:
                 {
-                    // Ggf. nˆtig: Hit unter Auto
+                    // Ggf. n√∂tig: Hit unter Auto
                     if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
                     {
                         targetNormal = hit.normal;
@@ -176,7 +176,7 @@ public class AutoAlignBehavior : CarBehavior
                             var trajectoryNormal = trajectoryRenderer.trajectory.HitNormal;
                             var trajectorySurfaceDistance = (trajectoryRenderer.trajectory.HitPoint - transform.position).magnitude;
 
-                            // nur wenn trajectory-fl‰che n‰her ist als downward-surface
+                            // nur wenn trajectory-fl√§che n√§her ist als downward-surface
                             if (trajectorySurfaceDistance < targetSurfaceDistance)
                             {
                                 targetNormal = trajectoryRenderer.trajectory.HitNormal;
@@ -202,14 +202,14 @@ public class AutoAlignBehavior : CarBehavior
 
         // 1. ADD TORQUE
         Vector3 torqueAxis = Vector3.Cross(transform.up, targetNormal).normalized;                                  // Rotations-Achse = Kreuzprodukt
-        float torqueAngleFactor = torqueAngleCurve.Evaluate(angleDotProduct);                                       // Faktor je nach ‹bereinstimmung von Zielnormale und transform.up
+        float torqueAngleFactor = torqueAngleCurve.Evaluate(angleDotProduct);                                       // Faktor je nach √úbereinstimmung von Zielnormale und transform.up
         Vector3 torque = torqueAxis * torqueForce * distanceFactor * torqueAngleFactor * strengthPercentage;        // Finale Torque
         rB.AddTorque(torque, ForceMode.Acceleration);
 
-        // 2. BRAKE                            
-        float velocityDistanceFactor = brakeDistanceCurve.Evaluate(Mathf.Clamp01(angleDotProduct));                 // Wert wird 1, wenn Distanz zu hoch (-> keine Ver‰nderung), 0 wenn Distanz niedrig
-        float brakeFactor = Mathf.Lerp(1f, velocityDistanceFactor, distanceFactor);                                 // Wenn keine Winkeldifferenz, dann angularVel *= 0; wenn Winkeldifferenz >= 90∞, dann keine Ver‰nderung
-        rB.angularVelocity *= Mathf.Lerp(1f, brakeFactor, strengthPercentage);                                      // Wirke brake Kraft abh‰ngig von strengPercentage
+        // 2. BRAKE
+        float velocityDistanceFactor = brakeDistanceCurve.Evaluate(Mathf.Clamp01(angleDotProduct));                 // Wert wird 1, wenn Distanz zu hoch (-> keine Ver√§nderung), 0 wenn Distanz niedrig
+        float brakeFactor = Mathf.Lerp(1f, velocityDistanceFactor, distanceFactor);                                 // Wenn keine Winkeldifferenz, dann angularVel *= 0; wenn Winkeldifferenz >= 90¬∞, dann keine Ver√§nderung
+        rB.angularVelocity *= Mathf.Lerp(1f, brakeFactor, strengthPercentage);                                      // Wirke brake Kraft abh√§ngig von strengPercentage
 
         // 3. Max speed
         rB.ClampAngularVelocity(maxAngularVelocity);

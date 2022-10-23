@@ -22,10 +22,18 @@
                     "interactions": ""
                 },
                 {
-                    "name": "LowRide",
-                    "type": "Value",
+                    "name": "LowRideFront",
+                    "type": "Button",
                     "id": "955466bf-83e1-4c49-9ea0-e6f793edea17",
-                    "expectedControlType": "Vector2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "LowRideBack",
+                    "type": "Button",
+                    "id": "7ccb8732-6cd8-40ef-926e-0182e2b29ece",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
                 },
@@ -57,14 +65,6 @@
                     "name": "MagnetPowerToggle",
                     "type": "Button",
                     "id": "cfc1b145-5ee4-4359-ae8b-ce7450a59468",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Jump",
-                    "type": "Button",
-                    "id": "c646ded3-e1cc-4615-9443-85cdb3b663fc",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -220,68 +220,24 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "Keyboard",
-                    "id": "8926c628-3a2c-4adc-bd10-0acc4f14d33a",
-                    "path": "2DVector",
+                    "name": "",
+                    "id": "e5e326fd-4224-4347-b3a2-d607f69c918e",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "LowRide",
-                    "isComposite": true,
+                    "action": "LowRideFront",
+                    "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "up",
-                    "id": "c2c0a002-bb17-4ec7-a9b9-3968171ef98e",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "LowRide",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "down",
-                    "id": "420ef81a-4263-4530-9c9a-cf0a20a95783",
-                    "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "LowRide",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "left",
-                    "id": "4033dda8-0474-47ce-ba6f-37c6c6604d73",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "LowRide",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "right",
-                    "id": "dbf06eb4-2080-46eb-b47c-c8970c6d1db0",
-                    "path": "<Keyboard>/d",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "LowRide",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
                     "name": "",
-                    "id": "e5e326fd-4224-4347-b3a2-d607f69c918e",
-                    "path": "<Gamepad>/rightStick",
+                    "id": "064637e3-c899-487e-9c6a-933a213ea2ac",
+                    "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "LowRide",
+                    "action": "LowRideFront",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -299,33 +255,11 @@
                 {
                     "name": "",
                     "id": "38d1d3f8-39a2-483f-8840-141352a27c0d",
-                    "path": "<Keyboard>/ctrl",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "ExtendWheelsPress",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1e095bb9-bfde-4493-b950-84465a74f3aa",
-                    "path": "<Gamepad>/buttonWest",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "63593350-fff6-4d15-b584-46be661fa737",
-                    "path": "<Keyboard>/ctrl",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -365,7 +299,7 @@
                 {
                     "name": "",
                     "id": "8cd69762-b125-48ac-bc70-498369459792",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -387,7 +321,7 @@
                 {
                     "name": "",
                     "id": "68c20d07-8317-4fc3-8c60-822bb33ca87e",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -436,6 +370,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "FourWheelsSteer",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bee384b9-c6a9-4550-bad3-0c2f32317893",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LowRideBack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

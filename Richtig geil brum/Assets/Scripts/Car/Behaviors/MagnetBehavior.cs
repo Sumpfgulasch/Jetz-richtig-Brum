@@ -35,15 +35,15 @@ public class MagnetBehavior : CarBehavior
     [TitleGroup(H)] [ReadOnly] private bool wheelsOut = false;
     [TitleGroup(I)] private bool magnetIsActive = false;
     [TitleGroup(I)] [ShowInInspector] public bool MagnetIsActive // Let everything that is dependent on Magnet is Active be run by the Setter (e.g. Visualisation, Toogle Wheel Distance, etc..)
-    { 
-        get => magnetIsActive; 
-        set 
+    {
+        get => magnetIsActive;
+        set
         {
-            magnetIsActive = value; 
-            SetMagnetVisualisation(value); 
-            ToggleExtendedGroundDistance(value,ref wheelsOut,extendWheelsDistanceOnWheelsOut,Wheels); 
-        } 
-    } 
+            magnetIsActive = value;
+            SetMagnetVisualisation(value);
+            ToggleExtendedGroundDistance(value,ref wheelsOut,extendWheelsDistanceOnWheelsOut,Wheels);
+        }
+    }
 
 
     [TitleGroup(S)] public AnimationCurve lowRideActivityMagnetCurve = AnimationCurve.Linear(0f,1f,1f,0f);
@@ -144,21 +144,10 @@ public class MagnetBehavior : CarBehavior
     public void OnMagnetPowerToggle(InputValue inputValue)
     {
         Debug.Log("Toggled");
-        if (EnabledBehavior)
-        {
-            // Button mode #1: De- & activate
-            if (inputValue.isPressed)
-            {
-                if (MagnetIsActive)
-                {
-                    MagnetIsActive = false;
-                }
-                else
-                {
-                    MagnetIsActive = true;
-                }
-            }
-        }
+        if (!EnabledBehavior || !inputValue.isPressed)
+            return;
+
+        MagnetIsActive = !MagnetIsActive;
     }
 
     public void OnMagnetPowerPress(InputValue inputValue)
@@ -167,14 +156,7 @@ public class MagnetBehavior : CarBehavior
         if (EnabledBehavior)
         {
             // Button mode #2: Pressed
-            if (inputValue.isPressed)
-            {
-                MagnetIsActive = true;
-            }
-            else
-            {
-                MagnetIsActive = false;
-            }
+            MagnetIsActive = inputValue.isPressed;
         }
 
     }
@@ -218,14 +200,14 @@ public class MagnetBehavior : CarBehavior
     {
         //Wheels
         foreach (MeshRenderer wheel in wheelMeshes)
-        {    
+        {
             if (_active)
             {
                 wheel.material = wheels_magnetPowerMat;
             }
             else
             {
-                wheel.material = wheels_defaultMat;  
+                wheel.material = wheels_defaultMat;
             }
         }
     }
@@ -241,7 +223,7 @@ public class MagnetBehavior : CarBehavior
         {
             if (hasLowRideBehavior)  // wenn lowRide-Activity: kein autoAlign
             {
-                float alignStrength = Mathf.Clamp01(lowRideActivityAlignCurve.Evaluate(lowRideBehavior.LowRideActivity.HighestValue));    
+                var alignStrength = Mathf.Clamp01(lowRideActivityAlignCurve.Evaluate(lowRideBehavior.LowRideActivity.HighestValue));
                 autoAlignBehavior.AutoAlignCar(alignStrength); // TODO - darf hier nicht aufgerufen werden.
             }
             else // wenn kein lowRideBehavior, immer voll autoalign
@@ -268,7 +250,7 @@ public class MagnetBehavior : CarBehavior
             magnetTimer = Mathf.Clamp(magnetTimer + Time.deltaTime, 0, magnetMaxTime);
         }
         else
-        { 
+        {
             magnetTimer = Mathf.Clamp(magnetTimer - magnetRefillFactor * Time.deltaTime, 0, magnetMaxTime);
         }
 
@@ -287,7 +269,7 @@ public class MagnetBehavior : CarBehavior
     }
 
     /// <summary>
-    /// Scheiﬂ funktion. Nochmal schˆn schreiben. F¸gt dem Auto Force nach unten hinzu, abh‰ngig von der Distanz der targetSurface.
+    /// Schei√ü funktion. Nochmal sch√∂n schreiben. F√ºgt dem Auto Force nach unten hinzu, abh√§ngig von der Distanz der targetSurface.
     /// </summary>
     /// <param name="_lowRideActivityValues">front, right, back, left. [0,1]</param>
     private void AddPullForce( Rigidbody _rB, Vector3[] _magnetForcePositions, AnimationCurve _magnetPowerDistanceCurve, float _magnetPowerAcceleration, AnimationCurve _lowRideActivityMagnetCurve, float _magnetPowerMaxVelocity, LowRideActivity _lowRideActivity)
@@ -304,7 +286,7 @@ public class MagnetBehavior : CarBehavior
         Vector3 downVector = -this.transform.up;
 
         // 2. Get distance factor
-        RaycastHit hit;                                                                     // scheiﬂe mit extra raycast, geschieht schon in autoAlignment, aber eben nicht jeden frame...
+        RaycastHit hit;                                                                     // schei√üe mit extra raycast, geschieht schon in autoAlignment, aber eben nicht jeden frame...
         if (Physics.Raycast(this.transform.position, downVector, out hit))
         {
             surfaceDistance = (hit.point - this.transform.position).magnitude;
@@ -320,7 +302,7 @@ public class MagnetBehavior : CarBehavior
 
         Debug.DrawRay(this.transform.TransformPoint(_magnetForcePositions[1]), -this.transform.up * frontStrength, Color.red);
         Debug.DrawRay(this.transform.TransformPoint(_magnetForcePositions[0]), -this.transform.up * backStrength, Color.red);
-        
+
         // 4. Max speed
         _rB.velocity = _rB.velocity.normalized * Mathf.Clamp(_rB.velocity.magnitude, 0, _magnetPowerMaxVelocity);
     }
