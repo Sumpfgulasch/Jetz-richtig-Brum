@@ -22,6 +22,14 @@
                     "interactions": ""
                 },
                 {
+                    "name": "LowRide",
+                    "type": "Value",
+                    "id": "fba16fd0-f07f-4a26-b991-151aab6e6140",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
                     "name": "LowRideFront",
                     "type": "Button",
                     "id": "955466bf-83e1-4c49-9ea0-e6f793edea17",
@@ -381,6 +389,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "LowRideBack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dbe43819-11e4-4a24-8b91-b9c2f824c0f0",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LowRide",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

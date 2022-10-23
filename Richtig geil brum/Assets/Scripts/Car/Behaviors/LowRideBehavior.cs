@@ -59,11 +59,23 @@ public class LowRideBehavior : CarBehavior
         }
     }
     //------------------------ INPUT HANDLING
+
+
+    public void OnLowRide(InputValue inputValue)
+    {
+        if (EnabledBehavior)
+        {
+            LowRideInputVal = inputValue.Get<Vector2>();
+        }
+    }
+
+
     public void OnLowRideFront(InputValue inputValue)
     {
         if (EnabledBehavior)
         {
             LowRideInputVal = Vector2.up;
+            StartCoroutine(WaitAndResetInputValue());
         }
     }
 
@@ -73,6 +85,12 @@ public class LowRideBehavior : CarBehavior
         {
             LowRideInputVal = Vector2.down;
         }
+    }
+
+    private IEnumerator WaitAndResetInputValue()
+    {
+        yield return new WaitForSeconds(0.5f);
+        lowRideInputVal = Vector2.zero;
     }
 
     //------------------------ BEHAVIOR
