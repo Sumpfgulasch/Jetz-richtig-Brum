@@ -73,6 +73,7 @@ public class LowRideBehavior : CarBehavior
     private void LowRide(Vector2 _inputStrength, Wheel _frontWheelR, Wheel _frontWheelL, Wheel _backWheelR, Wheel _backWheelL)
     {
         float strengthWheelFR, strengthWheelFL, strengthWheelBR, strengthWheelBL;
+        _inputStrength *= Time.deltaTime * 60f;
 
         #region allign stick to view
         if (allignStickToView)
@@ -86,7 +87,7 @@ public class LowRideBehavior : CarBehavior
             _inputStrength *= new Vector2(lowRideSideScale, 1f);
             _inputStrength = Quaternion.Euler(0, 0, forwardAngle) * _inputStrength;
 
-            // Stick-Richtungsvektoren für Dot-Produkt berechnen (sind abhängig von Richtung des Autos)
+            // Stick-Richtungsvektoren fï¿½r Dot-Produkt berechnen (sind abhï¿½ngig von Richtung des Autos)
             Vector2 vecFR = Quaternion.Euler(0, 0, -45f) * forwardScreenVector;
             Vector2 vecFL = Quaternion.Euler(0, 0, 45f) * forwardScreenVector;
             Vector2 vecBR = Quaternion.Euler(0, 0, -135f) * forwardScreenVector;
@@ -165,7 +166,7 @@ public class LowRideActivity
         if (_invertLowRideInput)
             _lowRideValue.y *= -1f;
 
-        // (SCHEIß CODE) Alle 4 Richtungen der lowRideActivity erhöhen oder verringern 
+        // (SCHEIï¿½ CODE) Alle 4 Richtungen der lowRideActivity erhï¿½hen oder verringern 
 
         // front
         if (_lowRideValue.y > Values[0])

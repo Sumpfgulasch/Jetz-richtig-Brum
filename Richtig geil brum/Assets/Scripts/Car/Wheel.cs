@@ -163,7 +163,7 @@ public class Wheel : SerializedMonoBehaviour
     {
         if (_currentExtensionDistanceMinMax == _targetExtensionDistanceMinMax) { return _currentExtensionDistanceMinMax; } // wenn beide gleich sind, mach nix.
 
-        Vector2 step = new Vector2(-0.005f,0.01f);// can be a variable. but for now, doesnt matter.
+        Vector2 step = new Vector2(-0.005f * Time.deltaTime * 200f,0.01f * Time.deltaTime * 200f);// can be a variable. but for now, doesnt matter.
 
         //1. Calculate the difference between the current and the target.
         float diffX = _targetExtensionDistanceMinMax.x- _currentExtensionDistanceMinMax.x;
