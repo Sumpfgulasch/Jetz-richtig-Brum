@@ -11,6 +11,7 @@ public class CarControllerEditor : OdinEditor
 {
     CarController cC;
     MagnetBehavior mB;
+    ConnectWheelsToGroundBehavior cWG;
     float wireBoxScale = 0.1f;
     new void OnEnable() 
     {        
@@ -21,6 +22,10 @@ public class CarControllerEditor : OdinEditor
             if(cC.HasBehavior<MagnetBehavior>())
             {
                 mB = cC.GetBehavior<MagnetBehavior>();
+            }
+            if (cC.HasBehavior<ConnectWheelsToGroundBehavior>())
+            {
+                cWG = cC.GetBehavior<ConnectWheelsToGroundBehavior>();
             }
         }
     }
@@ -40,11 +45,11 @@ public class CarControllerEditor : OdinEditor
                 Handles.DrawWireCube(cC.backWheelR.transform.position, Vector3.one * wireBoxScale);
                 Handles.DrawWireCube(cC.backWheelL.transform.position, Vector3.one * wireBoxScale);
 
-                //maxDistance lines
-                Handles.DrawLine(cC.frontWheelR.transform.position, cC.frontWheelR.transform.position + (-cC.transform.up * cC.frontWheelR.wheelCollider.suspensionDistance));
-                Handles.DrawLine(cC.frontWheelL.transform.position, cC.frontWheelL.transform.position + (-cC.transform.up * cC.frontWheelL.wheelCollider.suspensionDistance));
-                Handles.DrawLine(cC.backWheelR.transform.position, cC.backWheelR.transform.position + (-cC.transform.up * cC.backWheelR.wheelCollider.suspensionDistance));
-                Handles.DrawLine(cC.backWheelL.transform.position, cC.backWheelL.transform.position + (-cC.transform.up * cC.backWheelL.wheelCollider.suspensionDistance));
+                ////maxDistance lines
+                //Handles.DrawLine(cC.frontWheelR.transform.position, cC.frontWheelR.transform.position + (-cC.transform.up * cC.frontWheelR.wheelCollider.suspensionDistance));
+                //Handles.DrawLine(cC.frontWheelL.transform.position, cC.frontWheelL.transform.position + (-cC.transform.up * cC.frontWheelL.wheelCollider.suspensionDistance));
+                //Handles.DrawLine(cC.backWheelR.transform.position, cC.backWheelR.transform.position + (-cC.transform.up * cC.backWheelR.wheelCollider.suspensionDistance));
+                //Handles.DrawLine(cC.backWheelL.transform.position, cC.backWheelL.transform.position + (-cC.transform.up * cC.backWheelL.wheelCollider.suspensionDistance));
 
                 //Show Rigidbody Things
                 Rigidbody rB = cC.GetComponent<Rigidbody>();
@@ -81,13 +86,33 @@ public class CarControllerEditor : OdinEditor
                 Handles.Label(cC.transform.position, cC.Wheels.Count(x => x == null).ToString(), textStyle);
             }
 
-            for (int i = 0; i < mB.magnetForcePositions.Length; i++)
+            if (mB != null)
+            { 
+                for (int i = 0; i < mB.magnetForcePositions.Length; i++)
+                {
+                    Handles.color = Color.magenta;
+                    Handles.Label(cC.transform.TransformPoint(mB.magnetForcePositions[i]), i.ToString()); 
+                    Handles.DrawWireCube(cC.transform.TransformPoint(mB.magnetForcePositions[i]), Vector3.one * 0.3f);
+                    Handles.color = Color.red;
+                    Handles.DrawWireCube(cC.transform.TransformPoint(mB.magnetForcePositions[i]), Vector3.one * 0.01f);
+                }
+            }
+            if (cWG != null)
             {
-                Handles.color = Color.magenta;
-                Handles.Label(cC.transform.TransformPoint(mB.magnetForcePositions[i]), i.ToString()); 
-                Handles.DrawWireCube(cC.transform.TransformPoint(mB.magnetForcePositions[i]), Vector3.one * 0.3f);
                 Handles.color = Color.red;
-                Handles.DrawWireCube(cC.transform.TransformPoint(mB.magnetForcePositions[i]), Vector3.one * 0.01f);
+                float thickness = 8f;
+                //frontWheelL
+                Handles.Label(cC.frontWheelLRest.transform.position, cWG.frontWheelLDistance.ToString());
+                Handles.DrawLine(cC.frontWheelLRest.transform.position, cC.frontWheelLRest.transform.position + (cC.frontWheelLRest.transform.up * cWG.frontWheelLDistance), thickness);
+                //frontWheelR
+                Handles.Label(cC.frontWheelRRest.transform.position, cWG.frontWheelRDistance.ToString());
+                Handles.DrawLine(cC.frontWheelRRest.transform.position, cC.frontWheelRRest.transform.position + (cC.frontWheelRRest.transform.up * cWG.frontWheelRDistance), thickness);
+                //backWheelL
+                Handles.Label(cC.backWheelLRest.transform.position, cWG.backWheelLDistance.ToString());
+                Handles.DrawLine(cC.backWheelLRest.transform.position, cC.backWheelLRest.transform.position + (cC.backWheelLRest.transform.up * cWG.backWheelLDistance), thickness);
+                //backWheelR
+                Handles.Label(cC.backWheelRRest.transform.position, cWG.backWheelRDistance.ToString());
+                Handles.DrawLine(cC.backWheelRRest.transform.position, cC.backWheelRRest.transform.position + (cC.backWheelRRest.transform.up * cWG.backWheelRDistance), thickness);
             }
 
         }

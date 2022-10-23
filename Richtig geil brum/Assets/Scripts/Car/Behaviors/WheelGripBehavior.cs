@@ -78,8 +78,11 @@ public class WheelGripBehavior : CarBehavior
     }
     private void PushDownBasedOnSpeed() // can be used to prohibit Drifting
     {
-        float speed = rB.velocity.magnitude;
-        currentPushdownEffect = downwardForceBySpeed.Evaluate(speed);
-        rB.AddForceAtPosition(-this.transform.up * currentPushdownEffect, this.transform.position); // druecke es nach unten
+        if (cC.drivingStateInfo == DrivingState.Grounded)
+        { 
+            float speed = rB.velocity.magnitude;
+            currentPushdownEffect = downwardForceBySpeed.Evaluate(speed);
+            rB.AddForceAtPosition(-this.transform.up * currentPushdownEffect, this.transform.position); // druecke es nach unten
+        }
     }
 }

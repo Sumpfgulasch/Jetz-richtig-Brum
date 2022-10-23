@@ -37,6 +37,8 @@ public class CarController : SerializedMonoBehaviour
 
     [TitleGroup(R)] public Wheel frontWheelR, frontWheelL, backWheelR, backWheelL;
     [TitleGroup(R)] public Wheel[] Wheels { get { return new Wheel[4] { frontWheelR, frontWheelL, backWheelR, backWheelL }; } }
+    [TitleGroup(R)] public GameObject frontWheelRRest, frontWheelLRest, backWheelRRest, backWheelLRest;
+    [TitleGroup(R)] public GameObject[] WheelRest { get { return new GameObject[4] { frontWheelRRest, frontWheelLRest, backWheelRRest, backWheelLRest }; } }
 
     [TitleGroup(R)] private Rigidbody rB;
     [TitleGroup(R)] public Rigidbody RB { get { return rB; } }
