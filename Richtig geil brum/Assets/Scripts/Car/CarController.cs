@@ -7,6 +7,10 @@ using UnityEngine.InputSystem;
 using Sirenix.Utilities;
 
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 [RequireComponent(typeof(Rigidbody), typeof(PlayerInput))]
 public class CarController : SerializedMonoBehaviour
 {
@@ -365,3 +369,17 @@ public enum DrivingState
     InAir,
     TwoWheelsGrounded
 }
+
+#if UNITY_EDITOR
+public class MyScriptGizmoDrawer
+{
+    [DrawGizmo(GizmoType.Selected | GizmoType.Active)]
+    static void DrawGizmoForMyScript(CarController scr, GizmoType gizmoType)
+    {
+        Vector3 position = scr.transform.position;
+
+        if (Vector3.Distance(position, Camera.current.transform.position) > 10f)
+            Gizmos.DrawIcon(position, "MyScript Gizmo.tiff");
+    }
+}
+#endif

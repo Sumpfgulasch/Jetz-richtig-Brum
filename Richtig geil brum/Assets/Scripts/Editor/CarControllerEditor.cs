@@ -128,3 +128,16 @@ public class CarControllerEditor : OdinEditor
         }
     }
 }
+
+public class CarControllerGizmos
+{
+    [DrawGizmo(GizmoType.Selected | GizmoType.Active | GizmoType.NotInSelectionHierarchy)]
+    static void DrawGizmoForMyScript(CarController scr, GizmoType gizmoType)
+    {
+        Vector3 position = scr.transform.position;
+
+        //if (Vector3.Distance(position, Camera.current.transform.position) > 10f)
+        Gizmos.DrawIcon(position, "stopwatch.png");
+        //Gizmos.DrawLine
+    }
+}
