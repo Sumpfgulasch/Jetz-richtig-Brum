@@ -13,7 +13,9 @@ public class AutoAlignBehavior : CarBehavior
     const string I = "Input";
     const string D = "Debug";
 
-    const string HideConditionAAM = "@AutoAlignMode != AutoAlignModes.WheelsDownward";
+    const string HideConditionA = "@AutoAlignMode != AutoAlignModes.WheelsDownward";
+    const string HideConditionB = "@AutoAlignMode == AutoAlignModes.WheelsDownward";
+    const string HideConditionC = "@AutoAlignMode == AutoAlignModes.WheelsDownward && DistanceCalculationMode == DistanceCalculationModes.Curve";
 
 
 
@@ -45,21 +47,23 @@ public class AutoAlignBehavior : CarBehavior
     }
 
     // WHEN MODE NOT AutoAlignModes.WheelsDownward
-    [TitleGroup(S)] [ShowIf(HideConditionAAM)] public bool stopAutoaligningAfterInAirControl = false;
-    [TitleGroup(S)] [ShowIf(HideConditionAAM)] public bool autoalignCarInAir = false;
-    [TitleGroup(S)] [ShowIf(HideConditionAAM)] public float maxAngularVelocity = 4f;
-    [TitleGroup(S)] [ShowIf(HideConditionAAM)] public int autoAlignTorqueForce = 40;
+    [TitleGroup(S)] [ShowIf(HideConditionA)] public bool stopAutoaligningAfterInAirControl = false;
+    [TitleGroup(S)] [ShowIf(HideConditionA)] public bool autoalignCarInAir = false;
+    [TitleGroup(S)] [ShowIf(HideConditionA)] public float maxAngularVelocity = 4f;
+    [TitleGroup(S)] [ShowIf(HideConditionA)] public int autoAlignTorqueForce = 40;
     [TitleGroup(S)] [Tooltip("Used to control the amount of torque force. x = 1 heisst dass Auto 100% aligned, x = 0 heisst dass Auto 90Grad gedreht, x = -1 dass 180Grad gedreht.")]
-    [ShowIf(HideConditionAAM)] public AnimationCurve autoAlignAngleCurve = AnimationCurve.Linear(-1f,1f,1f,0f);
-    [TitleGroup(S)] [Tooltip("Used to reduce the angular velocity when the car is aligned")] [ShowIf(HideConditionAAM)] public AnimationCurve autoAlignBrakeCurve = AnimationCurve.EaseInOut(0f,1f,1f,0.98f);
-    [TitleGroup(S)] [ShowIf(HideConditionAAM)] public AnimationCurve autoAlignDistanceCurve = AnimationCurve.EaseInOut(0f,1f,13f,0f);
+    [ShowIf(HideConditionA)] public AnimationCurve autoAlignAngleCurve = AnimationCurve.Linear(-1f,1f,1f,0f);
+    [TitleGroup(S)] [Tooltip("Used to reduce the angular velocity when the car is aligned")] [ShowIf(HideConditionA)] public AnimationCurve autoAlignBrakeCurve = AnimationCurve.EaseInOut(0f,1f,1f,0.98f);
+    [TitleGroup(S)] [ShowIf(HideConditionA)] public AnimationCurve autoAlignDistanceCurve = AnimationCurve.EaseInOut(0f,1f,13f,0f);
     [TitleGroup(S)] private float targetSurfaceDistance;
 
     //WHEN MODE IS AutoAlignModes.WheelsDownward
-    [TitleGroup(S)] [Range(0, 1f)] public float maxConnectionDistance = 0.85f;
-    [TitleGroup(S)] [Range(0, 100000f)] public float forceMultiplier = 15000f;
+    [TitleGroup(S)] [Range(0, 1f)] [ShowIf(HideConditionB)] public float maxConnectionDistance = 0.85f;
+    [TitleGroup(S)] [Range(0, 100000f)] [ShowIf(HideConditionB)] public float forceMultiplier = 15000f;
+    [TitleGroup(S)] [ShowIf(HideConditionB)] public DistanceCalculationModes DistanceCalculationMode;
+    [TitleGroup(S)] [ShowIf(HideConditionC)] [Tooltip("This Curve should go from 0 to 1 in X and Y")] public AnimationCurve DistanceForceCurve01 = AnimationCurve.Linear(0f,1f,1f,0f); 
 
-    [TitleGroup(R)] [ShowIf("@this.AutoAlignMode != AutoAlignModes.WheelsDownward")] public TrajectoryRenderer trajectoryRenderer = null;
+    [TitleGroup(R)] [ShowIf(HideConditionA)] public TrajectoryRenderer trajectoryRenderer = null;
     [TitleGroup(R)] private Rigidbody rB;
 
     [TitleGroup(I)] private bool hasLowRideBehavior = false;
@@ -202,6 +206,7 @@ public class AutoAlignBehavior : CarBehavior
                     // break if there is input.
                     if (lowRideNotNullHasInput)
                     {
+                        Debug.Log("NOT NULL HAS INPUT");
                         break;
                     }
 
@@ -243,14 +248,48 @@ public class AutoAlignBehavior : CarBehavior
                     anticlimbingMutliplier = Mathf.Clamp01(Vector3.Dot(Vector3.up, cC.transform.up));
 
                     //Set Rigidbodyforces
-                    if (frontWheelLDistance <= maxConnectionDistance)
-                        cC.RB.AddForceAtPosition(cC.frontWheelL.transform.up * forceMultiplier * anticlimbingMutliplier, cC.frontWheelLRest.transform.position);
-                    if (frontWheelRDistance <= maxConnectionDistance)
-                        cC.RB.AddForceAtPosition(cC.frontWheelR.transform.up * forceMultiplier * anticlimbingMutliplier, cC.frontWheelRRest.transform.position);
-                    if (backWheelLDistance <= maxConnectionDistance)
-                        cC.RB.AddForceAtPosition(cC.backWheelL.transform.up * forceMultiplier * anticlimbingMutliplier, cC.backWheelLRest.transform.position);
-                    if (backWheelRDistance <= maxConnectionDistance)
-                        cC.RB.AddForceAtPosition(cC.backWheelR.transform.up * forceMultiplier * anticlimbingMutliplier, cC.backWheelRRest.transform.position);
+                    float frontWheelLDistanceMultiplier = 1f, frontWheelRDistanceMultiplier = 1f, backWheelLDistanceMultiplier = 1f, backWheelRDistanceMultiplier = 1f;
+
+                    switch (DistanceCalculationMode)
+                    {
+                        case DistanceCalculationModes.Binary:
+                            {
+                                if (frontWheelLDistance <= maxConnectionDistance)
+                                    frontWheelLDistanceMultiplier = 0f;
+                                if (frontWheelRDistance <= maxConnectionDistance)
+                                    frontWheelRDistanceMultiplier = 0f;
+                                if (backWheelLDistance <= maxConnectionDistance)
+                                    backWheelLDistanceMultiplier = 0f;
+                                if (backWheelRDistance <= maxConnectionDistance)
+                                    backWheelRDistanceMultiplier = 0f;
+                                break;
+                            }
+
+                        case DistanceCalculationModes.Linear:
+                            {
+                                frontWheelLDistanceMultiplier = Mathf.Clamp01(Mathf.InverseLerp(maxConnectionDistance, 0f, frontWheelLDistance));
+                                frontWheelRDistanceMultiplier = Mathf.Clamp01(Mathf.InverseLerp(maxConnectionDistance, 0f, frontWheelRDistance));
+                                backWheelLDistanceMultiplier = Mathf.Clamp01(Mathf.InverseLerp(maxConnectionDistance, 0f, backWheelLDistance));
+                                backWheelRDistanceMultiplier = Mathf.Clamp01(Mathf.InverseLerp(maxConnectionDistance,0f, backWheelLDistance));
+                                break;
+                            }
+                        case DistanceCalculationModes.Curve:
+                            {
+                                
+                                frontWheelLDistanceMultiplier = DistanceForceCurve01.Evaluate(Mathf.Clamp01(Mathf.InverseLerp(0f, maxConnectionDistance,  frontWheelLDistance)));
+                                frontWheelRDistanceMultiplier = DistanceForceCurve01.Evaluate(Mathf.Clamp01(Mathf.InverseLerp(0f, maxConnectionDistance, frontWheelLDistance)));
+                                backWheelLDistanceMultiplier = DistanceForceCurve01.Evaluate(Mathf.Clamp01(Mathf.InverseLerp(0f, maxConnectionDistance,  frontWheelLDistance)));
+                                backWheelRDistanceMultiplier = DistanceForceCurve01.Evaluate(Mathf.Clamp01(Mathf.InverseLerp(0f, maxConnectionDistance,  frontWheelLDistance)));
+                                break;
+                            }
+                    }
+
+
+                    //Apply Forces
+                    cC.RB.AddForceAtPosition(cC.frontWheelL.transform.up * forceMultiplier * anticlimbingMutliplier * frontWheelLDistanceMultiplier, cC.frontWheelLRest.transform.position);
+                    cC.RB.AddForceAtPosition(cC.frontWheelR.transform.up * forceMultiplier * anticlimbingMutliplier * frontWheelRDistanceMultiplier, cC.frontWheelRRest.transform.position);
+                    cC.RB.AddForceAtPosition(cC.backWheelL.transform.up * forceMultiplier * anticlimbingMutliplier * backWheelLDistanceMultiplier, cC.backWheelLRest.transform.position);
+                    cC.RB.AddForceAtPosition(cC.backWheelR.transform.up * forceMultiplier * anticlimbingMutliplier * backWheelRDistanceMultiplier, cC.backWheelRRest.transform.position);
                     break;
                 }
         }
@@ -285,4 +324,12 @@ public enum AutoAlignModes
     TrajectoryAndDownwardSurface,
     ForwardSurface,
     WheelsDownward
+}
+
+//Binary enables or disables, Linear blends based on Distance, Curve uses a Curve to blend Strength
+public enum DistanceCalculationModes
+{
+    Binary,
+    Linear,
+    Curve
 }

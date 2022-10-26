@@ -1073,7 +1073,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 391781414}
-  m_LocalRotation: {x: 0.3469958, y: -3e-45, z: 1e-45, w: 0.9378667}
+  m_LocalRotation: {x: 0.3469958, y: 1e-45, z: -0, w: 0.9378667}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1747,6 +1747,34 @@ Transform:
   m_Father: {fileID: 3212935939740550256}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!83 &675970055
+AudioClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: helm
+  m_LoadType: 0
+  m_Channels: 1
+  m_Frequency: 48000
+  m_BitsPerSample: 32
+  m_Length: 0
+  m_IsTrackerFormat: 0
+  m_Ambisonic: 0
+  m_SubsoundIndex: 0
+  m_PreloadAudioData: 1
+  m_LoadInBackground: 0
+  m_Legacy3D: 0
+  m_Resource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_CompressionFormat: 0
+  m_EditorResource:
+    m_Source: 
+    m_Offset: 0
+    m_Size: 0
+  m_EditorCompressionFormat: 0
 --- !u!1 &727664311
 GameObject:
   m_ObjectHideFlags: 0
@@ -3040,7 +3068,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -7618664418813488010, guid: f09893178100bb340a5c89c96d921580, type: 2}
-  m_audioClip: {fileID: 1842360847}
+  m_audioClip: {fileID: 675970055}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -3532,14 +3560,14 @@ MonoBehaviour:
     SerializedBytes: 
     ReferencedUnityObjects:
     - {fileID: 919132148347960417}
-    - {fileID: 919132148347960416}
-    - {fileID: 919132148347960418}
-    - {fileID: 919132148347960421}
-    - {fileID: 919132148347960422}
-    - {fileID: 919132148347960423}
-    - {fileID: 919132148347960420}
     - {fileID: 919132148347960424}
+    - {fileID: 919132148347960423}
+    - {fileID: 919132148347960422}
+    - {fileID: 919132148347960421}
+    - {fileID: 919132148347960420}
     - {fileID: 919132148347960419}
+    - {fileID: 919132148347960418}
+    - {fileID: 919132148347960416}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -3566,7 +3594,7 @@ MonoBehaviour:
         mscorlib
     - Name: 
       Entry: 12
-      Data: 10
+      Data: 9
     - Name: 
       Entry: 10
       Data: 0
@@ -3579,9 +3607,6 @@ MonoBehaviour:
     - Name: 
       Entry: 10
       Data: 3
-    - Name: 
-      Entry: 6
-      Data: 
     - Name: 
       Entry: 10
       Data: 4
@@ -3621,15 +3646,14 @@ MonoBehaviour:
   backWheelLRest: {fileID: 13263282}
   carBehaviors:
   - {fileID: 919132148347960417}
-  - {fileID: 919132148347960416}
-  - {fileID: 919132148347960418}
-  - {fileID: 919132148347960421}
-  - {fileID: 0}
-  - {fileID: 919132148347960422}
-  - {fileID: 919132148347960423}
-  - {fileID: 919132148347960420}
   - {fileID: 919132148347960424}
+  - {fileID: 919132148347960423}
+  - {fileID: 919132148347960422}
+  - {fileID: 919132148347960421}
+  - {fileID: 919132148347960420}
   - {fileID: 919132148347960419}
+  - {fileID: 919132148347960418}
+  - {fileID: 919132148347960416}
   showDebugHandles: 1
 --- !u!114 &1474740489
 MonoBehaviour:
@@ -4004,34 +4028,6 @@ MonoBehaviour:
   wheelCollider: {fileID: 1831576854}
   wheelModelTransform: {fileID: 6544276161636027100}
   wheelSmokeVisualEffect: {fileID: 0}
---- !u!83 &1842360847
-AudioClip:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: helm
-  m_LoadType: 0
-  m_Channels: 1
-  m_Frequency: 48000
-  m_BitsPerSample: 32
-  m_Length: 0
-  m_IsTrackerFormat: 0
-  m_Ambisonic: 0
-  m_SubsoundIndex: 0
-  m_PreloadAudioData: 1
-  m_LoadInBackground: 0
-  m_Legacy3D: 0
-  m_Resource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_CompressionFormat: 0
-  m_EditorResource:
-    m_Source: 
-    m_Offset: 0
-    m_Size: 0
-  m_EditorCompressionFormat: 0
 --- !u!1 &1890083707
 GameObject:
   m_ObjectHideFlags: 3
@@ -4611,7 +4607,6 @@ MonoBehaviour:
     SerializationNodes: []
   EnabledBehavior: 1
   ExecutionPriority: 1
-  initializedSuccessfully: 0
   motorForce: 2500
   propulsionMethod: 2
   UseDriveForward: 1
@@ -4639,7 +4634,6 @@ MonoBehaviour:
     SerializationNodes: []
   EnabledBehavior: 1
   ExecutionPriority: 0
-  initializedSuccessfully: 0
   maxSteerAngle: 30
   steeringMethod: 0
   alternativeMaxSteerAngle: 50
@@ -4669,7 +4663,6 @@ MonoBehaviour:
     SerializationNodes: []
   EnabledBehavior: 1
   ExecutionPriority: 2
-  initializedSuccessfully: 0
   teleportOnNextFrame: 0
 --- !u!114 &919132148347960419
 MonoBehaviour:
@@ -4694,7 +4687,6 @@ MonoBehaviour:
     SerializationNodes: []
   EnabledBehavior: 1
   ExecutionPriority: 9
-  initializedSuccessfully: 0
   magnetPowerAcceleration: 40
   magnetPowerMaxVelocity: 100
   extendWheelsDistanceOnWheelsOut: {x: 1.35, y: 2.55}
@@ -4814,7 +4806,6 @@ MonoBehaviour:
     SerializationNodes: []
   EnabledBehavior: 1
   ExecutionPriority: 7
-  initializedSuccessfully: 0
   UseLowRideFrontal: 1
   UseLowRideBack: 1
   invertLowRideControls: 0
@@ -4845,7 +4836,6 @@ MonoBehaviour:
     SerializationNodes: []
   EnabledBehavior: 1
   ExecutionPriority: 3
-  initializedSuccessfully: 0
   jumpForce: 10.3
 --- !u!114 &919132148347960422
 MonoBehaviour:
@@ -4870,7 +4860,6 @@ MonoBehaviour:
     SerializationNodes: []
   EnabledBehavior: 1
   ExecutionPriority: 5
-  initializedSuccessfully: 0
   maxAngularVelocity: 4
   inAirControlForce: 7
   airRollSpeedPitchRoll: {x: 0.1, y: 0.1}
@@ -4898,7 +4887,6 @@ MonoBehaviour:
     SerializationNodes: []
   EnabledBehavior: 1
   ExecutionPriority: 6
-  initializedSuccessfully: 0
   inAirAngularBrakeFactor: 0.99
 --- !u!114 &919132148347960424
 MonoBehaviour:
@@ -4921,14 +4909,11 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
-    - Name: AutoAlignSurface
+    - Name: AutoAlignMode
       Entry: 3
       Data: 3
   EnabledBehavior: 1
   ExecutionPriority: 8
-  initializedSuccessfully: 0
-  maxConnectionDistance: 0.85
-  forceMultiplier: 15000
   stopAutoaligningAfterInAirControl: 0
   autoalignCarInAir: 0
   maxAngularVelocity: 4
@@ -5023,6 +5008,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  maxConnectionDistance: 0.85
+  forceMultiplier: 15000
   trajectoryRenderer: {fileID: 0}
   frontWheelLDistance: 0
   frontWheelRDistance: 0
@@ -5482,7 +5469,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9072797899289852529}
   m_LocalRotation: {x: -0.00000005338517, y: 0.7071081, z: -0.7071055, w: 0.000000053384976}
-  m_LocalPosition: {x: -0, y: -0.5000018, z: 0.49999818}
+  m_LocalPosition: {x: 0, y: -0.547, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7182375293666097840}
@@ -5597,6 +5584,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7914078221680170320}
+  - component: {fileID: 9072797899289852531}
+  - component: {fileID: 9072797899289852530}
   m_Layer: 6
   m_Name: AutoBone
   m_TagString: Untagged
@@ -5604,6 +5593,58 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!59 &9072797899289852530
+HingeJoint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9072797899289852529}
+  m_ConnectedBody: {fileID: 919132148347960409}
+  m_ConnectedArticulationBody: {fileID: 0}
+  m_Anchor: {x: 0, y: 0.19, z: -0.21}
+  m_Axis: {x: 0, y: 1, z: 0}
+  m_AutoConfigureConnectedAnchor: 1
+  m_ConnectedAnchor: {x: -0.000000031709217, y: 0.3369981, z: -0.3100021}
+  m_UseSpring: 1
+  m_Spring:
+    spring: 60
+    damper: 1.3
+    targetPosition: 0
+  m_UseMotor: 0
+  m_Motor:
+    targetVelocity: 0
+    force: 0
+    freeSpin: 0
+  m_UseLimits: 1
+  m_Limits:
+    min: -18
+    max: 18
+    bounciness: 0.25
+    bounceMinVelocity: 0.2
+    contactDistance: 0
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
+--- !u!54 &9072797899289852531
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9072797899289852529}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &9111194596470348564
 GameObject:
   m_ObjectHideFlags: 0

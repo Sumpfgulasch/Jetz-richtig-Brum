@@ -350,17 +350,6 @@
                 },
                 {
                     "name": "",
-                    "id": "f057418b-ecaf-46f6-b85a-0a672229b143",
-                    "path": "<Gamepad>/leftShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MagnetPowerPress",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "3d1db6e3-a672-400f-a4e5-00844dea3ccf",
                     "path": "<Gamepad>/buttonEast",
                     "interactions": "",
@@ -374,6 +363,17 @@
                     "name": "",
                     "id": "57efe723-a0d0-4e6e-b390-b28eda5df6fa",
                     "path": "<Keyboard>/alt",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FourWheelsSteer",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "34e69b52-bdcb-46ae-8198-a16e73fced18",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
