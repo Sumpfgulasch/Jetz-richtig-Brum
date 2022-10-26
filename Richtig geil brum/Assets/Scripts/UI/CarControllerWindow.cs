@@ -211,7 +211,7 @@ public class CarControllerWindow : OdinEditorWindow
                     Toggle t = new Toggle(); // erstellt ein Toggle
                     l.text = "das Behavior " + cB.ToString();// bennene das Label entsprechend des Behaviors in der Liste
                     t.text = "ist initialisiert";
-                    t.value = cB.initializedSuccessfully; // initialize it to the right value.
+                    t.value = cB.InitializedSuccessfully; // initialize it to the right value.
                     t.SetEnabled(false); // graut den toggle aus, sodass er keinen Input entgegen nimmt.
 
                     SerializedObject serializedObject = new UnityEditor.SerializedObject(cB);

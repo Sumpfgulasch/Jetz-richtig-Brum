@@ -153,7 +153,7 @@ public class CarController : SerializedMonoBehaviour
 
         foreach (CarBehavior cB in carBehaviors) // fuer jedes Carbehavior
         {
-            if (cB.initializedSuccessfully && cB.EnabledBehavior) // wenn es erfolgreich initialisiert wurde
+            if (cB.InitializedSuccessfully && cB.EnabledBehavior) // wenn es erfolgreich initialisiert wurde
             {
                 cB.ExecuteBehavior(() =>
                     true); // fuehre die Executemethode aus. // lambdaexpression that always returns true. here we could implement a SWITCH that checks what type the carBehavior is, and apply a Rule, for different behaviors.

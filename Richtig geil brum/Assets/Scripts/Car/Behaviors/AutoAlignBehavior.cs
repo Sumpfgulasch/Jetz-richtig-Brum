@@ -13,32 +13,30 @@ public class AutoAlignBehavior : CarBehavior
     const string I = "Input";
     const string D = "Debug";
 
-    [TitleGroup(S)] [Range(0, 1f)] public float maxConnectionDistance = 0.85f;
+    const string HideConditionAAM = "@AutoAlignMode != AutoAlignModes.WheelsDownward";
 
-    [TitleGroup(S)] [Range(0, 100000f)] public float forceMultiplier = 15000f;
 
-    [TitleGroup(S)] public bool stopAutoaligningAfterInAirControl = false;
-    [TitleGroup(S)] public bool autoalignCarInAir = false;
-    [TitleGroup(S)] private AutoAlignSurface autoAlignSurface = AutoAlignSurface.TrajectoryAndDownwardSurface;
-    [TitleGroup(S)] [OdinSerialize] public AutoAlignSurface AutoAlignSurface
+
+    [TitleGroup(S)] private AutoAlignModes autoAlignMode = AutoAlignModes.TrajectoryAndDownwardSurface;
+    [TitleGroup(S)] [PropertyOrder(-1)] [OdinSerialize] public AutoAlignModes AutoAlignMode
     {
         get
         {
-            return autoAlignSurface;
+            return autoAlignMode;
         }
         set
         {
-            autoAlignSurface = value;
+            autoAlignMode = value;
 
             if (trajectoryRenderer != null) // wenn ein trajectoryrenderer assinged ist
             {
-                if (value != AutoAlignSurface.TrajectoryAndDownwardSurface) // wenn der AutoalignSurface bool umgeschaltet wird und nicht auf Trajectory steht
+                if (value != AutoAlignModes.TrajectoryAndDownwardSurface) // wenn der AutoalignSurface bool umgeschaltet wird und nicht auf Trajectory steht
                 {
                     trajectoryRenderer.ShowTrajectory = false; // schalte im trajectory das updaten aus
                     trajectoryRenderer.ClearTrajectory(); // loesche den bestehenden Trajectory im linerendeerer
                 }
 
-                else if (value == AutoAlignSurface.TrajectoryAndDownwardSurface) // wenn der AutoalignSurface bool umgeschaltet wird und auf Trajectory steht
+                else if (value == AutoAlignModes.TrajectoryAndDownwardSurface) // wenn der AutoalignSurface bool umgeschaltet wird und auf Trajectory steht
                 {
                     trajectoryRenderer.ShowTrajectory = true; // schalte im trajectory das updaten an
                 }
@@ -46,16 +44,22 @@ public class AutoAlignBehavior : CarBehavior
         }
     }
 
-    [TitleGroup(S)] public float maxAngularVelocity = 4f;
-    [TitleGroup(S)] public int autoAlignTorqueForce = 40;
-    [TitleGroup(S)] [Tooltip("Used to control the amount of torque force. x = 1 heißt dass Auto 100% aligned, x = 0 heißt dass Auto 90° gedreht, x = -1 dass 180° gedreht.")]
-    public AnimationCurve autoAlignAngleCurve = AnimationCurve.Linear(-1f,1f,1f,0f);
-    [TitleGroup(S)] [Tooltip("Used to reduce the angular velocity when the car is aligned")]
-    public AnimationCurve autoAlignBrakeCurve = AnimationCurve.EaseInOut(0f,1f,1f,0.98f);
-    [TitleGroup(S)] public AnimationCurve autoAlignDistanceCurve = AnimationCurve.EaseInOut(0f,1f,13f,0f);
+    // WHEN MODE NOT AutoAlignModes.WheelsDownward
+    [TitleGroup(S)] [ShowIf(HideConditionAAM)] public bool stopAutoaligningAfterInAirControl = false;
+    [TitleGroup(S)] [ShowIf(HideConditionAAM)] public bool autoalignCarInAir = false;
+    [TitleGroup(S)] [ShowIf(HideConditionAAM)] public float maxAngularVelocity = 4f;
+    [TitleGroup(S)] [ShowIf(HideConditionAAM)] public int autoAlignTorqueForce = 40;
+    [TitleGroup(S)] [Tooltip("Used to control the amount of torque force. x = 1 heisst dass Auto 100% aligned, x = 0 heisst dass Auto 90Grad gedreht, x = -1 dass 180Grad gedreht.")]
+    [ShowIf(HideConditionAAM)] public AnimationCurve autoAlignAngleCurve = AnimationCurve.Linear(-1f,1f,1f,0f);
+    [TitleGroup(S)] [Tooltip("Used to reduce the angular velocity when the car is aligned")] [ShowIf(HideConditionAAM)] public AnimationCurve autoAlignBrakeCurve = AnimationCurve.EaseInOut(0f,1f,1f,0.98f);
+    [TitleGroup(S)] [ShowIf(HideConditionAAM)] public AnimationCurve autoAlignDistanceCurve = AnimationCurve.EaseInOut(0f,1f,13f,0f);
     [TitleGroup(S)] private float targetSurfaceDistance;
 
-    [TitleGroup(R)] public TrajectoryRenderer trajectoryRenderer = null;
+    //WHEN MODE IS AutoAlignModes.WheelsDownward
+    [TitleGroup(S)] [Range(0, 1f)] public float maxConnectionDistance = 0.85f;
+    [TitleGroup(S)] [Range(0, 100000f)] public float forceMultiplier = 15000f;
+
+    [TitleGroup(R)] [ShowIf("@this.AutoAlignMode != AutoAlignModes.WheelsDownward")] public TrajectoryRenderer trajectoryRenderer = null;
     [TitleGroup(R)] private Rigidbody rB;
 
     [TitleGroup(I)] private bool hasLowRideBehavior = false;
@@ -85,6 +89,11 @@ public class AutoAlignBehavior : CarBehavior
         if (hasLowRideBehavior == true && lowRideBehavior == null) // dann ist irgendwas beim setup schief gegangen
         {
             return false;
+        }
+
+        if (AutoAlignMode != AutoAlignModes.WheelsDownward)  //wenn Autoalign Mode is Wheels Downward then here is the finishline for Init.
+        {
+            return true;
         }
 
         if (trajectoryRenderer == null) //wenn einer der wichtigen Referenzen null ist
@@ -120,9 +129,9 @@ public class AutoAlignBehavior : CarBehavior
 
 
         // Decide to which surface the car should align
-        switch (AutoAlignSurface)
+        switch (AutoAlignMode)
         {
-            case AutoAlignSurface.LowerSurface:
+            case AutoAlignModes.LowerSurface:
                 {
 
                     if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
@@ -133,7 +142,7 @@ public class AutoAlignBehavior : CarBehavior
                     }
                     break;
                 }
-            case AutoAlignSurface.ForwardSurface:
+            case AutoAlignModes.ForwardSurface:
                 {
                     // Ggf. noetig: Hit unter Auto
                     if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
@@ -154,7 +163,7 @@ public class AutoAlignBehavior : CarBehavior
 
                     break;
                 }
-            case AutoAlignSurface.TrajectoryAndDownwardSurface:
+            case AutoAlignModes.TrajectoryAndDownwardSurface:
                 {
                     if (!autoalignCarInAir || cC.drivingStateInfo != DrivingState.InAir)
                     {
@@ -188,8 +197,14 @@ public class AutoAlignBehavior : CarBehavior
 
                     break;
                 }
-            case AutoAlignSurface.WheelsDownward:
+            case AutoAlignModes.WheelsDownward:
                 {
+                    // break if there is input.
+                    if (lowRideNotNullHasInput)
+                    {
+                        break;
+                    }
+
                     // Get the WheelCollider Distance to the ground
                     if (Physics.Raycast(cC.frontWheelL.transform.position, cC.frontWheelL.transform.up, out hit))
                     {
@@ -224,9 +239,10 @@ public class AutoAlignBehavior : CarBehavior
                         backWheelRDistance = 0f;
                     }
 
-                    //Set Rigidbodyforces
-                    anticlimbingMutliplier = 1f - Mathf.Abs(Vector3.Dot(Vector3.up, cC.transform.forward));
+                    //Calculate Mutliplier that is 1 when the cars up is equal to global and is 0 when the cars roll axis is more than or equal 90 deg.
+                    anticlimbingMutliplier = Mathf.Clamp01(Vector3.Dot(Vector3.up, cC.transform.up));
 
+                    //Set Rigidbodyforces
                     if (frontWheelLDistance <= maxConnectionDistance)
                         cC.RB.AddForceAtPosition(cC.frontWheelL.transform.up * forceMultiplier * anticlimbingMutliplier, cC.frontWheelLRest.transform.position);
                     if (frontWheelRDistance <= maxConnectionDistance)
@@ -263,7 +279,7 @@ public class AutoAlignBehavior : CarBehavior
     }
 }
 
-public enum AutoAlignSurface
+public enum AutoAlignModes
 {
     LowerSurface,
     TrajectoryAndDownwardSurface,

@@ -14,11 +14,11 @@ public abstract class CarBehavior : SerializedMonoBehaviour // abstract class, s
     /// <summary>
     /// Enables/Disables The Behavior entirely. has to be implemented into the inherited Script.
     /// </summary>
-    [TitleGroup(B)] public bool EnabledBehavior = true;
+    [TitleGroup(B)] [PropertyOrder(-10)] public bool EnabledBehavior = true;
     /// <summary>
     /// ExecutionPriority provides a way to Order the BehaviorExecution. Scripts with the Same Value will be executed randomly after another.
     /// </summary>
-    [TitleGroup(B)] public int ExecutionPriority = 0;
+    [TitleGroup(B)] [PropertyOrder(-10)] public int ExecutionPriority = 0;
     /// <summary>
     /// A Reference to the CarController this Behavior Belongs to, for easy and guaranteed access
     /// </summary>
@@ -28,7 +28,8 @@ public abstract class CarBehavior : SerializedMonoBehaviour // abstract class, s
     /// A bool to check if a Script was initialized Successfully, it is the value that is returned by the SetRequirements value. It can be used to prevent the game from crashing 
     /// if behaviors arent initialized completely.
     /// </summary>
-    [TitleGroup(B)] public bool initializedSuccessfully = false;
+    [TitleGroup(B)] private bool initializedSuccessfully = false;
+    [TitleGroup(B)] [ShowInInspector] [PropertyOrder(-10)] public bool InitializedSuccessfully { get => initializedSuccessfully; }
 
     /// <summary>
     /// All Classes that inherit from CarBehavior should not override the Start Method. It calles the "SetRequirements()" method and tries to find the CarController.
