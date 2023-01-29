@@ -61,7 +61,7 @@ public class AutoAlignBehavior : CarBehavior
     [TitleGroup(S)] [Range(0, 1f)] [ShowIf(HideConditionB)] public float maxConnectionDistance = 0.85f;
     [TitleGroup(S)] [Range(0, 100000f)] [ShowIf(HideConditionB)] public float forceMultiplier = 15000f;
     [TitleGroup(S)] [ShowIf(HideConditionB)] public DistanceCalculationModes DistanceCalculationMode;
-    [TitleGroup(S)] [ShowIf(HideConditionC)] [Tooltip("This Curve should go from 0 to 1 in X and Y")] public AnimationCurve DistanceForceCurve01 = AnimationCurve.Linear(0f,1f,1f,0f); 
+    [TitleGroup(S)] [ShowIf(HideConditionC)] [Tooltip("This Curve should go from 0 to 1 in X and Y")] public AnimationCurve DistanceForceCurve01 = AnimationCurve.Linear(0f,1f,1f,0f);
 
     [TitleGroup(R)] [ShowIf(HideConditionA)] public TrajectoryRenderer trajectoryRenderer = null;
     [TitleGroup(R)] private Rigidbody rB;
@@ -174,7 +174,7 @@ public class AutoAlignBehavior : CarBehavior
                         break;
                     }
 
-                    // Ggf. nötig: Hit unter Auto
+                    // Ggf. nï¿½tig: Hit unter Auto
                     if (Physics.Raycast(this.transform.position, -this.transform.up, out hit))
                     {
                         targetNormal = hit.normal;
@@ -275,7 +275,7 @@ public class AutoAlignBehavior : CarBehavior
                             }
                         case DistanceCalculationModes.Curve:
                             {
-                                
+
                                 frontWheelLDistanceMultiplier = DistanceForceCurve01.Evaluate(Mathf.Clamp01(Mathf.InverseLerp(0f, maxConnectionDistance,  frontWheelLDistance)));
                                 frontWheelRDistanceMultiplier = DistanceForceCurve01.Evaluate(Mathf.Clamp01(Mathf.InverseLerp(0f, maxConnectionDistance, frontWheelLDistance)));
                                 backWheelLDistanceMultiplier = DistanceForceCurve01.Evaluate(Mathf.Clamp01(Mathf.InverseLerp(0f, maxConnectionDistance,  frontWheelLDistance)));
