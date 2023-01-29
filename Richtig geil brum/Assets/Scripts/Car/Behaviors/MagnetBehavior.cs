@@ -330,7 +330,7 @@ public class MagnetBehavior : CarBehavior
         float surfaceDistance = 1000;
 
         // 1. Get vector pointing downwards from car
-        Vector3 downVector = Vector3.down; // -transform.up; // TODO: TEMPORARY!!!! CHANGE
+        Vector3 downVector = Vector3.down; // -transform.up; // TODO: TEMPORARY!!!!  CHANGE
 
         // 2. Get distance factor
         RaycastHit hit; // scheiße mit extra raycast, geschieht schon in autoAlignment, aber eben nicht jeden frame...
