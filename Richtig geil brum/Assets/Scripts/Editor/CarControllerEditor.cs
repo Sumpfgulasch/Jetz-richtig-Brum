@@ -102,11 +102,12 @@ public class CarControllerEditor : OdinEditor
                 for (int i = 0; i < mB.magnetForcePositions.Length; i++)
                 {
                     Handles.color = Color.magenta;
-                    Handles.Label(mB.magnetForcePositions[i].position, i.ToString());
                     Handles.DrawWireCube(mB.magnetForcePositions[i].position, Vector3.one * 0.3f);
                     Handles.color = Color.red;
                     Handles.DrawWireCube(mB.magnetForcePositions[i].position, Vector3.one * 0.01f);
                 }
+                Handles.Label(mB.magnetForcePositions[0].position, "Front");
+                Handles.Label(mB.magnetForcePositions[1].position, "Back");
             }
             //if (cWG != null)
             //{

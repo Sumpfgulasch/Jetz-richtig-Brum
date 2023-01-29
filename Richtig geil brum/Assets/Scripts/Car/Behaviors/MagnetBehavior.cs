@@ -331,7 +331,7 @@ public class MagnetBehavior : CarBehavior
         float surfaceDistanceBack = 1000;
 
         // 1. Get vector pointing downwards from car
-        Vector3 downVector = Vector3.down; // -transform.up; // TODO: TEMPORARY!!!!  CHANGE
+        Vector3 downVector = - transform.up; 
 
         // 2. Get distance factor
         RaycastHit hitFront; // scheiße mit extra raycast, geschieht schon in autoAlignment, aber eben nicht jeden frame...
@@ -354,15 +354,18 @@ public class MagnetBehavior : CarBehavior
 
         float frontStrength = Mathf.Clamp01(_lowRideActivityMagnetCurve.Evaluate(_lowRideActivity[CarDir.F]));
         float backStrength = Mathf.Clamp01(_lowRideActivityMagnetCurve.Evaluate(_lowRideActivity[CarDir.B]));
-        _rB.AddForceAtPosition(forceFront * 0.5f * frontStrength, _magnetForcePositions[0].position,
+
+        Vector3 totalForceFront = forceFront * 0.5f * frontStrength;
+        Vector3 totalForceBack = forceBack * 0.5f * backStrength;
+
+
+        _rB.AddForceAtPosition(totalForceFront, _magnetForcePositions[0].position,
             ForceMode.Acceleration); // front wheels
-        _rB.AddForceAtPosition(forceBack * 0.5f * backStrength, _magnetForcePositions[1].position,
+        _rB.AddForceAtPosition(totalForceBack, _magnetForcePositions[1].position,
             ForceMode.Acceleration); // back wheels
 
-        Debug.DrawRay(_magnetForcePositions[0].position, downVector * frontStrength,
-            Color.red);
-        Debug.DrawRay(_magnetForcePositions[1].position, downVector * backStrength,
-            Color.red);
+        Debug.DrawRay(_magnetForcePositions[0].position, totalForceFront * 0.1f, Color.red);
+        Debug.DrawRay(_magnetForcePositions[1].position, totalForceBack * 0.1f, Color.red);
 
         // 4. Max speed
         _rB.velocity = _rB.velocity.normalized * Mathf.Clamp(_rB.velocity.magnitude, 0, _magnetPowerMaxVelocity);
