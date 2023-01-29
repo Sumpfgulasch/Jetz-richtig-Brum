@@ -16,12 +16,12 @@ public class CarControllerEditor : OdinEditor
 
 
 
-    new void OnEnable() 
+    new void OnEnable()
     {
         cC = (CarController) target;
 
         if (cC != null)
-        { 
+        {
             if(cC.HasBehavior<MagnetBehavior>())
             {
                 mB = cC.GetBehavior<MagnetBehavior>();
@@ -49,7 +49,7 @@ public class CarControllerEditor : OdinEditor
 
 
             if (!cC.Wheels.Contains(null)) // wenn wheels gesetzt sind - bzw kein wheel null ist
-            {            
+            {
                 //starting Pos boxes
                 Handles.DrawWireCube(cC.frontWheelR.transform.position, Vector3.one * wireBoxScale);
                 Handles.DrawWireCube(cC.frontWheelL.transform.position, Vector3.one * wireBoxScale);
@@ -86,7 +86,7 @@ public class CarControllerEditor : OdinEditor
                 //Handles.color = Color.magenta;
                 //Handles.Label(cC.transform.position + cC.airRollCenterOffset,"rotationCenter");
                 //Handles.DrawWireCube(cC.transform.position + (cC.transform.rotation * cC.airRollCenterOffset), Vector3.one * 1.4f * wireBoxScale);
-                
+
             }
             else
             {
@@ -98,14 +98,14 @@ public class CarControllerEditor : OdinEditor
             }
 
             if (mB != null)
-            { 
+            {
                 for (int i = 0; i < mB.magnetForcePositions.Length; i++)
                 {
                     Handles.color = Color.magenta;
-                    Handles.Label(cC.transform.TransformPoint(mB.magnetForcePositions[i]), i.ToString()); 
-                    Handles.DrawWireCube(cC.transform.TransformPoint(mB.magnetForcePositions[i]), Vector3.one * 0.3f);
+                    Handles.Label(mB.magnetForcePositions[i].position, i.ToString());
+                    Handles.DrawWireCube(mB.magnetForcePositions[i].position, Vector3.one * 0.3f);
                     Handles.color = Color.red;
-                    Handles.DrawWireCube(cC.transform.TransformPoint(mB.magnetForcePositions[i]), Vector3.one * 0.01f);
+                    Handles.DrawWireCube(mB.magnetForcePositions[i].position, Vector3.one * 0.01f);
                 }
             }
             //if (cWG != null)
